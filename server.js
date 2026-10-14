@@ -6,6 +6,8 @@ const dns = require('dns');
 dns.setDefaultResultOrder('ipv4first');
 
 require('dotenv').config();
+const fs = require('fs');
+const path = require('path');
 const express = require('express');
 const cors = require('cors');
 const { Pool } = require('pg');
@@ -139,10 +141,36 @@ const inMemoryCitizens = [
 ];
 
 // ---------------------------------------------------------------
-// In-Memory Bookings Store (Managed & Modifiable by Admin)
-// Initially initialized with 0 bookings (0 slots booked initially)
+// Bookings Store (Persistent JSON file + In-Memory Ledger)
+// Keeps permanent memory of every booking done in the system
 // ---------------------------------------------------------------
-let inMemoryBookings = [];
+const BOOKINGS_FILE = path.join(__dirname, 'bookings_ledger.json');
+
+function loadBookingsFromFile() {
+  try {
+    if (fs.existsSync(BOOKINGS_FILE)) {
+      const data = fs.readFileSync(BOOKINGS_FILE, 'utf8');
+      const parsed = JSON.parse(data);
+      if (Array.isArray(parsed)) {
+        console.log(`📖 Loaded ${parsed.length} persistent bookings from bookings_ledger.json`);
+        return parsed;
+      }
+    }
+  } catch (e) {
+    console.warn('⚠️ Could not load bookings_ledger.json:', e.message);
+  }
+  return [];
+}
+
+function saveBookingsToFile(bookings) {
+  try {
+    fs.writeFileSync(BOOKINGS_FILE, JSON.stringify(bookings, null, 2), 'utf8');
+  } catch (e) {
+    console.warn('⚠️ Could not save bookings_ledger.json:', e.message);
+  }
+}
+
+let inMemoryBookings = loadBookingsFromFile();
 
 
 const inMemoryOtpStore = new Map(); // mobile -> { otp, expiresAt }
@@ -612,6 +640,7 @@ app.post('/api/notify-slot-booked', async (req, res) => {
     } else {
       inMemoryBookings.unshift(bookingRecord);
     }
+    saveBookingsToFile(inMemoryBookings);
 
     console.log(`\n======================================================`);
     console.log(`🎟️ [SLOT BOOKING CONFIRMED & NOTIFICATION DISPATCHED]`);
@@ -693,6 +722,7 @@ app.get('/api/bookings', (req, res) => {
 // Reset all bookings to 0 (all slots 0 booked)
 app.post('/api/bookings/reset', (req, res) => {
   inMemoryBookings = [];
+  saveBookingsToFile(inMemoryBookings);
   console.log('🛡️ Admin reset all bookings to 0.');
   res.json({ success: true, message: 'All bookings cleared. 0 slots booked initially.', count: 0, bookings: [] });
 });
@@ -740,6 +770,7 @@ app.post('/api/bookings/seed', (req, res) => {
       created_at: new Date().toISOString()
     }
   ];
+  saveBookingsToFile(inMemoryBookings);
   console.log('🛡️ Admin seeded demo bookings.');
   res.json({ success: true, message: 'Sample demo bookings seeded.', count: inMemoryBookings.length, bookings: inMemoryBookings });
 });
@@ -765,6 +796,7 @@ app.put('/api/bookings/:id', async (req, res) => {
     if (shop_name) b.shop_name = shop_name;
     if (items) b.items = Array.isArray(items) ? items : [items];
     b.updated_at = new Date().toISOString();
+    saveBookingsToFile(inMemoryBookings);
 
     console.log(`\n======================================================`);
     console.log(`🛡️ [ADMIN MODIFIED BOOKING: ${bookingId}]`);
@@ -779,7 +811,7 @@ app.put('/api/bookings/:id', async (req, res) => {
       const cleanMobile = String(b.mobile_number).replace(/[^0-9]/g, '').slice(-10);
       const ntfyTopic = `tnpds-${cleanMobile}`;
       const ntfyUrl = `https://ntfy.sh/${ntfyTopic}`;
-      const updateMsg = `Hello ${b.citizen_name}!\n\nYour Fair Price Shop collection booking has been MODIFIED by the Administrator:\n\n🎫 Token: ${b.id}\n📅 Date: ${b.date}\n⏰ Time: ${b.time}\n🏪 Shop: ${b.shop_code} (${b.shop_name})\n📊 Status: ${b.status}\n📦 Items: ${b.items.join(', ')}\n\nPlease note your updated time window.`;
+      const updateMsg = `Hello ${b.citizen_name}!\n\nYour Fair Price Shop collection booking has been MODIFIED:\n\n🎫 Token: ${b.id}\n📅 Date: ${b.date}\n⏰ Time: ${b.time}\n🏪 Shop: ${b.shop_code} (${b.shop_name})\n📊 Status: ${b.status}\n📦 Items: ${b.items.join(', ')}\n\nPlease note your updated time window.`;
 
       fetch(ntfyUrl, {
         method: 'POST',
@@ -805,7 +837,7 @@ app.put('/api/bookings/:id', async (req, res) => {
 });
 
 // ---------------------------------------------------------------
-// 11. API Route: Admin Cancel Booking
+// 11. API Route: Cancel Booking (Admin or Citizen)
 // ---------------------------------------------------------------
 app.delete('/api/bookings/:id', (req, res) => {
   const bookingId = req.params.id;
@@ -817,6 +849,7 @@ app.delete('/api/bookings/:id', (req, res) => {
   const b = inMemoryBookings[idx];
   b.status = 'Cancelled';
   b.updated_at = new Date().toISOString();
+  saveBookingsToFile(inMemoryBookings);
 
   // Send cancellation push
   const cleanMobile = String(b.mobile_number).replace(/[^0-9]/g, '').slice(-10);
@@ -828,10 +861,10 @@ app.delete('/api/bookings/:id', (req, res) => {
       'Priority': 'default',
       'Tags': 'x,no_entry_sign'
     },
-    body: `Hello ${b.citizen_name},\nYour collection booking token ${b.id} scheduled for ${b.time} has been CANCELLED by the Administrator.`
+    body: `Hello ${b.citizen_name},\nYour collection booking token ${b.id} scheduled for ${b.time} has been CANCELLED.`
   }).catch(() => {});
 
-  console.log(`🛡️ Admin cancelled booking ${bookingId} for citizen ${b.citizen_name}`);
+  console.log(`❌ Cancelled booking ${bookingId} for citizen ${b.citizen_name}`);
   res.json({ success: true, message: `Booking ${bookingId} cancelled.`, booking: b });
 });
 
