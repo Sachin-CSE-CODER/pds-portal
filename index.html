@@ -1,0 +1,2493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Smart Ration — Tamil Nadu ePDS Digital Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #12304a;
+  --blue: #1769aa;
+  --teal: #008b8b;
+  --green: #18864b;
+  --orange: #d97706;
+  --red: #c62828;
+  --purple: #7048b8;
+  --bg: #f4f7fa;
+  --card: #fff;
+  --text: #17212b;
+  --muted: #667585;
+  --border: #dfe6ec;
+  --shadow: 0 8px 24px rgba(18,48,74,.08);
+  --radius: 16px;
+  --tn-green: #0a6638;
+  --tn-maroon: #821414;
+  --tn-gold: #e5a93c;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+}
+button, input, select, textarea { font: inherit; }
+button { cursor: pointer; border: 0; }
+.hidden { display: none !important; }
+
+/* Layout & Topbar */
+.app { min-height: 100vh; }
+.landing { min-height: 100vh; }
+.topbar {
+  height: 72px;
+  background: #fff;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 6%;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 21px;
+  font-weight: 800;
+  color: var(--navy);
+  text-decoration: none;
+}
+.brandmark {
+  width: 40px;
+  height: 40px;
+  border-radius: 11px;
+  background: var(--navy);
+  color: white;
+  display: grid;
+  place-items: center;
+  font-size: 16px;
+  font-weight: 900;
+}
+.brand-tn {
+  display: flex;
+  flex-direction: column;
+}
+.brand-tn small {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--tn-green);
+  letter-spacing: 0.5px;
+}
+.nav { display: flex; gap: 26px; }
+.nav a { color: #425466; text-decoration: none; font-size: 14px; font-weight: 600; }
+.nav a:hover { color: var(--blue); }
+
+/* Buttons */
+.btn {
+  padding: 11px 18px;
+  border-radius: 10px;
+  font-weight: 700;
+  transition: all .2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-decoration: none;
+}
+.btn-primary { background: var(--blue); color: #fff; }
+.btn-primary:hover { background: #10598f; transform: translateY(-1px); }
+.btn-outline { background: #fff; border: 1px solid var(--border); color: var(--navy); }
+.btn-outline:hover { background: #f8fafc; border-color: #cbd5e1; }
+.btn-success { background: var(--green); color: #fff; }
+.btn-success:hover { background: #136f3e; }
+.btn-warning { background: var(--orange); color: #fff; }
+.btn-danger { background: var(--red); color: #fff; }
+.btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none !important; }
+
+/* Hero Section */
+.hero {
+  padding: 76px 6%;
+  display: grid;
+  grid-template-columns: 1.1fr .9fr;
+  gap: 60px;
+  align-items: center;
+  background: linear-gradient(180deg, #fff, #f3f8fb);
+}
+.eyebrow {
+  color: var(--teal);
+  font-weight: 800;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.hero h1 { font-size: 50px; line-height: 1.1; margin: 14px 0; color: var(--navy); }
+.hero p { font-size: 18px; line-height: 1.7; color: var(--muted); max-width: 650px; }
+.actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 26px; }
+
+/* Hero Mini Demo */
+.hero-demo {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  padding: 24px;
+  box-shadow: var(--shadow);
+}
+.mini-head { display: flex; justify-content: space-between; align-items: center; }
+.mini-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 18px; }
+.mini-card { padding: 16px; border: 1px solid var(--border); border-radius: 14px; background: #fafbfc; }
+.mini-value { font-size: 24px; font-weight: 800; color: var(--navy); margin-top: 6px; }
+
+/* General Sections */
+.section { padding: 70px 6%; }
+.section h2 { text-align: center; color: var(--navy); font-size: 30px; margin-bottom: 30px; }
+.feature-grid, .portal-grid, .product-grid, .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+.feature-card, .portal-card, .card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  box-shadow: var(--shadow);
+}
+.feature-card h3, .portal-card h3 { margin: 14px 0 8px; color: var(--navy); }
+.feature-card p, .portal-card p { color: var(--muted); line-height: 1.6; font-size: 14px; }
+.icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  background: #e9f3fb;
+  display: grid;
+  place-items: center;
+  font-size: 22px;
+}
+footer { padding: 32px 6%; background: var(--navy); color: #dce8f0; text-align: center; font-size: 13px; line-height: 1.8; }
+
+/* Modals */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(12, 28, 42, .6);
+  display: grid;
+  place-items: center;
+  z-index: 100;
+  padding: 20px;
+  backdrop-filter: blur(4px);
+}
+.modal {
+  background: #fff;
+  border-radius: 20px;
+  max-width: 580px;
+  width: 100%;
+  padding: 30px;
+  box-shadow: 0 25px 70px rgba(0,0,0,.25);
+  animation: slide .25s ease-out;
+}
+.modal h2 { margin-top: 0; color: var(--navy); font-size: 24px; }
+.close {
+  float: right;
+  background: #eef2f5;
+  border-radius: 50%;
+  width: 34px;
+  height: 34px;
+  font-size: 16px;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+}
+.close:hover { background: #e2e8f0; }
+.lang-options, .portal-options { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-top: 20px; }
+.portal-options { grid-template-columns: repeat(3, 1fr); }
+.choice {
+  border: 1px solid var(--border);
+  background: #fff;
+  padding: 20px;
+  border-radius: 14px;
+  text-align: left;
+  transition: all .2s;
+}
+.choice:hover { border-color: var(--blue); background: #f6fbff; transform: translateY(-2px); }
+
+/* Portal & Forms */
+.portal { min-height: 100vh; padding: 60px 6%; background: #f5f8fb; }
+.portal-title { text-align: center; margin-bottom: 35px; }
+.portal-title h1 { color: var(--navy); font-size: 32px; }
+
+.login-box {
+  max-width: 520px;
+  margin: 20px auto;
+  background: #fff;
+  padding: 32px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  position: relative;
+}
+.login-stripe {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 5px;
+  border-radius: 20px 20px 0 0;
+  background: linear-gradient(90deg, var(--tn-maroon) 0%, var(--tn-green) 50%, var(--tn-gold) 100%);
+}
+label { font-size: 13px; font-weight: 700; color: #455564; display: block; margin: 16px 0 7px; text-align: left; }
+input, select, textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #ccd6de;
+  border-radius: 10px;
+  outline: none;
+  background: #fff;
+  transition: border-color .2s;
+}
+input:focus, select:focus, textarea:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(23, 105, 170, 0.12); }
+.input-prefix-box {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border: 1px solid #ccd6de;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.input-prefix-box:focus-within { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(23, 105, 170, 0.12); }
+.input-prefix-box span {
+  padding: 12px 14px;
+  background: #f8fafc;
+  color: #64748b;
+  font-weight: 700;
+  font-size: 13px;
+  border-right: 1px solid #ccd6de;
+  user-select: none;
+}
+.input-prefix-box input { border: 0; box-shadow: none; border-radius: 0; }
+
+.demo-note {
+  background: #fff8e8;
+  border: 1px solid #f2d59a;
+  padding: 12px;
+  border-radius: 10px;
+  font-size: 13px;
+  color: #76520c;
+  margin-top: 15px;
+  text-align: left;
+}
+.topic-info-box {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-top: 16px;
+  font-size: 12px;
+  color: #166534;
+  text-align: left;
+  line-height: 1.5;
+}
+.topic-info-box code {
+  background: #dcfce7;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 700;
+  color: #14532d;
+}
+
+/* Portal App Shell */
+.portal-layout { display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; }
+.sidebar { background: var(--navy); color: #fff; padding: 22px 16px; position: sticky; top: 0; height: 100vh; }
+.side-brand { padding: 10px 12px 25px; font-size: 20px; font-weight: 800; display: flex; align-items: center; gap: 10px; }
+.side-nav button {
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  color: #d8e4ec;
+  padding: 12px 14px;
+  border-radius: 10px;
+  margin: 3px 0;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all .15s;
+}
+.side-nav button:hover, .side-nav button.active { background: rgba(255,255,255,0.12); color: #fff; }
+.content { padding: 32px; overflow: auto; }
+.content-head { display: flex; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 25px; }
+.content-head h1 { margin: 0; color: var(--navy); font-size: 28px; }
+.user-tools { display: flex; align-items: center; gap: 12px; }
+.avatar {
+  width: 40px;
+  height: 40px;
+  background: #dcecf7;
+  color: var(--navy);
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  font-weight: 800;
+  font-size: 14px;
+}
+
+/* Stat Cards & Dashboard */
+.stat-grid { grid-template-columns: repeat(4, 1fr); }
+.stat-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: var(--shadow);
+}
+.stat-card .label { color: var(--muted); font-size: 13px; font-weight: 600; }
+.stat-card .num { font-size: 28px; font-weight: 850; color: var(--navy); margin-top: 8px; }
+.stat-card .sub { font-size: 12px; margin-top: 6px; color: var(--green); font-weight: 600; }
+
+.two-col { display: grid; grid-template-columns: 1.3fr .7fr; gap: 18px; margin-top: 18px; }
+.card h2, .card h3 { color: var(--navy); margin-top: 0; }
+.progress { height: 12px; background: #e7edf1; border-radius: 20px; overflow: hidden; }
+.progress span { display: block; height: 100%; background: var(--teal); border-radius: 20px; }
+.progress-label { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); margin: 8px 0; font-weight: 600; }
+
+/* Badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border-radius: 30px;
+  padding: 5px 11px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+}
+.available, .prepared, .collected { background: #e8f7ee; color: var(--green); }
+.warning, .pending { background: #fff3df; color: #9b5c00; }
+.out, .missed { background: #fdeaea; color: var(--red); }
+.booked { background: #e9f1fb; color: var(--blue); }
+.purple { background: #f1ebfb; color: var(--purple); }
+
+/* Products Grid */
+.product-grid { grid-template-columns: repeat(4, 1fr); }
+.product-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+}
+.product-icon { height: 95px; border-radius: 12px; background: #edf5f7; display: grid; place-items: center; font-size: 45px; }
+.product-card h3 { margin: 12px 0 5px; font-size: 18px; }
+.muted { color: var(--muted); font-size: 13px; }
+.qty { display: flex; gap: 8px; align-items: center; margin: 14px 0; }
+.qty button { width: 32px; height: 32px; border-radius: 8px; background: #eef2f5; font-weight: 800; font-size: 16px; }
+.qty button:hover { background: #e2e8f0; }
+.qty span { min-width: 32px; text-align: center; font-weight: 800; font-size: 15px; }
+
+/* Tables */
+.table-wrap { overflow: auto; }
+.table { width: 100%; border-collapse: collapse; min-width: 760px; }
+.table th, .table td { text-align: left; padding: 14px; border-bottom: 1px solid var(--border); font-size: 13px; }
+.table th { background: #f7f9fb; color: #526373; font-weight: 700; }
+.table tr:hover td { background: #fafcfd; }
+
+/* Slots & Charts */
+.slot-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.slot {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px;
+  background: #fff;
+  text-align: left;
+  transition: all .2s;
+}
+.slot:hover, .slot.selected { border: 2px solid var(--blue); background: #f5fbff; }
+.slot strong { display: block; color: var(--navy); margin-bottom: 8px; font-size: 15px; }
+.slot .capacity { font-size: 12px; color: var(--muted); font-weight: 600; }
+.chart { height: 210px; display: flex; align-items: end; gap: 15px; padding: 20px 10px 10px; border-top: 1px solid var(--border); }
+.bar { flex: 1; background: #75a9c9; border-radius: 6px 6px 0 0; position: relative; min-height: 10px; }
+.bar span { position: absolute; top: -20px; font-size: 11px; left: 50%; transform: translateX(-50%); font-weight: 700; color: var(--navy); }
+.bar small { position: absolute; bottom: -25px; left: 50%; transform: translateX(-50%); white-space: nowrap; color: var(--muted); font-size: 10px; }
+
+/* Timeline */
+.timeline { display: flex; align-items: center; gap: 0; overflow: auto; padding: 20px 0; }
+.step { min-width: 115px; text-align: center; position: relative; }
+.step:not(:last-child):after { content: ""; height: 3px; background: #dce4ea; width: 100%; position: absolute; top: 18px; left: 50%; z-index: 0; }
+.dot {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: #e7edf1;
+  margin: auto;
+  position: relative;
+  z-index: 1;
+  font-weight: 800;
+  color: #607180;
+}
+.step.done .dot { background: #dff4e8; color: var(--green); }
+.step.current .dot { background: #dcecf9; color: var(--blue); box-shadow: 0 0 0 5px rgba(220,236,249,.5); }
+.step p { font-size: 11px; color: var(--muted); margin-top: 8px; font-weight: 600; }
+
+/* System Flow */
+.flow { display: grid; gap: 8px; max-width: 680px; margin: auto; }
+.flow-item { padding: 14px; background: #fff; border: 1px solid var(--border); border-radius: 11px; text-align: center; font-weight: 700; color: var(--navy); }
+.arrow { text-align: center; color: var(--teal); font-size: 20px; }
+
+/* Toast */
+.toast {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  background: var(--navy);
+  color: #fff;
+  padding: 15px 20px;
+  border-radius: 12px;
+  box-shadow: 0 12px 40px rgba(0,0,0,.25);
+  z-index: 200;
+  animation: slide .25s ease-out;
+  font-weight: 600;
+  font-size: 14px;
+}
+.mobile-menu { display: none; }
+@keyframes slide { from { transform: translateY(20px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+/* Notices & Rules */
+.notice { padding: 14px 16px; border-radius: 11px; background: #edf7fb; border-left: 4px solid var(--teal); font-size: 13px; margin: 14px 0; line-height: 1.5; }
+.rule { background: #faf7ff; border: 1px solid #e4d9f5; border-radius: 12px; padding: 16px; }
+.empty { padding: 40px; text-align: center; color: var(--muted); font-size: 15px; }
+
+/* Smart Card Graphic */
+.ration-card-ui {
+  background: linear-gradient(135deg, #0a4f2c 0%, #0d6e3e 100%);
+  color: white;
+  border-radius: 18px;
+  padding: 24px;
+  box-shadow: 0 15px 35px rgba(10,79,44,0.25);
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 22px;
+}
+.ration-card-ui::after {
+  content: "🏛️";
+  position: absolute;
+  right: -10px;
+  bottom: -20px;
+  font-size: 130px;
+  opacity: 0.12;
+  pointer-events: none;
+}
+.card-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255,255,255,0.2);
+  padding-bottom: 12px;
+  margin-bottom: 16px;
+}
+.card-quota-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  background: rgba(255,255,255,0.1);
+  padding: 12px;
+  border-radius: 10px;
+  margin-top: 16px;
+  text-align: center;
+}
+.card-quota-item b { display: block; font-size: 16px; margin-top: 4px; }
+
+/* Responsive */
+@media(max-width: 1050px) {
+  .hero { grid-template-columns: 1fr; }
+  .product-grid { grid-template-columns: repeat(2, 1fr); }
+  .stat-grid { grid-template-columns: repeat(2, 1fr); }
+  .slot-grid { grid-template-columns: repeat(2, 1fr); }
+  .two-col { grid-template-columns: 1fr; }
+}
+@media(max-width: 760px) {
+  .nav { display: none; }
+  .topbar { padding: 0 18px; }
+  .hero { padding: 50px 20px; }
+  .hero h1 { font-size: 38px; }
+  .section { padding: 50px 20px; }
+  .feature-grid, .portal-grid, .product-grid { grid-template-columns: 1fr; }
+  .portal-layout { grid-template-columns: 1fr; }
+  .sidebar { height: auto; position: fixed; left: -270px; width: 250px; z-index: 80; transition: .25s; }
+  .sidebar.open { left: 0; }
+  .content { padding: 18px; }
+  .mobile-menu { display: block; background: #eef3f7; border-radius: 8px; padding: 9px 12px; }
+  .stat-grid { grid-template-columns: 1fr 1fr; }
+  .slot-grid { grid-template-columns: 1fr; }
+  .portal-options { grid-template-columns: 1fr; }
+  .lang-options { grid-template-columns: 1fr; }
+  .two-col { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="modalRoot"></div>
+<div id="toastRoot"></div>
+
+<script>
+// =====================================================================
+// Global State & Data Store
+// =====================================================================
+const API_URL = window.location.protocol === 'file:' ? 'http://localhost:3000/api' : '/api';
+
+const state = {
+  page: "landing",
+  role: null,
+  lang: "English",
+  otpSent: false,
+  verified: false,
+  cardVerified: false,
+  cart: [],
+  notified: { Wheat: false, Dal: false },
+  selectedSlot: null,
+  booking: null,
+  prepared: false,
+  collected: false,
+  stock: { Rice: 650, Wheat: 100, Sugar: 0, Dal: 0 },
+  audit: [],
+  notifications: [
+    { text: "Your monthly collection is pending.", type: "Collection", time: "Today" },
+    { text: "Your demo slot is available for booking.", type: "Bookings", time: "Today" }
+  ],
+  location: "FPS-1024",
+  locationChanged: false,
+  collectionDone: false,
+  rescheduled: false,
+  // Multi-User & OTP Authentication State
+  citizen: null,
+  citizensList: [
+    { id: 1, full_name: 'Kavitha Murugan', mobile_number: '7904208464', smart_card_no: '33/G/0123456', card_type: 'PHH (Rice)', district: 'Chennai', taluk: 'Mylapore', fps_shop_code: 'TN-FPS-0102', fps_shop_name: 'Mylapore TUCS Cooperative Society', rice_quota_kg: 20, sugar_quota_kg: 2, dhal_quota_kg: 1, oil_quota_liters: 1 },
+    { id: 2, full_name: 'Senthil Kumar', mobile_number: '9876543210', smart_card_no: '33/K/0789012', card_type: 'AAY (Antyodaya)', district: 'Coimbatore', taluk: 'South', fps_shop_code: 'TN-FPS-0504', fps_shop_name: 'Gandhipuram Primary Agri Coop Shop', rice_quota_kg: 35, sugar_quota_kg: 3, dhal_quota_kg: 2, oil_quota_liters: 2 },
+    { id: 3, full_name: 'Anitha Rajendran', mobile_number: '9123456780', smart_card_no: '33/M/0456789', card_type: 'NPHS (Sugar)', district: 'Madurai', taluk: 'Central', fps_shop_code: 'TN-FPS-0812', fps_shop_name: 'Simmakkal Cooperative Store', rice_quota_kg: 10, sugar_quota_kg: 4, dhal_quota_kg: 1, oil_quota_liters: 1 },
+    { id: 4, full_name: 'Vijay Anand', mobile_number: '8899001122', smart_card_no: '33/S/0998877', card_type: 'PHH (Rice)', district: 'Salem', taluk: 'West', fps_shop_code: 'TN-FPS-1201', fps_shop_name: 'Suramangalam Fair Price Outlet', rice_quota_kg: 20, sugar_quota_kg: 2, dhal_quota_kg: 1, oil_quota_liters: 1 },
+    { id: 5, full_name: 'Meenakshi Sundaram', mobile_number: '9444112233', smart_card_no: '33/T/0334455', card_type: 'AAY (Antyodaya)', district: 'Tiruchirappalli', taluk: 'East', fps_shop_code: 'TN-FPS-1402', fps_shop_name: 'Srirangam Co-op Supermarket', rice_quota_kg: 35, sugar_quota_kg: 3, dhal_quota_kg: 2, oil_quota_liters: 2 }
+  ],
+  selectedMobile: '7904208464',
+  selectedCardNo: '33/G/0123456',
+  devOtp: null,
+  countdown: 0,
+  countdownInterval: null,
+  showRegisterForm: false,
+  isSendingOtp: false,
+  isVerifyingOtp: false
+};
+
+const products = [
+  { name: "Rice", eligible: 20, stock: 650, icon: "🌾", available: true },
+  { name: "Sugar", eligible: 2, stock: 0, icon: "🧂", available: false },
+  { name: "Wheat", eligible: 5, stock: 100, icon: "🌾", available: false },
+  { name: "Dal", eligible: 1, stock: 0, icon: "🥣", available: false }
+];
+
+const slots = [
+  ["8:30–9:30", 15, 12], ["9:30–10:30", 15, 10], ["10:30–11:30", 20, 17], ["11:30–12:30", 15, 9],
+  ["3:00–4:00", 15, 11], ["4:00–5:00", 20, 18], ["5:00–6:00", 15, 8], ["6:00–7:00", 15, 14]
+];
+
+// =====================================================================
+// Utility Functions
+// =====================================================================
+function save() {
+  try { localStorage.setItem("smartRationDemo", JSON.stringify(state)); } catch (e) {}
+}
+
+function toast(msg) {
+  const x = document.createElement("div");
+  x.className = "toast";
+  x.textContent = msg;
+  document.getElementById("toastRoot").appendChild(x);
+  setTimeout(() => x.remove(), 3200);
+  save();
+}
+
+function modal(html) {
+  document.getElementById("modalRoot").innerHTML =
+    `<div class="overlay" onclick="if(event.target===this)closeModal()"><div class="modal">${html}</div></div>`;
+}
+
+function closeModal() {
+  document.getElementById("modalRoot").innerHTML = "";
+}
+
+function audit(action, product = "-", status = "Completed") {
+  const citizenName = state.citizen ? state.citizen.full_name : "Beneficiary";
+  state.audit.unshift({
+    time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+    user: state.role === "staff" ? "Staff-102" : citizenName,
+    role: state.role || "Citizen",
+    action,
+    product,
+    shop: state.citizen ? (state.citizen.fps_shop_code || "FPS-1024") : "FPS-1024",
+    status
+  });
+  save();
+}
+
+function setPage(p) {
+  state.page = p;
+  render();
+  window.scrollTo(0, 0);
+}
+
+// Fetch live citizen directory from backend
+async function fetchCitizensFromBackend() {
+  try {
+    const res = await fetch(`${API_URL}/citizens`);
+    if (res.ok) {
+      const data = await res.json();
+      if (data.citizens && Array.isArray(data.citizens)) {
+        state.citizensList = data.citizens;
+        // Keep selected mobile synced
+        const found = state.citizensList.find(c => c.mobile_number === state.selectedMobile);
+        if (found) {
+          state.selectedCardNo = found.smart_card_no;
+        }
+        if (state.page === "login") render();
+      }
+    }
+  } catch (e) {
+    console.log("Using cached/fallback citizen list.");
+  }
+}
+
+// =====================================================================
+// Landing & Navigation Views
+// =====================================================================
+function landing() {
+  return `
+  <div class="landing">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brandmark">🌾</div>
+        <div class="brand-tn">
+          <span>Smart Ration</span>
+          <small>தமிழ்நாடு அரசு • Civil Supplies</small>
+        </div>
+      </div>
+      <nav class="nav">
+        <a href="#home">Home</a>
+        <a href="#how">How It Works</a>
+        <a href="#features">Features</a>
+        <a href="#transparency">Transparency</a>
+        <a href="#citizens">Test Citizens</a>
+      </nav>
+      <div style="display:flex;gap:10px;align-items:center;">
+        <button class="btn btn-outline" onclick="openLanguage()">🌐 ${state.lang}</button>
+        <button class="btn btn-primary" onclick="openPortal()">Login Portal →</button>
+      </div>
+    </header>
+
+    <section class="hero" id="home">
+      <div>
+        <div class="eyebrow">Tamil Nadu Public Distribution System (ePDS)</div>
+        <h1>Plan Your Ration Collection Before You Visit.</h1>
+        <p>Check commodity availability, receive real-time push notifications on your phone, book 15-minute Fair Price Shop collection slots, and verify item-level distribution records.</p>
+        <div class="actions">
+          <button class="btn btn-primary" style="padding:13px 24px;font-size:16px;" onclick="chooseRole('beneficiary')">
+            Citizen Login (OTP via Phone) 📲
+          </button>
+          <button class="btn btn-outline" style="padding:13px 20px;" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">
+            Explore How It Works
+          </button>
+        </div>
+      </div>
+
+      <div class="hero-demo">
+        <div class="mini-head">
+          <strong style="color:var(--navy);font-size:16px;">🌾 Tamil Nadu Smart Card Portal</strong>
+          <span class="badge available">● BACKEND LIVE</span>
+        </div>
+        <div class="mini-grid">
+          <div class="mini-card">
+            <span class="muted">Monthly Entitlement</span>
+            <div class="mini-value">24 kg</div>
+          </div>
+          <div class="mini-card">
+            <span class="muted">Phone Delivery</span>
+            <div class="mini-value" style="font-size:18px;color:var(--green)">Instant ntfy App</div>
+          </div>
+          <div class="mini-card">
+            <span class="muted">Active FPS Shop</span>
+            <div class="mini-value" style="font-size:16px;">TN-FPS-0102</div>
+          </div>
+          <div class="mini-card">
+            <span class="muted">Slot Windows</span>
+            <div class="mini-value" style="font-size:16px;">15-Min Slots</div>
+          </div>
+        </div>
+        <div style="margin-top:20px;padding:12px;background:#f0fdf4;border-radius:12px;border:1px solid #bbf7d0;font-size:13px;color:#166534;">
+          📲 <strong>Direct Phone Delivery:</strong> No SMS delay or TRAI blocks. OTP is pushed straight to your Android phone via the <code>ntfy</code> app!
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="how">
+      <h2>How Smart Ration Works</h2>
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="icon">📦</div>
+          <h3>1. Check Availability</h3>
+          <p>See real-time stock of Rice, Sugar, Dhal, and Oil at your allotted Fair Price Shop before leaving home.</p>
+        </div>
+        <div class="feature-card">
+          <div class="icon">📅</div>
+          <h3>2. Book Collection Slot</h3>
+          <p>Select a 15-minute collection window based on shop capacity and avoid standing in long queues.</p>
+        </div>
+        <div class="feature-card">
+          <div class="icon">✓</div>
+          <h3>3. Transparent Collection</h3>
+          <p>Handover is authenticated biometrically with tamper-proof records and stock reconciliation.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="citizens" style="background:#f8fafc;">
+      <h2>Multi-User Database Access</h2>
+      <p class="muted" style="text-align:center;max-width:600px;margin:-15px auto 30px;">
+        Choose any of the pre-seeded Tamil Nadu citizens below to receive OTP on their dedicated topic, or register your own mobile number.
+      </p>
+      <div class="feature-grid">
+        ${state.citizensList.slice(0, 3).map(c => `
+          <div class="feature-card" style="border-top:4px solid var(--tn-green);">
+            <span class="badge ${c.card_type.includes('PHH') ? 'available' : 'purple'}">${c.card_type}</span>
+            <h3 style="margin-top:8px;">${c.full_name}</h3>
+            <p style="margin:4px 0;">📱 <b>+91 ${c.mobile_number}</b></p>
+            <p class="muted" style="font-size:12px;">${c.taluk}, ${c.district} • FPS: ${c.fps_shop_code}</p>
+            <button class="btn btn-outline" style="width:100%;margin-top:14px;font-size:13px;" onclick="quickLoginCitizen('${c.mobile_number}')">
+              Login as ${c.full_name.split(' ')[0]} 📲
+            </button>
+          </div>
+        `).join("")}
+      </div>
+    </section>
+
+    <section class="section" id="features">
+      <h2>Designed for Zero Queues & Total Transparency</h2>
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="icon">🔔</div>
+          <h3>Stock-Aware Restock Alerts</h3>
+          <p>Register "Notify Me" requests for out-of-stock items and get notified as soon as trucks arrive at the FPS.</p>
+        </div>
+        <div class="feature-card">
+          <div class="icon">🧾</div>
+          <h3>Item-Level Traceability</h3>
+          <p>Every kilogram of rice and sugar requested, packed, and collected is permanently visible to the citizen.</p>
+        </div>
+        <div class="feature-card">
+          <div class="icon">📊</div>
+          <h3>Official Taluk Monitoring</h3>
+          <p>Civil Supplies officers can monitor demand hotspots, stock levels, and distribution speed across districts.</p>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <strong>Tamil Nadu ePDS — Smart Public Distribution System Prototype</strong><br>
+      Department of Civil Supplies & Consumer Protection, Government of Tamil Nadu<br>
+      <small style="opacity:0.8;">Integrated with Redis OTP Cache & ntfy Android Push Notification Gateway</small>
+    </footer>
+  </div>`;
+}
+
+function openLanguage() {
+  modal(`
+    <button class="close" onclick="closeModal()">×</button>
+    <h2>Select Your Language / மொழியைத் தேர்ந்தெடுக்கவும்</h2>
+    <p class="muted">Choose your preferred interface language.</p>
+    <div class="lang-options">
+      <button class="choice" onclick="chooseLanguage('English')">
+        <b>English</b><br><span class="muted">Continue in English</span>
+      </button>
+      <button class="choice" onclick="chooseLanguage('தமிழ்')">
+        <b>தமிழ்</b><br><span class="muted">தொடர தமிழை தேர்வு செய்யவும்</span>
+      </button>
+    </div>
+  `);
+}
+
+function chooseLanguage(l) {
+  state.lang = l;
+  closeModal();
+  toast(l === "தமிழ்" ? "மொழி: தமிழ் தேர்ந்தெடுக்கப்பட்டது" : "Language: English selected");
+  render();
+}
+
+function openPortal() {
+  modal(`
+    <button class="close" onclick="closeModal()">×</button>
+    <h2>Select Portal / பிரிவைத் தேர்ந்தெடுக்கவும்</h2>
+    <p class="muted">Choose the operational role for this session.</p>
+    <div class="portal-options">
+      <button class="choice" onclick="chooseRole('beneficiary')">
+        <div class="icon">👤</div>
+        <h3>Beneficiary</h3>
+        <p>Family smart card login & slot booking.</p>
+        <b>Continue 📲</b>
+      </button>
+      <button class="choice" onclick="chooseRole('staff')">
+        <div class="icon">🏪</div>
+        <h3>FPS Staff</h3>
+        <p>Fair Price Shop order packing & stock.</p>
+        <b>Continue →</b>
+      </button>
+      <button class="choice" onclick="chooseRole('official')">
+        <div class="icon">📊</div>
+        <h3>Officials</h3>
+        <p>Civil Supplies district monitoring.</p>
+        <b>Continue →</b>
+      </button>
+    </div>
+  `);
+}
+
+function chooseRole(role) {
+  state.role = role;
+  closeModal();
+  if (role === "beneficiary") {
+    state.page = "login";
+    render();
+  } else {
+    setPage(role);
+  }
+}
+
+function quickLoginCitizen(mobile) {
+  state.selectedMobile = mobile;
+  const c = state.citizensList.find(x => x.mobile_number === mobile);
+  if (c) state.selectedCardNo = c.smart_card_no;
+  state.role = "beneficiary";
+  state.page = "login";
+  render();
+  toast(`Selected ${c ? c.full_name : mobile}`);
+}
+
+// =====================================================================
+// Beneficiary Login & OTP System (Integrated with Node & ntfy)
+// =====================================================================
+function loginView() {
+  const isTamil = state.lang === "தமிழ்";
+  const mobile = state.selectedMobile || '7904208464';
+  const ntfyTopic = `tnpds-${mobile}`;
+
+  return `
+  <div class="portal">
+    <div class="brand" style="justify-content:center;margin-bottom:20px;">
+      <div class="brandmark">🌾</div>
+      <div class="brand-tn">
+        <span>Tamil Nadu ePDS</span>
+        <small>ஸ்மார்ட் குடும்ப அட்டை போர்டல்</small>
+      </div>
+    </div>
+
+    <div class="login-box">
+      <div class="login-stripe"></div>
+      <div class="eyebrow">${isTamil ? "பயனாளர் உள்நுழைவு" : "Beneficiary Portal"}</div>
+      <h1 style="color:var(--navy);font-size:24px;margin:8px 0 4px;">
+        ${isTamil ? "குடும்ப அட்டை உள்நுழைவு" : "Citizen Smart Card Login"}
+      </h1>
+      <p class="muted" style="margin-bottom:20px;">
+        ${isTamil ? "உங்கள் பதிவு செய்யப்பட்ட கைபேசி எண்ணிற்கு OTP அனுப்பப்படும்." : "Authenticate via 6-digit OTP dispatched directly to your mobile phone."}
+      </p>
+
+      <!-- Database Citizen Quick Selector -->
+      <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:12px;margin-bottom:18px;text-align:left;">
+        <label style="margin:0 0 6px;font-size:12px;color:var(--navy);text-transform:uppercase;letter-spacing:0.5px;">
+          👥 ${isTamil ? "தரவுத்தளத்திலிருந்து தேர்வு செய்:" : "Select Citizen from Database:"}
+        </label>
+        <select id="citizenSelectDropdown" onchange="onCitizenSelectChange(this.value)" style="font-weight:600;font-size:13px;">
+          ${state.citizensList.map(c => `
+            <option value="${c.mobile_number}" ${c.mobile_number === mobile ? "selected" : ""}>
+              ${c.full_name} (${c.district || 'TN'}) — ${c.mobile_number} [${c.card_type}]
+            </option>
+          `).join("")}
+        </select>
+      </div>
+
+      <!-- Ration Card Number -->
+      <label>${isTamil ? "குடும்ப அட்டை எண் (Smart Card No.)" : "Smart Ration Card Number"}</label>
+      <input id="cardNo" value="${state.selectedCardNo || '33/G/0123456'}" placeholder="33/G/XXXXXXX" oninput="state.selectedCardNo=this.value">
+
+      <!-- Registered Mobile Number -->
+      <label>${isTamil ? "பதிவு செய்யப்பட்ட கைபேசி எண்" : "Registered Mobile Number"}</label>
+      <div class="input-prefix-box">
+        <span>🇮🇳 +91</span>
+        <input id="mobile" type="tel" maxlength="10" value="${mobile}" placeholder="9876543210" oninput="onMobileInput(this.value)">
+      </div>
+
+      <!-- Push Notification Channel Alert -->
+      <div class="topic-info-box">
+        📲 <strong>Android Push Channel:</strong><br>
+        OTP is sent to ntfy topic: <code>${ntfyTopic}</code>
+        <div style="margin-top:6px;">
+          <a href="https://ntfy.sh/${ntfyTopic}" target="_blank" style="color:var(--tn-green);font-weight:700;text-decoration:underline;">
+            🔔 Open Live Web Feed on Browser →
+          </a>
+        </div>
+      </div>
+
+      <!-- Send OTP Button -->
+      <button 
+        id="btnSendOtp" 
+        class="btn btn-primary" 
+        style="width:100%;margin-top:20px;padding:13px;font-size:15px;background-color:var(--tn-green);" 
+        onclick="requestOtpFromBackend()"
+        ${state.isSendingOtp ? "disabled" : ""}
+      >
+        ${state.isSendingOtp ? "⏳ Dispatching to Phone..." : "Get OTP on Phone 📲"}
+      </button>
+
+      <!-- OTP Entry Section -->
+      ${state.otpSent ? `
+        <div style="margin-top:22px;padding-top:20px;border-top:1px dashed var(--border);animation:slide .25s ease-out;">
+          ${state.devOtp ? `
+            <div class="demo-note" style="cursor:pointer;" onclick="autofillOtp('${state.devOtp}')">
+              ⚡ <b>Dev Mode OTP: <code style="font-size:15px;background:#fae8b4;padding:2px 6px;border-radius:4px;">${state.devOtp}</code></b> (Click to autofill)
+            </div>
+          ` : ""}
+
+          <label>${isTamil ? "ஒருமுறை கடவுச்சொல் (6-Digit OTP)" : "Enter 6-Digit OTP"}</label>
+          <input id="otp" type="tel" maxlength="6" placeholder="• • • • • •" style="font-size:20px;letter-spacing:6px;text-align:center;font-weight:800;">
+
+          <div style="display:flex;justify-content:space-between;align-items:center;margin:10px 0 16px;font-size:12px;">
+            <span class="muted">
+              ${state.countdown > 0 ? `Resend OTP in <b>${state.countdown}s</b>` : "Didn't receive OTP?"}
+            </span>
+            <button 
+              class="btn btn-outline" 
+              style="padding:6px 12px;font-size:12px;" 
+              onclick="requestOtpFromBackend()" 
+              ${state.countdown > 0 ? "disabled" : ""}
+            >
+              Resend OTP
+            </button>
+          </div>
+
+          <button 
+            id="btnVerifyOtp" 
+            class="btn btn-success" 
+            style="width:100%;padding:13px;font-size:15px;" 
+            onclick="verifyOtpWithBackend()"
+            ${state.isVerifyingOtp ? "disabled" : ""}
+          >
+            ${state.isVerifyingOtp ? "Validating..." : "Verify OTP & Access Portal ✓"}
+          </button>
+        </div>
+      ` : ""}
+
+      <!-- Collapsible Registration Section -->
+      <div style="margin-top:20px;text-align:center;">
+        <button type="button" class="btn btn-outline" style="width:100%;font-size:13px;" onclick="toggleRegisterForm()">
+          ${state.showRegisterForm ? "▲ Close Registration" : "➕ Register New Citizen / Phone Number"}
+        </button>
+      </div>
+
+      ${state.showRegisterForm ? `
+        <div style="margin-top:16px;padding:18px;background:#fafbfc;border:1px dashed var(--border);border-radius:12px;text-align:left;">
+          <h4 style="margin:0 0 12px;color:var(--navy);font-size:14px;font-weight:800;">
+            ➕ Add Citizen to Tamil Nadu Database
+          </h4>
+          <label style="margin:8px 0 4px;font-size:11px;">Full Name (பெயர்)</label>
+          <input id="regName" placeholder="e.g. Ramesh Chandran" style="padding:10px;font-size:13px;">
+
+          <label style="margin:8px 0 4px;font-size:11px;">Mobile Number (கைபேசி எண்)</label>
+          <input id="regMobile" type="tel" maxlength="10" placeholder="10-digit mobile" style="padding:10px;font-size:13px;">
+
+          <label style="margin:8px 0 4px;font-size:11px;">Card Category (அட்டை வகை)</label>
+          <select id="regCardType" style="padding:10px;font-size:13px;">
+            <option value="PHH (Rice)">PHH (Rice - Priority Household)</option>
+            <option value="AAY (Antyodaya)">AAY (Antyodaya Anna Yojana)</option>
+            <option value="NPHS (Sugar)">NPHS (Sugar - Non-Priority)</option>
+          </select>
+
+          <label style="margin:8px 0 4px;font-size:11px;">District (மாவட்டம்)</label>
+          <input id="regDistrict" value="Chennai" placeholder="e.g. Chennai, Coimbatore, Salem" style="padding:10px;font-size:13px;">
+
+          <button class="btn btn-primary" style="width:100%;margin-top:14px;font-size:13px;" onclick="submitNewCitizenRegistration()">
+            Save Citizen to Database & Select
+          </button>
+        </div>
+      ` : ""}
+
+      <button class="btn btn-outline" style="width:100%;margin-top:14px;font-size:13px;" onclick="setPage('landing')">
+        ← Back to Home
+      </button>
+    </div>
+  </div>`;
+}
+
+function onMobileInput(val) {
+  state.selectedMobile = val.trim();
+  const found = state.citizensList.find(c => c.mobile_number === state.selectedMobile);
+  if (found) {
+    state.selectedCardNo = found.smart_card_no;
+    const cardInput = document.getElementById('cardNo');
+    if (cardInput) cardInput.value = found.smart_card_no;
+  }
+}
+
+function onCitizenSelectChange(mobile) {
+  state.selectedMobile = mobile;
+  const found = state.citizensList.find(c => c.mobile_number === mobile);
+  if (found) {
+    state.selectedCardNo = found.smart_card_no;
+  }
+  state.otpSent = false;
+  state.devOtp = null;
+  clearInterval(state.countdownInterval);
+  render();
+}
+
+function toggleRegisterForm() {
+  state.showRegisterForm = !state.showRegisterForm;
+  render();
+}
+
+function autofillOtp(code) {
+  const input = document.getElementById('otp');
+  if (input) {
+    input.value = code;
+    toast(`OTP autofilled: ${code}`);
+  }
+}
+
+// Request OTP from Backend API
+async function requestOtpFromBackend() {
+  const mobileInput = document.getElementById('mobile');
+  const mobile = mobileInput ? mobileInput.value.trim() : state.selectedMobile;
+
+  if (!mobile || mobile.length !== 10) {
+    toast("⚠️ Please enter a valid 10-digit mobile number.");
+    if (mobileInput) mobileInput.focus();
+    return;
+  }
+
+  state.isSendingOtp = true;
+  render();
+
+  try {
+    const res = await fetch(`${API_URL}/request-otp`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ mobile_number: mobile })
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      state.otpSent = true;
+      state.devOtp = data.devOtp || null;
+      toast(`📲 OTP sent to your phone! Topic: ${data.topic || 'tnpds-' + mobile}`);
+
+      // Start 30s countdown
+      clearInterval(state.countdownInterval);
+      state.countdown = 30;
+      state.countdownInterval = setInterval(() => {
+        state.countdown -= 1;
+        if (state.countdown <= 0) {
+          clearInterval(state.countdownInterval);
+        }
+        const timerSpan = document.getElementById('resendCountdownSpan');
+        if (timerSpan) timerSpan.innerText = state.countdown;
+      }, 1000);
+
+    } else {
+      toast(`❌ ${data.error || 'Failed to dispatch OTP.'}`);
+    }
+  } catch (err) {
+    toast(`❌ Backend offline. Ensure server is running on http://localhost:3000`);
+  } finally {
+    state.isSendingOtp = false;
+    render();
+    setTimeout(() => {
+      const otpField = document.getElementById('otp');
+      if (otpField) otpField.focus();
+    }, 100);
+  }
+}
+
+// Verify OTP with Backend API
+async function verifyOtpWithBackend() {
+  const mobileInput = document.getElementById('mobile');
+  const mobile = mobileInput ? mobileInput.value.trim() : state.selectedMobile;
+  const otpInput = document.getElementById('otp');
+  const otp = otpInput ? otpInput.value.trim() : '';
+
+  if (!otp || otp.length !== 6) {
+    toast("⚠️ Please enter the full 6-digit OTP.");
+    if (otpInput) otpInput.focus();
+    return;
+  }
+
+  state.isVerifyingOtp = true;
+  render();
+
+  try {
+    const res = await fetch(`${API_URL}/verify-otp`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ mobile_number: mobile, otp: otp })
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      state.verified = true;
+      localStorage.setItem('tnpds_token', data.token);
+
+      // Bind authenticated citizen details to state
+      const c = data.citizen || state.citizensList.find(x => x.mobile_number === mobile) || {
+        full_name: 'Registered Citizen',
+        mobile_number: mobile,
+        smart_card_no: state.selectedCardNo || '33/G/0123456',
+        card_type: 'PHH (Rice)',
+        district: 'Chennai',
+        taluk: 'Mylapore',
+        fps_shop_code: 'TN-FPS-0102',
+        fps_shop_name: 'Mylapore TUCS Cooperative Society',
+        rice_quota_kg: 20,
+        sugar_quota_kg: 2,
+        dhal_quota_kg: 1,
+        oil_quota_liters: 1
+      };
+
+      state.citizen = c;
+      state.location = c.fps_shop_code || "FPS-1024";
+
+      // Dynamically update product entitlements based on card quota
+      if (c.rice_quota_kg) products[0].eligible = c.rice_quota_kg;
+      if (c.sugar_quota_kg) products[1].eligible = c.sugar_quota_kg;
+      if (c.dhal_quota_kg) products[3].eligible = c.dhal_quota_kg;
+
+      audit("Beneficiary Logged In", "-", "Authenticated");
+      toast(`🎉 Welcome, ${c.full_name}!`);
+
+      setTimeout(() => {
+        setPage("card");
+      }, 400);
+
+    } else {
+      toast(`❌ ${data.error || 'Incorrect OTP code.'}`);
+    }
+  } catch (err) {
+    toast(`❌ Verification failed: Backend unreachable.`);
+  } finally {
+    state.isVerifyingOtp = false;
+    render();
+  }
+}
+
+// Register New Citizen via Backend API
+async function submitNewCitizenRegistration() {
+  const name = (document.getElementById('regName').value || '').trim();
+  const mobile = (document.getElementById('regMobile').value || '').trim();
+  const cardType = document.getElementById('regCardType').value;
+  const district = (document.getElementById('regDistrict').value || 'Chennai').trim();
+
+  if (!name || !mobile || mobile.length !== 10) {
+    toast("⚠️ Please enter a valid name and 10-digit mobile number.");
+    return;
+  }
+
+  try {
+    const res = await fetch(`${API_URL}/register-citizen`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        full_name: name,
+        mobile_number: mobile,
+        card_type: cardType,
+        district: district,
+        taluk: 'Central',
+        fps_shop_code: 'TN-FPS-0101'
+      })
+    });
+
+    const data = await res.json();
+    if (res.ok) {
+      toast(`✅ Citizen ${name} registered successfully!`);
+      state.showRegisterForm = false;
+      state.selectedMobile = mobile;
+      await fetchCitizensFromBackend();
+      render();
+    } else {
+      toast(`❌ ${data.error || 'Registration failed.'}`);
+    }
+  } catch (e) {
+    toast("❌ Server offline. Could not save citizen.");
+  }
+}
+
+// =====================================================================
+// e-Ration Card Verification View
+// =====================================================================
+function cardView() {
+  const c = state.citizen || {
+    full_name: 'Kavitha Murugan',
+    mobile_number: '7904208464',
+    smart_card_no: '33/G/0123456',
+    card_type: 'PHH (Rice - Priority Household)',
+    family_head: 'Kavitha M',
+    family_members_count: 4,
+    district: 'Chennai',
+    taluk: 'Mylapore',
+    fps_shop_code: 'TN-FPS-0102',
+    fps_shop_name: 'Mylapore TUCS Cooperative Society',
+    rice_quota_kg: 20,
+    sugar_quota_kg: 2,
+    dhal_quota_kg: 1,
+    oil_quota_liters: 1
+  };
+
+  return `
+  <div class="portal">
+    <div class="login-box" style="max-width:720px;padding:34px;">
+      <div class="login-stripe"></div>
+      <div class="eyebrow">Tamil Nadu ePDS • Verification</div>
+      <h1 style="color:var(--navy);font-size:26px;margin:8px 0 16px;">
+        மின்னணு குடும்ப அட்டை (e-Smart Card)
+      </h1>
+
+      <!-- Graphic Smart Card UI -->
+      <div class="ration-card-ui">
+        <div class="card-header-row">
+          <div>
+            <div style="font-size:12px;opacity:0.85;text-transform:uppercase;letter-spacing:1px;">தமிழ்நாடு அரசு • Civil Supplies</div>
+            <div style="font-size:19px;font-weight:800;letter-spacing:0.5px;">TAMIL NADU SMART RATION CARD</div>
+          </div>
+          <span class="badge available" style="background:white;color:var(--tn-green);font-size:12px;">
+            ${c.card_type}
+          </span>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13px;">
+          <div>
+            <span style="opacity:0.75;font-size:11px;display:block;">CARD NUMBER</span>
+            <b style="font-size:16px;letter-spacing:1px;">${c.smart_card_no}</b>
+          </div>
+          <div>
+            <span style="opacity:0.75;font-size:11px;display:block;">HEAD OF FAMILY</span>
+            <b style="font-size:15px;">${c.family_head || c.full_name}</b>
+          </div>
+          <div>
+            <span style="opacity:0.75;font-size:11px;display:block;">REGISTERED MOBILE</span>
+            <b>+91 ${c.mobile_number}</b>
+          </div>
+          <div>
+            <span style="opacity:0.75;font-size:11px;display:block;">TALUK / JURISDICTION</span>
+            <b>${c.taluk || 'Mylapore'}, ${c.district || 'Chennai'}</b>
+          </div>
+        </div>
+
+        <div class="card-quota-grid">
+          <div class="card-quota-item">
+            <span style="font-size:11px;opacity:0.8;">RICE</span>
+            <b>${c.rice_quota_kg || 20} kg</b>
+          </div>
+          <div class="card-quota-item">
+            <span style="font-size:11px;opacity:0.8;">SUGAR</span>
+            <b>${c.sugar_quota_kg || 2} kg</b>
+          </div>
+          <div class="card-quota-item">
+            <span style="font-size:11px;opacity:0.8;">DHAL</span>
+            <b>${c.dhal_quota_kg || 1} kg</b>
+          </div>
+          <div class="card-quota-item">
+            <span style="font-size:11px;opacity:0.8;">OIL</span>
+            <b>${c.oil_quota_liters || 1} L</b>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="box-shadow:none;background:#f8fafc;margin-bottom:20px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <div>
+            <span class="muted" style="font-size:12px;display:block;">ALLOTTED FAIR PRICE SHOP</span>
+            <strong style="color:var(--navy);font-size:15px;">${c.fps_shop_code || 'TN-FPS-0102'} — ${c.fps_shop_name || 'Mylapore TUCS Cooperative Society'}</strong>
+          </div>
+          <span class="badge available">● ACTIVE SHOP</span>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-primary" style="padding:13px 24px;font-size:15px;" onclick="confirmCard()">
+          Confirm Details & Access Dashboard →
+        </button>
+        <button class="btn btn-outline" onclick="logoutCitizen()">
+          Switch Citizen / Logout
+        </button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function confirmCard() {
+  state.cardVerified = true;
+  audit("e-Ration Card Verified");
+  toast("Smart Ration Card confirmed ✓");
+  setTimeout(() => setPage("beneficiary"), 350);
+}
+
+function logoutCitizen() {
+  localStorage.removeItem('tnpds_token');
+  state.verified = false;
+  state.cardVerified = false;
+  state.otpSent = false;
+  state.citizen = null;
+  state.cart = [];
+  state.selectedSlot = null;
+  state.booking = null;
+  toast("Logged out of session.");
+  setPage("landing");
+}
+
+// =====================================================================
+// App Shell Layout (Beneficiary, FPS Staff, Official)
+// =====================================================================
+function shell(role, body, active) {
+  let title = role === "beneficiary" ? "Beneficiary Portal" : role === "staff" ? "FPS Staff Portal" : "Officials Dashboard";
+  let menus = role === "beneficiary" ? [
+    ["beneficiary", "Dashboard"], ["products", "Products"], ["cart", "My Cart"], ["slots", "Book Slot"],
+    ["bookings", "My Bookings"], ["history", "Collection History"], ["location", "Change Location"],
+    ["flow", "System Flow"], ["notifications", "Notifications"], ["help", "Help"]
+  ] : role === "staff" ? [
+    ["staff", "Dashboard"], ["staffbookings", "Today's Bookings"], ["prepare", "Orders to Prepare"],
+    ["stock", "Stock"], ["notify", "Notify Me Requests"], ["collection", "Collection Updates"],
+    ["reschedule", "Missed Slots"], ["audit", "Audit Log"]
+  ] : [
+    ["official", "Overview"], ["shops", "Shops"], ["stockofficial", "Stock"],
+    ["analytics", "Distribution"], ["slotdemand", "Slot Demand"], ["notifyofficial", "Notify Me"],
+    ["collections", "Collections"], ["audit", "Audit Logs"]
+  ];
+
+  const citizenInitials = state.citizen
+    ? state.citizen.full_name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()
+    : "KM";
+
+  return `
+  <div class="portal-layout">
+    <aside class="sidebar" id="sidebar">
+      <div class="side-brand">
+        <span>🌾</span> Smart Ration
+      </div>
+      <div class="side-nav">
+        ${menus.map(m => `
+          <button class="${active === m[0] ? 'active' : ''}" onclick="setPage('${m[0]}')">
+            ${menuIcon(m[0])} &nbsp;${m[1]}
+          </button>
+        `).join("")}
+        <button style="margin-top:20px;color:#fca5a5;" onclick="logoutCitizen()">
+          🚪 &nbsp;Logout / Exit
+        </button>
+      </div>
+    </aside>
+
+    <main class="content">
+      <div class="content-head">
+        <div>
+          <button class="mobile-menu" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+          <h1>${title}</h1>
+          <span class="muted">
+            ${state.citizen ? `Logged in: <b>${state.citizen.full_name}</b> (+91 ${state.citizen.mobile_number}) • ${state.citizen.card_type}` : 'Department of Civil Supplies, Tamil Nadu'}
+          </span>
+        </div>
+        <div class="user-tools">
+          <button class="btn btn-outline" style="padding:8px 12px;" onclick="openNotifications()">🔔</button>
+          <span class="avatar">${role === "beneficiary" ? citizenInitials : role === "staff" ? "SF" : "OF"}</span>
+        </div>
+      </div>
+      ${body}
+    </main>
+  </div>`;
+}
+
+function menuIcon(x) {
+  return ({
+    beneficiary: "⌂", products: "▦", cart: "🛒", slots: "◷", bookings: "▣", history: "▤",
+    location: "⌖", flow: "⇅", notifications: "🔔", help: "?",
+    staff: "⌂", staffbookings: "▣", prepare: "☑", stock: "▥", notify: "🔔", collection: "✓",
+    reschedule: "↻", audit: "☷",
+    official: "⌂", shops: "▦", stockofficial: "▥", analytics: "▥", slotdemand: "◒",
+    notifyofficial: "🔔", collections: "✓"
+  }[x] || "•");
+}
+
+// =====================================================================
+// Beneficiary Dashboard & Modules
+// =====================================================================
+function dashboard() {
+  const c = state.citizen || {
+    full_name: 'Kavitha Murugan',
+    rice_quota_kg: 20,
+    sugar_quota_kg: 2,
+    dhal_quota_kg: 1,
+    fps_shop_code: 'TN-FPS-0102',
+    fps_shop_name: 'Mylapore TUCS Cooperative Society',
+    district: 'Chennai'
+  };
+
+  const totalQuota = (c.rice_quota_kg || 20) + (c.sugar_quota_kg || 2) + (c.dhal_quota_kg || 1);
+
+  return shell("beneficiary", `
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="label">Monthly Entitlement</div>
+        <div class="num">${totalQuota} kg</div>
+        <div class="sub">Valid for this month</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Collected So Far</div>
+        <div class="num">8 kg</div>
+        <div class="sub">33% complete</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Pending Entitlement</div>
+        <div class="num">${totalQuota - 8} kg</div>
+        <div class="sub">Eligible to collect</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Allotted FPS Shop</div>
+        <div class="num" style="font-size:20px;">${c.fps_shop_code || 'FPS-1024'}</div>
+        <div class="sub">● OPEN TODAY</div>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="card">
+        <h2>Good Morning, ${c.full_name}</h2>
+        <div class="progress-label">
+          <span>Monthly Ration Quota Progress</span>
+          <b>8 kg / ${totalQuota} kg</b>
+        </div>
+        <div class="progress"><span style="width:33%"></span></div>
+        <div class="notice">
+          💡 <b>Pro Tip:</b> Book a 15-minute slot before visiting the Fair Price Shop to avoid waiting in line.
+        </div>
+        <div class="actions">
+          <button class="btn btn-primary" onclick="setPage('products')">View Eligible Products 🌾</button>
+          <button class="btn btn-outline" onclick="setPage('slots')">Book Collection Slot ◷</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Your Fair Price Shop</h3>
+        <strong style="color:var(--navy);font-size:16px;">${c.fps_shop_code || 'TN-FPS-0102'} — ${c.fps_shop_name || 'Mylapore TUCS Cooperative Society'}</strong>
+        <p class="muted">${c.taluk || 'Mylapore'}, ${c.district || 'Chennai'}, Tamil Nadu</p>
+        <span class="badge available">● OPEN TODAY</span>
+        <p class="muted" style="margin-top:10px;font-size:12px;">
+          Morning: 8:30 AM – 12:30 PM<br>
+          Evening: 3:00 PM – 7:00 PM
+        </p>
+        <button class="btn btn-outline" style="width:100%;margin-top:8px;font-size:13px;" onclick="toast('Opening Shop Inventory Details...')">
+          View Shop Inventory Details
+        </button>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:18px">
+      <h3>Important Guidelines (முக்கிய விதிகள்)</h3>
+      <div class="notice">
+        <b>Booking ≠ Collection:</b> Reserving a collection slot guarantees your 15-minute express window at the counter. Handover is recorded only after authorised biometric authentication.
+      </div>
+    </div>
+  `, `beneficiary`);
+}
+
+function productsView() {
+  return shell("beneficiary", `
+    <div class="content-head">
+      <div>
+        <h2>Your Eligible Commodities (உரிய பொருட்கள்)</h2>
+        <span class="muted">Based on your Smart Card category and government allocations.</span>
+      </div>
+    </div>
+
+    <div class="product-grid">
+      ${products.map((p, i) => `
+        <div class="product-card">
+          <div class="product-icon">${p.icon}</div>
+          <h3>${p.name}</h3>
+          <p class="muted">Your Entitlement: <b>${p.eligible} kg</b></p>
+          <p class="muted">Shop Stock: <b>${p.stock} kg</b></p>
+          <span class="badge ${p.available ? 'available' : 'out'}" style="margin-bottom:12px;">
+            ${p.available ? '● AVAILABLE IN SHOP' : '● OUT OF STOCK'}
+          </span>
+          ${p.available ? `
+            <div class="qty">
+              <button onclick="changeQty(${i}, -1)">−</button>
+              <span id="q${i}">0</span>
+              <button onclick="changeQty(${i}, 1)">+</button>
+            </div>
+            <button class="btn btn-primary" style="width:100%;margin-top:auto;" onclick="addCart(${i})">
+              Add to Cart
+            </button>
+          ` : `
+            <button class="btn btn-outline" style="width:100%;margin-top:auto;" onclick="notifyProduct('${p.name}')">
+              ${state.notified[p.name] ? 'Notification Requested ✓' : 'Notify Me When Available 🔔'}
+            </button>
+          `}
+        </div>
+      `).join("")}
+    </div>
+
+    <div class="card" style="margin-top:18px">
+      <div class="notice">
+        Out-of-stock items will trigger an automated push notification to your phone as soon as the Fair Price Shop confirms delivery.
+      </div>
+    </div>
+  `, `products`);
+}
+
+const quantities = {};
+function changeQty(i, d) {
+  quantities[i] = Math.max(0, Math.min(products[i].eligible, (quantities[i] || 0) + d));
+  const el = document.getElementById("q" + i);
+  if (el) el.textContent = quantities[i];
+}
+
+function addCart(i) {
+  const p = products[i], q = quantities[i] || 0;
+  if (!q) return toast("⚠️ Please select a quantity first");
+  const found = state.cart.find(x => x.name === p.name);
+  if (found) found.qty = Math.min(p.eligible, found.qty + q);
+  else state.cart.push({ name: p.name, qty: q, eligible: p.eligible, status: "Ready" });
+  quantities[i] = 0;
+  const counter = document.getElementById("q" + i);
+  if (counter) counter.textContent = "0";
+  audit("Added to Ration Cart", p.name);
+  toast(`✓ ${q} kg ${p.name} added to preparation cart`);
+  render();
+}
+
+function notifyProduct(name) {
+  if (state.notified[name]) return toast("Notification already requested for " + name);
+  modal(`
+    <button class="close" onclick="closeModal()">×</button>
+    <h2>Commodity Notification Request</h2>
+    <p>Product <b>${name}</b> is currently out of stock at your allotted FPS.</p>
+    <div class="notice">
+      <b>Status:</b> Awaiting fresh truck delivery from Civil Supplies Godown.<br>
+      <b>Push Channel:</b> Instant alert to your phone via ntfy app.
+    </div>
+    <button class="btn btn-primary" style="width:100%" onclick="registerNotify('${name}')">
+      Register Phone Notification Request
+    </button>
+  `);
+}
+
+function registerNotify(name) {
+  state.notified[name] = true;
+  state.notifications.unshift({
+    text: `Restock alert registered for ${name}. You will receive a push notification when restocked.`,
+    type: "Stock",
+    time: "Now"
+  });
+  audit("Notify Me Requested", name, "Requested");
+  closeModal();
+  toast(`✓ Push notification alert registered for ${name}`);
+  render();
+}
+
+function cartView() {
+  let total = state.cart.reduce((a, x) => a + x.qty, 0);
+  return shell("beneficiary", `
+    <div class="card">
+      <h2>My Ration Cart (ரேஷன் தயாரிப்புக் கூடை)</h2>
+      <p class="muted">This is an express pre-packing request for your FPS shop staff, not a commercial order.</p>
+      ${state.cart.length ? `
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Commodity</th>
+                <th>Quantity</th>
+                <th>Monthly Entitlement</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${state.cart.map((x, i) => `
+                <tr>
+                  <td><b>${x.name}</b></td>
+                  <td>${x.qty} kg</td>
+                  <td>${x.eligible} kg</td>
+                  <td><span class="badge prepared">Ready for Pack</span></td>
+                  <td><button class="btn btn-outline" style="padding:6px 12px;font-size:12px;" onclick="removeCart(${i})">Remove</button></td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+        </div>
+        <div class="actions" style="margin-top:22px;display:flex;justify-content:space-between;align-items:center;">
+          <div>
+            <b>Total Items: ${state.cart.length}</b> &nbsp;|&nbsp; 
+            <b>Total Weight: ${total} kg</b>
+          </div>
+          <button class="btn btn-primary" onclick="setPage('slots')">
+            Proceed to 15-Minute Slot Booking →
+          </button>
+        </div>
+      ` : `
+        <div class="empty">
+          Your ration preparation cart is empty.<br>
+          <button class="btn btn-primary" style="margin-top:14px" onclick="setPage('products')">
+            Browse Eligible Commodities
+          </button>
+        </div>
+      `}
+    </div>
+  `, `cart`);
+}
+
+function removeCart(i) {
+  state.cart.splice(i, 1);
+  toast("Item removed from cart");
+  render();
+}
+
+function slotsView() {
+  const c = state.citizen || { fps_shop_code: 'TN-FPS-0102', fps_shop_name: 'Mylapore TUCS Cooperative' };
+  return shell("beneficiary", `
+    <div class="two-col">
+      <div class="card">
+        <h2>Choose Express Collection Slot</h2>
+        <p class="muted">Shop: <b>${c.fps_shop_code} — ${c.fps_shop_name}</b></p>
+        <div class="slot-grid">
+          ${slots.map((s, i) => `
+            <button class="slot ${state.selectedSlot === i ? 'selected' : ''}" onclick="selectSlot(${i})">
+              <strong>${s[0]}</strong>
+              <span class="capacity">${s[2]} / ${s[1]} slots available</span>
+              ${(i === 2 || i === 5) ? '<br><span class="badge warning" style="margin-top:8px">Peak Window</span>' : ''}
+            </button>
+          `).join("")}
+        </div>
+        ${state.selectedSlot !== null ? `
+          <div class="actions" style="margin-top:24px;">
+            <button class="btn btn-primary" style="padding:13px 24px;font-size:15px;" onclick="confirmBooking()">
+              Confirm Slot Booking ◷
+            </button>
+          </div>
+        ` : ""}
+      </div>
+
+      <div>
+        <div class="card">
+          <h3>Real-Time Shop Crowd Analytics</h3>
+          <p class="muted">Hourly footfall distribution to help you pick the quickest window.</p>
+          <div class="chart">
+            ${[35, 48, 65, 42, 55, 78, 40, 31].map((v, i) => `
+              <div class="bar" style="height:${v}%">
+                <span>${v}</span>
+                <small>${slots[i][0].split("–")[0]}</small>
+              </div>
+            `).join("")}
+          </div>
+          <small class="muted" style="display:block;margin-top:28px;">Based on current week biometric check-ins</small>
+        </div>
+
+        <div class="card" style="margin-top:18px">
+          <h3>Collection Window</h3>
+          <div class="timeline">
+            ${["Today", "Tomorrow", "Thursday"].map((x, i) => `
+              <div class="step ${i === 0 ? 'current' : ''}">
+                <div class="dot">${i + 1}</div>
+                <p>${x}</p>
+              </div>
+            `).join("")}
+          </div>
+        </div>
+      </div>
+    </div>
+  `, `slots`);
+}
+
+function selectSlot(i) {
+  if (slots[i][2] <= 0) return toast("⚠️ No capacity remaining in this slot");
+  state.selectedSlot = i;
+  render();
+}
+
+function confirmBooking() {
+  if (state.selectedSlot === null) return;
+  const s = slots[state.selectedSlot];
+  const c = state.citizen || { fps_shop_code: 'TN-FPS-0102' };
+  const bookingId = `TN-BK-${Date.now().toString().slice(-6)}`;
+  state.booking = {
+    id: bookingId,
+    date: "Today",
+    time: s[0],
+    shop: c.fps_shop_code || "TN-FPS-0102"
+  };
+  audit("Slot Booked", s[0]);
+  modal(`
+    <button class="close" onclick="closeModal()">×</button>
+    <h2>Confirm Collection Slot</h2>
+    <p><b>Booking Token:</b> <code style="font-size:16px;">${bookingId}</code></p>
+    <p><b>Fair Price Shop:</b> ${state.booking.shop}</p>
+    <p><b>Time Window:</b> ${s[0]}</p>
+    <p><b>Pre-Packed Items:</b><br>${state.cart.map(x => `• ${x.name} — ${x.qty} kg`).join("<br>") || "Standard Monthly Entitlement"}</p>
+    <span class="badge available">Express Window Reserved</span>
+    <button class="btn btn-primary" style="width:100%;margin-top:20px;padding:12px;" onclick="finishBooking()">
+      Confirm & Receive Booking Pass ✓
+    </button>
+  `);
+}
+
+function finishBooking() {
+  closeModal();
+  state.booking.status = "Booked";
+  state.notifications.unshift({
+    text: `Slot confirmed for ${state.booking.time}. Show your token ${state.booking.id} at the counter.`,
+    type: "Bookings",
+    time: "Now"
+  });
+  audit("Booking Confirmed", state.booking.id);
+  toast(`✓ Slot Confirmed! Pass Token: ${state.booking.id}`);
+  setPage("bookings");
+}
+
+function bookingsView() {
+  return shell("beneficiary", `
+    <div class="card">
+      <h2>My Active Collection Bookings</h2>
+      ${state.booking ? `
+        <div class="two-col">
+          <div>
+            <div class="notice">
+              <b>Booking Token:</b> <code style="font-size:16px;background:#fff;padding:2px 8px;border-radius:4px;">${state.booking.id}</code>
+            </div>
+            <h3>${state.booking.shop}</h3>
+            <p><b>Collection Day:</b> ${state.booking.date}<br><b>Time Slot:</b> ${state.booking.time}</p>
+            <span class="badge booked">BOOKED & RESERVED</span>
+            <div class="timeline" style="margin-top:24px">
+              ${["Booked", "Pre-Packed", "Biometric Auth", "Handed Over"].map((x, i) => `
+                <div class="step ${i === 0 ? 'current' : ''}">
+                  <div class="dot">${i + 1}</div>
+                  <p>${x}</p>
+                </div>
+              `).join("")}
+            </div>
+          </div>
+          <div class="rule">
+            <h3>How to Collect at FPS</h3>
+            <p class="muted">
+              1. Arrive 5 minutes before your time window.<br>
+              2. Proceed directly to the Express Collection Counter.<br>
+              3. Present your token number or Smart Card.<br>
+              4. Complete Aadhaar biometric authentication to receive your ration.
+            </p>
+          </div>
+        </div>
+      ` : `
+        <div class="empty">
+          You have no active slot bookings.<br>
+          <button class="btn btn-primary" style="margin-top:14px" onclick="setPage('slots')">
+            Book an Express Slot
+          </button>
+        </div>
+      `}
+    </div>
+  `, `bookings`);
+}
+
+function historyView() {
+  return shell("beneficiary", `
+    <div class="card">
+      <h2>My Collection History (விநியோக வரலாறு)</h2>
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Commodity</th>
+              <th>Entitled</th>
+              <th>Requested</th>
+              <th>Packed</th>
+              <th>Collected</th>
+              <th>Pending</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>Rice (அரிசி)</b></td>
+              <td>20 kg</td>
+              <td>20 kg</td>
+              <td>20 kg</td>
+              <td>20 kg</td>
+              <td>0 kg</td>
+              <td><span class="badge collected">Collected</span></td>
+            </tr>
+            <tr>
+              <td><b>Sugar (சர்க்கரை)</b></td>
+              <td>2 kg</td>
+              <td>2 kg</td>
+              <td>2 kg</td>
+              <td>2 kg</td>
+              <td>0 kg</td>
+              <td><span class="badge collected">Collected</span></td>
+            </tr>
+            <tr>
+              <td><b>Dhal (பருப்பு)</b></td>
+              <td>1 kg</td>
+              <td>1 kg</td>
+              <td>0 kg</td>
+              <td>0 kg</td>
+              <td>1 kg</td>
+              <td><span class="badge out">Awaiting Stock</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card" style="margin-top:22px;box-shadow:none;background:#fafbfc;">
+        <h3>Item-Level Traceability Lifecycle</h3>
+        <div class="timeline">
+          ${["Eligible", "Requested", "Restocked", "Slot Booked", "Staff Packed", "Biometric Auth", "Handed Over"].map((x, i) => `
+            <div class="step ${i < 3 ? 'done' : ''} ${i === 2 ? 'current' : ''}">
+              <div class="dot">${i + 1}</div>
+              <p>${x}</p>
+            </div>
+          `).join("")}
+        </div>
+      </div>
+    </div>
+  `, `history`);
+}
+
+function locationView() {
+  const c = state.citizen || { fps_shop_code: 'TN-FPS-0102' };
+  return shell("beneficiary", `
+    <div class="two-col">
+      <div class="card">
+        <h2>Change Collection Location (Portability)</h2>
+        <label>Current Assigned Shop</label>
+        <input value="${c.fps_shop_code || state.location} — Mylapore TUCS" disabled>
+
+        <label>New Portability Location</label>
+        <select id="newLocation">
+          <option>TN-FPS-0103 — Alwarpet Primary Cooperative Store</option>
+          <option>TN-FPS-0104 — Triplicane Urban Cooperative Outlet</option>
+          <option>TN-FPS-0105 — Royapettah Fair Price Center</option>
+        </select>
+
+        <label>Reason for Temporary Transfer</label>
+        <textarea id="reason" rows="3" placeholder="e.g. Temporary work transfer, family relocation"></textarea>
+
+        <label style="font-weight:600;margin-top:14px;">
+          <input type="checkbox" id="locationConfirm" style="width:auto"> 
+          I confirm that this portability transfer is for monthly ration collection under One Nation One Ration Card (ONORC) guidelines.
+        </label>
+
+        <button class="btn btn-primary" style="margin-top:16px;" onclick="changeLocation()">
+          Confirm Location Change
+        </button>
+      </div>
+
+      <div class="card">
+        <h3>Portability Regulations</h3>
+        <div class="notice">
+          No manual office approvals required. Instant digital shop migration is supported under National Food Security Act portability guidelines.
+        </div>
+        <p class="muted">
+          Location changes are valid for the active monthly cycle. You can switch back or choose another shop in subsequent cycles.
+        </p>
+      </div>
+    </div>
+  `, `location`);
+}
+
+function changeLocation() {
+  if (state.collectionDone) return toast("⚠️ Location change blocked after monthly collection is already done.");
+  if (!document.getElementById("locationConfirm").checked) return toast("⚠️ Please check the declaration checkbox.");
+  state.location = document.getElementById("newLocation").value.split("—")[0].trim();
+  state.locationChanged = true;
+  audit("Collection Location Changed", state.location);
+  toast(`✓ Collection shop transferred to ${state.location}`);
+  render();
+}
+
+function flowView() {
+  return shell("beneficiary", `
+    <div class="card">
+      <h2 style="text-align:center">End-to-End System Workflow</h2>
+      <div class="flow">
+        ${[
+          "Beneficiary Login (Push Notification OTP via ntfy)",
+          "Aadhaar / Smart Card Verification",
+          "Allotted Fair Price Shop Stock Verification",
+          "Eligible Commodity Selection & Ration Cart",
+          "Express 15-Minute Slot Booking",
+          "FPS Staff Advance Packing & Bagging",
+          "Beneficiary Arrival at Express Counter",
+          "ePOS Biometric Fingerprint / Iris Handshake",
+          "Commodity Handover & Transparent Digital Receipt",
+          "Central Civil Supplies Inventory Auto-Reconciliation"
+        ].map((x, i) => `
+          <div class="flow-item">${i + 1}. ${x}</div>
+          ${i < 9 ? '<div class="arrow">↓</div>' : ''}
+        `).join("")}
+      </div>
+    </div>
+  `, `flow`);
+}
+
+function notificationsView() {
+  return shell("beneficiary", `
+    <div class="card">
+      <h2>Notification Centre (அறிவிப்புகள்)</h2>
+      <div class="actions" style="margin-bottom:18px;">
+        <span class="badge booked">All</span>
+        <span class="badge purple">Bookings</span>
+        <span class="badge warning">Stock</span>
+        <span class="badge collected">Collection</span>
+      </div>
+      ${state.notifications.map(n => `
+        <div class="notice" style="margin:10px 0">
+          <b>${n.text}</b><br>
+          <span class="muted">${n.type} • ${n.time}</span>
+        </div>
+      `).join("")}
+    </div>
+  `, `notifications`);
+}
+
+function helpView() {
+  return shell("beneficiary", `
+    <div class="card">
+      <h2>Citizen Support & Grievance Helpline</h2>
+      <p class="muted">Department of Civil Supplies and Consumer Protection, Government of Tamil Nadu.</p>
+      <div class="stat-grid" style="margin:20px 0;">
+        <div class="stat-card">
+          <div class="label">Toll-Free Helpline</div>
+          <div class="num" style="font-size:22px;">1967</div>
+          <div class="sub">24x7 Support</div>
+        </div>
+        <div class="stat-card">
+          <div class="label">Consumer Grievance</div>
+          <div class="num" style="font-size:22px;">1800-425-5901</div>
+          <div class="sub">Free Calling</div>
+        </div>
+      </div>
+      <div class="notice">
+        <b>Fraud Prevention:</b> Never share your OTP with shopkeepers or unauthorized agents. The Fair Price Shop staff will only require your biometric confirmation during handover.
+      </div>
+    </div>
+  `, `help`);
+}
+
+// =====================================================================
+// FPS Staff Portal Modules
+// =====================================================================
+function staffDashboard() {
+  return shell("staff", `
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="label">Today's Bookings</div>
+        <div class="num">48</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Orders to Prepare</div>
+        <div class="num">31</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Collected So Far</div>
+        <div class="num">24</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Pending Collections</div>
+        <div class="num">7</div>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="card">
+        <h2>Today's Counter Operations</h2>
+        <div class="progress-label">
+          <span>Advance Packed Bags</span>
+          <b>${state.prepared ? 32 : 31} / 31</b>
+        </div>
+        <div class="progress"><span style="width:85%"></span></div>
+        <div class="notice">
+          High rush expected between 10:30 AM – 11:30 AM and 4:00 PM – 5:00 PM. Keep 20 kg Rice bags pre-weighed.
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Stock Reconciliation Formula</h3>
+        <b>Opening + Received − Handed Over = Remaining</b>
+        <p style="margin-top:10px;font-size:15px;">1000 + 500 − 850 = <b>650 kg</b></p>
+      </div>
+    </div>
+  `, `staff`);
+}
+
+function staffBookings() {
+  return shell("staff", `
+    <div class="card">
+      <h2>Today's Slot Bookings</h2>
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Booking ID</th>
+              <th>Beneficiary</th>
+              <th>Time Slot</th>
+              <th>Commodities</th>
+              <th>Pack Status</th>
+              <th>Collection</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${["SR-00124", "SR-00125", "SR-00126", "SR-00127"].map((id, i) => `
+              <tr>
+                <td><b>${id}</b></td>
+                <td>Card XXXX${1234 + i}</td>
+                <td>${["10:30–11:30", "10:30–11:30", "11:30–12:30", "4:00–5:00"][i]}</td>
+                <td>Rice 20kg, Sugar 2kg</td>
+                <td><span class="badge ${i === 0 && state.prepared ? 'prepared' : 'pending'}">${i === 0 && state.prepared ? 'Packed ✓' : 'Pending'}</span></td>
+                <td><span class="badge pending">Awaiting Citizen</span></td>
+                <td><button class="btn btn-outline" style="padding:6px 12px;font-size:12px;" onclick="setPage('prepare')">View Order</button></td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `, `staffbookings`);
+}
+
+function prepareView() {
+  return shell("staff", `
+    <div class="two-col">
+      <div class="card">
+        <h2>Advance Bag Preparation</h2>
+        <p><b>Booking Token:</b> SR-00124</p>
+        <p style="font-size:16px;">
+          🌾 Rice — 20 kg<br>
+          🧂 Sugar — 2 kg<br>
+          🥣 Dhal — 1 kg
+        </p>
+        <label>Pre-Packing Checklist</label>
+        <p>
+          ☑ Verify family quota limits<br>
+          ☑ Weigh and seal non-leaking bags<br>
+          ☑ Attach token label to bundle<br>
+          ☐ Place in express collection bay
+        </p>
+        <button class="btn btn-success" onclick="markPrepared()">
+          Mark as Pre-Packed ✓
+        </button>
+      </div>
+
+      <div class="card">
+        <h3>Packing Status</h3>
+        <span class="badge ${state.prepared ? 'prepared' : 'pending'}" style="font-size:14px;padding:8px 16px;">
+          ${state.prepared ? 'Packed & Ready for Handover ✓' : 'Packing in Progress'}
+        </span>
+        <p class="muted" style="margin-top:14px;">
+          Pre-packing items in standard measures cuts counter transaction time from 8 minutes down to 45 seconds per citizen.
+        </p>
+      </div>
+    </div>
+  `, `prepare`);
+}
+
+function markPrepared() {
+  state.prepared = true;
+  audit("Order Prepared", "Rice, Sugar, Dhal");
+  toast("Order SR-00124 marked as Pre-Packed ✓");
+  render();
+}
+
+function stockView() {
+  return shell("staff", `
+    <div class="card">
+      <div class="content-head">
+        <h2>Shop Stock Management</h2>
+        <button class="btn btn-primary" onclick="updateStock()">+ Receive New Godown Stock</button>
+      </div>
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Commodity</th>
+              <th>Opening</th>
+              <th>Received</th>
+              <th>Distributed</th>
+              <th>Current Balance</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>Rice</b></td>
+              <td>1000 kg</td>
+              <td>500 kg</td>
+              <td>850 kg</td>
+              <td>${state.stock.Rice} kg</td>
+              <td><span class="badge available">Stock Adequate</span></td>
+            </tr>
+            <tr>
+              <td><b>Wheat</b></td>
+              <td>500 kg</td>
+              <td>200 kg</td>
+              <td>600 kg</td>
+              <td>${state.stock.Wheat} kg</td>
+              <td><span class="badge available">Stock Adequate</span></td>
+            </tr>
+            <tr>
+              <td><b>Sugar</b></td>
+              <td>300 kg</td>
+              <td>100 kg</td>
+              <td>400 kg</td>
+              <td>${state.stock.Sugar} kg</td>
+              <td><span class="badge ${state.stock.Sugar ? 'available' : 'out'}">${state.stock.Sugar ? 'Available' : 'Out of Stock'}</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `, `stock`);
+}
+
+function updateStock() {
+  modal(`
+    <button class="close" onclick="closeModal()">×</button>
+    <h2>Receive Godown Truck Stock</h2>
+    <label>Commodity</label>
+    <select id="restockProduct">
+      <option>Sugar</option>
+      <option>Wheat</option>
+      <option>Dal</option>
+      <option>Rice</option>
+    </select>
+    <label>Quantity Inward (kg)</label>
+    <input id="restockQty" type="number" value="200">
+    <button class="btn btn-primary" style="width:100%;margin-top:20px;" onclick="applyStock()">
+      Record Stock Inward & Notify Citizens
+    </button>
+  `);
+}
+
+function applyStock() {
+  let p = document.getElementById("restockProduct").value;
+  let q = Number(document.getElementById("restockQty").value);
+  state.stock[p] = (state.stock[p] || 0) + q;
+  const prod = products.find(x => x.name === p);
+  if (prod) {
+    prod.stock = state.stock[p];
+    prod.available = state.stock[p] > 0;
+  }
+  state.notifications.unshift({
+    text: `${p} restocked (+${q} kg). Push notifications dispatched to waiting citizens.`,
+    type: "Stock",
+    time: "Now"
+  });
+  audit("Stock Inward", p);
+  closeModal();
+  toast(`✓ ${p} +${q} kg added to shop inventory`);
+  render();
+}
+
+function notifyView() {
+  return shell("staff", `
+    <div class="card">
+      <h2>Citizen Restock Alert Requests</h2>
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Commodity</th>
+              <th>Beneficiaries Waiting</th>
+              <th>Requests</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>Wheat</b></td>
+              <td>18 citizens</td>
+              <td>18</td>
+              <td><span class="badge ${state.stock.Wheat > 0 ? 'available' : 'out'}">${state.stock.Wheat > 0 ? 'Available' : 'Out of Stock'}</span></td>
+              <td><button class="btn btn-primary" style="padding:6px 12px;font-size:12px;" onclick="sendRestock('Wheat')">Dispatch Alerts</button></td>
+            </tr>
+            <tr>
+              <td><b>Dal</b></td>
+              <td>12 citizens</td>
+              <td>12</td>
+              <td><span class="badge ${state.stock.Dal > 0 ? 'available' : 'out'}">${state.stock.Dal > 0 ? 'Available' : 'Out of Stock'}</span></td>
+              <td><button class="btn btn-primary" style="padding:6px 12px;font-size:12px;" onclick="sendRestock('Dal')">Dispatch Alerts</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `, `notify`);
+}
+
+function sendRestock(p) {
+  state.notifications.unshift({
+    text: `${p} arrival notifications pushed to registered phones.`,
+    type: "Stock",
+    time: "Now"
+  });
+  audit("Restock Notification", p, "Sent");
+  toast(`✓ Restock alerts sent for ${p}`);
+  render();
+}
+
+function collectionView() {
+  return shell("staff", `
+    <div class="two-col">
+      <div class="card">
+        <h2>Handover Biometric Authentication</h2>
+        <p><b>Booking Token:</b> SR-00124</p>
+        <p><b>Beneficiary:</b> Kavitha Murugan (33/G/0123456)</p>
+        <p>
+          Rice: 20 kg | Sugar: 2 kg | Dhal: 1 kg
+        </p>
+        <button class="btn btn-primary" onclick="biometric()">
+          Authorize via ePOS Biometric Scanner
+        </button>
+        ${state.collected ? `
+          <div class="notice" style="background:#f0fdf4;border-color:var(--green);color:#166534;margin-top:16px;">
+            <b>COLLECTION SUCCESSFUL ✓</b><br>
+            Biometric match confirmed (Aadhaar UIDAI). Handover logged to state ePDS ledger.
+          </div>
+        ` : ""}
+      </div>
+
+      <div class="card">
+        <h3>Biometric Security Policy</h3>
+        <div class="rule">
+          <b>Zero Fraud Handover:</b> No ration can be marked collected without biometric fingerprint or iris confirmation at the Point of Sale device.
+        </div>
+      </div>
+    </div>
+  `, `collection`);
+}
+
+function biometric() {
+  modal(`
+    <button class="close" onclick="closeModal()">×</button>
+    <h2>ePOS Biometric Verification</h2>
+    <p class="muted">Citizen places thumb on scanner for Aadhaar ePDS handshake.</p>
+    <div style="font-size:60px;text-align:center;margin:20px 0;">🖐️ 🔐</div>
+    <button class="btn btn-success" style="width:100%" onclick="completeCollection()">
+      Simulate Biometric Verification & Handover
+    </button>
+  `);
+}
+
+function completeCollection() {
+  state.collected = true;
+  state.collectionDone = true;
+  state.notifications.unshift({
+    text: "Monthly ration handover completed successfully.",
+    type: "Collection",
+    time: "Now"
+  });
+  audit("Handover Completed", "Rice 20kg, Sugar 2kg", "Handed Over");
+  closeModal();
+  toast("✓ HANDOVER COMPLETED & RECEIPT GENERATED");
+  render();
+}
+
+function rescheduleView() {
+  return shell("staff", `
+    <div class="two-col">
+      <div class="card">
+        <h2>Missed Slot Management</h2>
+        <div class="notice">
+          <b>Citizen missed scheduled window (10:30 AM – 11:30 AM).</b>
+        </div>
+        <h3>One automatic reschedule window permitted.</h3>
+        <button class="btn btn-primary" onclick="reschedule()">Grant Reschedule Window</button>
+      </div>
+
+      <div class="card">
+        <h3>Department Reschedule Policy</h3>
+        <p>• <b>Month 1:</b> Primary window + 1 reschedule.</p>
+        <p>• <b>Recovery Days:</b> Last 3 days of the month reserved for missed slot collections.</p>
+      </div>
+    </div>
+  `, `reschedule`);
+}
+
+function reschedule() {
+  state.rescheduled = true;
+  audit("Slot Rescheduled");
+  toast("✓ One reschedule window granted to beneficiary");
+}
+
+function auditView() {
+  return shell("staff", `
+    <div class="card">
+      <h2>Fair Price Shop Operational Audit Log</h2>
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Timestamp</th>
+              <th>User</th>
+              <th>Role</th>
+              <th>Action</th>
+              <th>Commodity</th>
+              <th>Shop</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${(state.audit.length ? state.audit : [
+              { time: "10:31 AM", user: "Staff-102", role: "Staff", action: "Stock Inward", product: "Wheat", shop: "TN-FPS-0102", status: "Completed" },
+              { time: "10:45 AM", user: "Staff-102", role: "Staff", action: "Push Alert Sent", product: "Wheat", shop: "TN-FPS-0102", status: "Sent" },
+              { time: "11:10 AM", user: "Staff-102", role: "Staff", action: "Biometric Handover", product: "Rice", shop: "TN-FPS-0102", status: "Collected" }
+            ]).map(x => `
+              <tr>
+                <td>${x.time}</td>
+                <td><b>${x.user}</b></td>
+                <td>${x.role}</td>
+                <td>${x.action}</td>
+                <td>${x.product}</td>
+                <td>${x.shop}</td>
+                <td><span class="badge available">${x.status}</span></td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `, `audit`);
+}
+
+// =====================================================================
+// Officials Dashboard
+// =====================================================================
+function officialDashboard() {
+  return shell("official", `
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="label">Total FPS Shops</div>
+        <div class="num">128</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Today's Bookings</div>
+        <div class="num">2,340</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Completed Handovers</div>
+        <div class="num">1,982</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Pending Today</div>
+        <div class="num">358</div>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="card">
+        <h2>District Distribution Progress</h2>
+        <div class="chart">
+          ${[85, 67, 53, 25, 38].map((v, i) => `
+            <div class="bar" style="height:${v}%">
+              <span>${["Collected", "Pre-Packed", "Booked", "Missed", "Recovered"][i]}</span>
+              <small>${v}%</small>
+            </div>
+          `).join("")}
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Overall Commodity Availability</h2>
+        <div class="progress-label"><span>In Stock</span><b>83%</b></div>
+        <div class="progress"><span style="width:83%"></span></div>
+        <div class="progress-label" style="margin-top:16px;"><span>Awaiting Restock</span><b>17%</b></div>
+        <div class="progress"><span style="width:17%;background:var(--red)"></span></div>
+      </div>
+    </div>
+  `, `official`);
+}
+
+function officialSimple(title, active, body) {
+  return shell("official", `<div class="card"><h2>${title}</h2>${body}</div>`, active);
+}
+
+function openNotifications() {
+  modal(`
+    <button class="close" onclick="closeModal()">×</button>
+    <h2>Notifications & Real-Time Alerts</h2>
+    ${state.notifications.slice(0, 6).map(n => `
+      <div class="notice" style="margin:10px 0;">
+        <b>${n.text}</b><br>
+        <span class="muted">${n.type} • ${n.time}</span>
+      </div>
+    `).join("")}
+  `);
+}
+
+// =====================================================================
+// Router & Renderer
+// =====================================================================
+function render() {
+  const root = document.getElementById("app");
+  const p = state.page;
+
+  if (p === "landing") root.innerHTML = landing();
+  else if (p === "login") root.innerHTML = loginView();
+  else if (p === "card") root.innerHTML = cardView();
+  else if (p === "beneficiary") root.innerHTML = dashboard();
+  else if (p === "products") root.innerHTML = productsView();
+  else if (p === "cart") root.innerHTML = cartView();
+  else if (p === "slots") root.innerHTML = slotsView();
+  else if (p === "bookings") root.innerHTML = bookingsView();
+  else if (p === "history") root.innerHTML = historyView();
+  else if (p === "location") root.innerHTML = locationView();
+  else if (p === "flow") root.innerHTML = flowView();
+  else if (p === "notifications") root.innerHTML = notificationsView();
+  else if (p === "help") root.innerHTML = helpView();
+  else if (p === "staff") root.innerHTML = staffDashboard();
+  else if (p === "staffbookings") root.innerHTML = staffBookings();
+  else if (p === "prepare") root.innerHTML = prepareView();
+  else if (p === "stock") root.innerHTML = stockView();
+  else if (p === "notify") root.innerHTML = notifyView();
+  else if (p === "collection") root.innerHTML = collectionView();
+  else if (p === "reschedule") root.innerHTML = rescheduleView();
+  else if (p === "audit") root.innerHTML = auditView();
+  else if (p === "official") root.innerHTML = officialDashboard();
+  else if (["shops", "stockofficial", "analytics", "slotdemand", "notifyofficial", "collections"].includes(p)) {
+    const titles = {
+      shops: "Fair Price Shops Overview",
+      stockofficial: "Stock Reconciliation Monitoring",
+      analytics: "Distribution Analytics",
+      slotdemand: "Hourly Demand Hotspots",
+      notifyofficial: "Restock Notification Funnel",
+      collections: "Verified Handover Reports"
+    };
+    const bodies = {
+      shops: `<div class="notice">128 registered Fair Price Shops across Chennai and suburban taluks.</div><div class="stat-grid"><div class="stat-card"><div class="label">Open Shops</div><div class="num">119</div></div><div class="stat-card"><div class="label">Stock Critical</div><div class="num">9</div></div></div>`,
+      stockofficial: `<div class="notice">Central stock ledger synchronizing godown inward and counter sales.</div><div class="chart">${[72,58,81,43,67,52].map((v,i)=>`<div class="bar" style="height:${v}%"><span>${v}</span><small>FPS ${i+1}</small></div>`).join("")}</div>`,
+      analytics: `<h3>Godown Inward → Outward → Shop Balance</h3><div class="stat-grid"><div class="stat-card"><div class="label">Inward</div><div class="num">500 MT</div></div><div class="stat-card"><div class="label">Distributed</div><div class="num">350 MT</div></div><div class="stat-card"><div class="label">Remaining</div><div class="num">150 MT</div></div></div>`,
+      slotdemand: `<h3>Hourly Slot Bookings Demand</h3><div class="chart">${[32,45,60,82,48,35,70,54].map((v,i)=>`<div class="bar" style="height:${v}%"><span>${v}</span><small>${8+i}:30</small></div>`).join("")}</div>`,
+      notifyofficial: `<h3>Restock Push Notification Funnel</h3><div class="timeline">${["Requests","Restocked","Pushed","Booked","Collected"].map((x,i)=>`<div class="step done"><div class="dot">${[421,302,278,210,185][i]}</div><p>${x}</p></div>`).join("")}</div>`,
+      collections: `<div class="notice">Digital ePOS ledger reports.</div><div class="stat-grid"><div class="stat-card"><div class="label">Biometrically Handed Over</div><div class="num">1,982</div></div><div class="stat-card"><div class="label">Missed Slots</div><div class="num">103</div></div><div class="stat-card"><div class="label">Recovered</div><div class="num">42</div></div></div>`
+    };
+    root.innerHTML = officialSimple(titles[p], p, bodies[p]);
+  }
+  save();
+}
+
+// Startup
+fetchCitizensFromBackend();
+render();
+</script>
+</body>
+</html>
