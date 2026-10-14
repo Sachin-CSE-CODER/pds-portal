@@ -73,7 +73,7 @@ INSERT INTO citizens (
     family_head, family_members_count, district, taluk, 
     fps_shop_code, fps_shop_name, rice_quota_kg, sugar_quota_kg, dhal_quota_kg, oil_quota_liters
 ) VALUES (
-    'Vijay Anand', '8899001122', '33/S/0998877', 'PHH (Rice)', 
+    'Vijay Anand', '6382826805', '33/S/0998877', 'PHH (Rice)', 
     'Vijay Anand', 4, 'Salem', 'West', 
     'TN-FPS-1201', 'Suramangalam Fair Price Outlet', 20, 2, 1, 1
 ) ON CONFLICT (mobile_number) DO UPDATE SET 

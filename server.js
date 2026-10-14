@@ -96,7 +96,7 @@ const inMemoryCitizens = [
   {
     id: 4,
     full_name: 'Vijay Anand',
-    mobile_number: '8899001122',
+    mobile_number: '6382826805',
     smart_card_no: '33/S/0998877',
     card_type: 'PHH (Rice)',
     family_head: 'Vijay Anand',
