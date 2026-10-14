@@ -943,47 +943,7 @@ const state = {
   adminUser: null, // Logged in admin: { login_id: 'admin', role: 'Super Administrator' }
   adminTab: 'bookings', // Active tab in Admin Console: 'bookings', 'citizens', 'capacity', 'extensions'
   citizenOtps: {}, // Cached verification OTPs per citizen mobile
-  allBookings: [
-    {
-      id: 'TN-BK-829104',
-      citizen_name: 'Vijay Anand',
-      mobile_number: '6382826805',
-      smart_card_no: '33/S/0998877',
-      date: 'Today',
-      time: '10:00 AM – 10:15 AM',
-      shop_code: 'TN-FPS-1201',
-      shop_name: 'Suramangalam Fair Price Outlet',
-      items: ['Boiled Rice (20 kg)', 'Sugar (2 kg)', 'Toor Dhal (1 kg)', 'Palm Oil (1 L)'],
-      status: 'Booked',
-      created_at: new Date().toISOString()
-    },
-    {
-      id: 'TN-BK-409182',
-      citizen_name: 'Kavitha Murugan',
-      mobile_number: '7904208464',
-      smart_card_no: '33/G/0123456',
-      date: 'Today',
-      time: '11:15 AM – 11:30 AM',
-      shop_code: 'TN-FPS-0102',
-      shop_name: 'Mylapore TUCS Cooperative Society',
-      items: ['Rice (20 kg)', 'Sugar (2 kg)', 'Palm Oil (1 L)'],
-      status: 'Pre-Packed',
-      created_at: new Date().toISOString()
-    },
-    {
-      id: 'TN-BK-193850',
-      citizen_name: 'Senthil Kumar',
-      mobile_number: '9876543210',
-      smart_card_no: '33/K/0789012',
-      date: 'Tomorrow',
-      time: '09:00 AM – 09:15 AM',
-      shop_code: 'TN-FPS-0504',
-      shop_name: 'Gandhipuram Primary Agri Coop Shop',
-      items: ['Rice (35 kg)', 'Sugar (3 kg)', 'Toor Dhal (2 kg)', 'Palm Oil (2 L)'],
-      status: 'Booked',
-      created_at: new Date().toISOString()
-    }
-  ],
+  allBookings: [], // Initially 0 bookings (0 slots booked initially)
   inputName: '',
   inputPassword: '',
   showPassword: false,
@@ -1004,9 +964,11 @@ const products = [
   { id: "dal", name: "Dal", nameTa: "துவரம் பருப்பு", eligible: 1, stock: 0, icon: "🥣", available: false }
 ];
 
+// Slots structure: [Window Name, Max Capacity, Available Slots]
+// Initially all slots have 0 slots booked (Available Slots === Max Capacity)
 const slots = [
-  ["8:30–9:30", 15, 12], ["9:30–10:30", 15, 10], ["10:30–11:30", 20, 17], ["11:30–12:30", 15, 9],
-  ["3:00–4:00", 15, 11], ["4:00–5:00", 20, 18], ["5:00–6:00", 15, 8], ["6:00–7:00", 15, 14]
+  ["8:30–9:30", 15, 15], ["9:30–10:30", 15, 15], ["10:30–11:30", 20, 20], ["11:30–12:30", 15, 15],
+  ["3:00–4:00", 15, 15], ["4:00–5:00", 20, 20], ["5:00–6:00", 15, 15], ["6:00–7:00", 15, 15]
 ];
 
 // =====================================================================
@@ -1080,7 +1042,7 @@ async function fetchBookingsFromBackend() {
     const res = await fetch(`${API_URL}/bookings`);
     if (res.ok) {
       const data = await res.json();
-      if (data.bookings && Array.isArray(data.bookings) && data.bookings.length > 0) {
+      if (data.bookings && Array.isArray(data.bookings)) {
         state.allBookings = data.bookings;
         if (state.citizen) {
           const myB = state.allBookings.find(b => b.mobile_number === state.citizen.mobile_number && b.status !== 'Cancelled');
@@ -1092,6 +1054,88 @@ async function fetchBookingsFromBackend() {
   } catch (e) {
     console.log("Operating in local bookings store mode.");
   }
+}
+
+// Reset all slots so that available capacity equals max capacity (0 slots booked)
+function resetAllSlotsToZeroBooked() {
+  slots.forEach(s => {
+    s[2] = s[1];
+  });
+  render();
+  toast(state.lang === "தமிழ்" ? "அனைத்து நேர இடங்களும் 0 முன்பதிவாக மீட்டமைக்கப்பட்டன" : "All slots reset to 0 booked (100% capacity available)");
+}
+
+// Reset all bookings to 0 and all slots to 0 booked
+async function clearAllBookings() {
+  state.allBookings = [];
+  state.booking = null;
+  slots.forEach(s => {
+    s[2] = s[1];
+  });
+  try {
+    await fetch(`${API_URL}/bookings/reset`, { method: 'POST' });
+  } catch (e) {}
+  render();
+  toast(state.lang === "தமிழ்" ? "அனைத்து முன்பதிவுகளும் நீக்கப்பட்டு 0 இடங்களாக மீட்டமைக்கப்பட்டன" : "All bookings cleared and slots reset to 0 booked");
+}
+
+// Seed sample demo bookings for testing
+async function seedDemoBookings() {
+  try {
+    const res = await fetch(`${API_URL}/bookings/seed`, { method: 'POST' });
+    if (res.ok) {
+      const data = await res.json();
+      state.allBookings = data.bookings || [];
+    }
+  } catch (e) {}
+  if (state.allBookings.length === 0) {
+    state.allBookings = [
+      {
+        id: 'TN-BK-829104',
+        citizen_name: 'Vijay Anand',
+        mobile_number: '6382826805',
+        smart_card_no: '33/S/0998877',
+        date: 'Today',
+        time: '10:00 AM – 10:15 AM',
+        shop_code: 'TN-FPS-1201',
+        shop_name: 'Suramangalam Fair Price Outlet',
+        items: ['Boiled Rice (20 kg)', 'Sugar (2 kg)', 'Toor Dhal (1 kg)', 'Palm Oil (1 L)'],
+        status: 'Booked',
+        created_at: new Date().toISOString()
+      },
+      {
+        id: 'TN-BK-409182',
+        citizen_name: 'Kavitha Murugan',
+        mobile_number: '7904208464',
+        smart_card_no: '33/G/0123456',
+        date: 'Today',
+        time: '11:15 AM – 11:30 AM',
+        shop_code: 'TN-FPS-0102',
+        shop_name: 'Mylapore TUCS Cooperative Society',
+        items: ['Rice (20 kg)', 'Sugar (2 kg)', 'Palm Oil (1 L)'],
+        status: 'Pre-Packed',
+        created_at: new Date().toISOString()
+      },
+      {
+        id: 'TN-BK-193850',
+        citizen_name: 'Senthil Kumar',
+        mobile_number: '9876543210',
+        smart_card_no: '33/K/0789012',
+        date: 'Tomorrow',
+        time: '09:00 AM – 09:15 AM',
+        shop_code: 'TN-FPS-0504',
+        shop_name: 'Gandhipuram Primary Agri Coop Shop',
+        items: ['Rice (35 kg)', 'Sugar (3 kg)', 'Toor Dhal (2 kg)', 'Palm Oil (2 L)'],
+        status: 'Booked',
+        created_at: new Date().toISOString()
+      }
+    ];
+  }
+  if (slots[1][2] > 0) slots[1][2]--;
+  if (slots[2][2] > 0) slots[2][2]--;
+  if (slots[0][2] > 0) slots[0][2]--;
+  render();
+  toast(state.lang === "தமிழ்" ? "மாதிரி முன்பதிவுகள் ஏற்றப்பட்டன" : "Demo sample bookings loaded");
 }
 
 // Helper to get or generate active verification OTP for citizen (for Admin inspection)
@@ -2612,14 +2656,18 @@ function slotsView() {
           <h3>${t("crowdAnalytics")}</h3>
           <p class="muted">${t("crowdDesc")}</p>
           <div class="chart">
-            ${[35, 48, 65, 42, 55, 78, 40, 31].map((v, i) => `
-              <div class="bar" style="height:${v}%">
-                <span>${v}</span>
-                <small>${slots[i][0].split("–")[0]}</small>
+            ${slots.map((s, i) => {
+              const booked = Math.max(0, s[1] - s[2]);
+              const pct = s[1] > 0 ? Math.round((booked / s[1]) * 100) : 0;
+              return `
+              <div class="bar" style="height:${Math.max(pct, 6)}%">
+                <span>${booked}</span>
+                <small>${s[0].split("–")[0].split("-")[0]}</small>
               </div>
-            `).join("")}
+              `;
+            }).join("")}
           </div>
-          <small class="muted" style="display:block;margin-top:28px;">${isTa ? "நடப்பு வார பயோமெட்ரிக் வருகையின் அடிப்படையில்" : "Based on current week biometric check-ins"}</small>
+          <small class="muted" style="display:block;margin-top:28px;">${isTa ? "நேரடி முன்பதிவு அடர்த்தி (தொடக்கத்தில் 0 முன்பதிவு)" : "Live slot crowd booking load (0 slots booked initially)"}</small>
         </div>
 
         <div class="card" style="margin-top:18px">
@@ -3661,12 +3709,25 @@ function renderAdminBookingsTab(isTa) {
     <!-- Bookings Table Card -->
     <div class="card" style="border-top:3px solid var(--tn-green);">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px;">
-        <h2 style="margin:0;font-size:18px;">
-          🎟️ ${isTa ? 'அனைத்து பயனாளர் முன்பதிவுகள் & திருத்தக் கருவிகள்' : 'All Citizen Slot Bookings & Modifications'}
-        </h2>
-        <span class="muted" style="font-size:12px;">
-          ${isTa ? 'நிர்வாகியால் நேரத்தை மாற்றவோ, ரத்து செய்யவோ, அல்லது அறிவிப்பு அனுப்பவோ முடியும்.' : 'Admins can modify slot time, date, status, shop, and push live ntfy updates to citizens.'}
-        </span>
+        <div>
+          <h2 style="margin:0;font-size:18px;">
+            🎟️ ${isTa ? 'அனைத்து பயனாளர் முன்பதிவுகள் & திருத்தக் கருவிகள்' : 'All Citizen Slot Bookings & Modifications'}
+          </h2>
+          <span class="muted" style="font-size:12px;">
+            ${isTa ? 'துவக்கத்தில் 0 முன்பதிவு செய்யப்பட்டுள்ளது. நிர்வாகியால் புதிய முன்பதிவு ஒதுக்கவோ அல்லது திருத்தவோ முடியும்.' : 'Initially 0 slots booked. Admins can assign new slots, modify time windows, or push live ntfy updates.'}
+          </span>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button type="button" class="btn btn-primary" onclick="openAdminNewBookingModal()" style="font-size:12px;padding:6px 12px;">
+            + ${isTa ? 'புதிய முன்பதிவு' : 'Assign Booking'}
+          </button>
+          <button type="button" class="btn btn-outline" onclick="seedDemoBookings()" style="font-size:12px;padding:6px 12px;">
+            📥 ${isTa ? 'மாதிரி முன்பதிவுகள்' : 'Load Demo Bookings'}
+          </button>
+          <button type="button" class="btn btn-outline" onclick="clearAllBookings()" style="font-size:12px;padding:6px 12px;color:var(--tn-red);border-color:#fca5a5;">
+            🗑️ ${isTa ? '0 முன்பதிவாக மீட்டமை' : 'Reset to 0 Bookings'}
+          </button>
+        </div>
       </div>
 
       <div class="table-wrap">
@@ -3683,7 +3744,25 @@ function renderAdminBookingsTab(isTa) {
             </tr>
           </thead>
           <tbody>
-            ${state.allBookings.map(b => {
+            ${state.allBookings.length === 0 ? `
+              <tr>
+                <td colspan="7" style="text-align:center;padding:36px;color:#64748b;">
+                  <div style="font-size:26px;margin-bottom:6px;">🎯</div>
+                  <b style="font-size:15px;color:#334155;">${isTa ? 'தற்போது செயலில் உள்ள முன்பதிவுகள் எதுவும் இல்லை (0 முன்பதிவுகள்)' : 'No Slot Bookings Currently Scheduled (0 Bookings Active)'}</b><br>
+                  <span style="font-size:12px;color:#64748b;margin-top:6px;display:inline-block;">
+                    ${isTa ? 'அனைத்து 8 விரைவு கவுண்டர் நேர இடங்களும் 100% இட வசதியுடன் (0 முன்பதிவு) தயார் நிலையில் உள்ளன.' : 'All 8 express counter time windows are at 100% capacity with 0 slots booked initially.'}
+                  </span>
+                  <div style="margin-top:14px;display:flex;justify-content:center;gap:10px;">
+                    <button type="button" class="btn btn-primary" style="padding:7px 14px;font-size:12px;" onclick="openAdminNewBookingModal()">
+                      + ${isTa ? 'புதிய முன்பதிவு ஒதுக்குக' : 'Assign New Booking'}
+                    </button>
+                    <button type="button" class="btn btn-outline" style="padding:7px 14px;font-size:12px;" onclick="seedDemoBookings()">
+                      📥 ${isTa ? 'மாதிரி முன்பதிவுகளை ஏற்றுக' : 'Load Demo Sample Bookings'}
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ` : state.allBookings.map(b => {
               const statusStyle = b.status === 'Pre-Packed' 
                 ? 'background:#ede9fe;color:#6d28d9;border:1px solid #c4b5fd;' 
                 : b.status === 'Biometric Auth' || b.status === 'Completed'
@@ -4188,36 +4267,85 @@ function adminLoginAsCitizen(mobile) {
 }
 
 function renderAdminCapacityTab(isTa) {
+  const totalMax = slots.reduce((acc, s) => acc + s[1], 0);
+  const totalAvail = slots.reduce((acc, s) => acc + s[2], 0);
+  const totalBooked = Math.max(0, totalMax - totalAvail);
+  const utilPct = totalMax > 0 ? Math.round((totalBooked / totalMax) * 100) : 0;
+
   return `
+    <!-- Top Capacity Overview Cards -->
+    <div class="stat-grid" style="margin-bottom:20px;">
+      <div class="stat-card" style="border-top-color:var(--tn-green);">
+        <div class="label">${isTa ? 'மொத்த இட ஒதுக்கீடு' : 'Total Slot Capacity'}</div>
+        <div class="num">${totalMax} <small style="font-size:13px;font-weight:normal;color:#64748b;">slots</small></div>
+      </div>
+      <div class="stat-card" style="border-top-color:#0284c7;">
+        <div class="label">${isTa ? 'முன்பதிவு செய்யப்பட்டவை' : 'Slots Booked'}</div>
+        <div class="num" style="color:${totalBooked === 0 ? 'var(--tn-green)' : '#0284c7'};">
+          ${totalBooked} <small style="font-size:13px;font-weight:normal;color:#64748b;">(${utilPct}%)</small>
+        </div>
+      </div>
+      <div class="stat-card" style="border-top-color:var(--tn-green);">
+        <div class="label">${isTa ? 'மீதமுள்ள இடங்கள்' : 'Available Slots'}</div>
+        <div class="num" style="color:var(--tn-green);">${totalAvail} <small style="font-size:13px;font-weight:normal;color:#64748b;">(100%)</small></div>
+      </div>
+      <div class="stat-card" style="border-top-color:#10b981;">
+        <div class="label">${isTa ? 'துவக்க நிலை' : 'Initial Status'}</div>
+        <div class="num" style="font-size:18px;color:var(--tn-green);margin-top:6px;">
+          ✓ 0 Booked
+        </div>
+      </div>
+    </div>
+
     <div class="two-col">
       <div class="card" style="border-top:3px solid var(--tn-green);">
-        <h2>🏪 ${isTa ? 'நியாயவிலைக் கடை நேர திறன் மேலாண்மை' : 'FPS Slot Capacity & Express Window Management'}</h2>
-        <p class="muted" style="margin-bottom:16px;">
-          ${isTa ? 'ஒவ்வொரு 15-நிமிட நேரத்திற்கும் அனுமதிக்கப்படும் அதிகபட்ச பயனாளர்களின் எண்ணிக்கையை மாற்றலாம்.' : 'Adjust allocated capacity, peak crowd caps, and express counter windows per shop.'}
-        </p>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px;">
+          <div>
+            <h2 style="margin:0;">🏪 ${isTa ? 'நியாயவிலைக் கடை நேர திறன் மேலாண்மை' : 'FPS Slot Capacity & Express Window Management'}</h2>
+            <p class="muted" style="margin:4px 0 0 0;font-size:12px;">
+              ${isTa ? 'துவக்கத்தில் அனைத்து நேர இடங்களும் 0 முன்பதிவுடன் 100% கிடைக்கும் திறனுடன் அமைக்கப்பட்டுள்ளன.' : 'Initially configured with 0 slots booked (100% capacity available per window).'}
+            </p>
+          </div>
+          <button type="button" class="btn btn-outline" style="font-size:11px;padding:5px 10px;color:var(--tn-red);border-color:#fca5a5;" onclick="resetAllSlotsToZeroBooked()">
+            🔄 ${isTa ? 'அனைத்தையும் 0 முன்பதிவாக மீட்டமை' : 'Reset All to 0 Booked'}
+          </button>
+        </div>
+
         <div class="table-wrap">
           <table class="table">
             <thead>
               <tr>
                 <th>${isTa ? 'நேரம்' : 'Window'}</th>
                 <th>${isTa ? 'அதிகபட்ச இடங்கள்' : 'Max Cap'}</th>
+                <th>${isTa ? 'முன்பதிவு' : 'Booked'}</th>
                 <th>${isTa ? 'மீதமுள்ளவை' : 'Available'}</th>
                 <th>${isTa ? 'செயல்' : 'Action'}</th>
               </tr>
             </thead>
             <tbody>
-              ${slots.map((s, i) => `
+              ${slots.map((s, i) => {
+                const booked = Math.max(0, s[1] - s[2]);
+                return `
                 <tr>
                   <td><b>${s[0]}</b></td>
                   <td>${s[1]} slots</td>
-                  <td><b style="color:var(--tn-green);">${s[2]}</b> left</td>
                   <td>
-                    <button type="button" class="btn btn-outline" style="padding:3px 8px;font-size:11px;" onclick="slots[${i}][1]+=5;slots[${i}][2]+=5;render();toast('+5 Slots Added');">
+                    <span class="badge ${booked === 0 ? 'available' : 'warning'}" style="font-weight:700;">
+                      ${booked} booked
+                    </span>
+                  </td>
+                  <td><b style="color:var(--tn-green);">${s[2]}</b> left (${s[2]} / ${s[1]})</td>
+                  <td>
+                    <button type="button" class="btn btn-outline" style="padding:4px 8px;font-size:11px;" onclick="slots[${i}][1]+=5;slots[${i}][2]+=5;render();toast('+5 Slots Added');">
                       +5 Slots
+                    </button>
+                    <button type="button" class="btn btn-outline" style="padding:4px 8px;font-size:11px;margin-left:4px;color:var(--tn-red);border-color:#fca5a5;" onclick="slots[${i}][2]=slots[${i}][1];render();toast('Reset to 0 Booked');">
+                      0 Booked
                     </button>
                   </td>
                 </tr>
-              `).join('')}
+                `;
+              }).join('')}
             </tbody>
           </table>
         </div>
@@ -4227,12 +4355,20 @@ function renderAdminCapacityTab(isTa) {
         <h3>📊 ${isTa ? 'கூட்ட நெரிசல் பகுப்பாய்வு' : 'Hourly Demand Hotspots'}</h3>
         <p class="muted">${isTa ? 'இன்றைய நேர முன்பதிவு அடர்த்தி மற்றும் விரைவு கவுண்டர் சுமை.' : 'Real-time booking density across express counters.'}</p>
         <div class="chart">
-          ${[35, 48, 65, 42, 55, 78, 40, 31].map((v, i) => `
-            <div class="bar" style="height:${v}%">
-              <span>${v}</span>
-              <small>${slots[i][0].split("–")[0]}</small>
+          ${slots.map((s, i) => {
+            const booked = Math.max(0, s[1] - s[2]);
+            const pct = s[1] > 0 ? Math.round((booked / s[1]) * 100) : 0;
+            return `
+            <div class="bar" style="height:${Math.max(pct, 6)}%">
+              <span>${booked}</span>
+              <small>${s[0].split("–")[0].split("-")[0]}</small>
             </div>
-          `).join("")}
+            `;
+          }).join("")}
+        </div>
+        <div style="margin-top:16px;padding:10px 12px;background:#f8fafc;border-radius:8px;font-size:12px;color:#475569;display:flex;justify-content:space-between;align-items:center;">
+          <span>🟢 <b>Initial State:</b> 0 slots booked (0% crowd load)</span>
+          <span style="color:var(--tn-green);font-weight:700;">● Live Auto-Sync</span>
         </div>
       </div>
     </div>

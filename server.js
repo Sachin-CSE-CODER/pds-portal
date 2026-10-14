@@ -140,48 +140,9 @@ const inMemoryCitizens = [
 
 // ---------------------------------------------------------------
 // In-Memory Bookings Store (Managed & Modifiable by Admin)
+// Initially initialized with 0 bookings (0 slots booked initially)
 // ---------------------------------------------------------------
-const inMemoryBookings = [
-  {
-    id: 'TN-BK-829104',
-    citizen_name: 'Vijay Anand',
-    mobile_number: '6382826805',
-    smart_card_no: '33/S/0998877',
-    date: 'Today',
-    time: '10:00 AM – 10:15 AM',
-    shop_code: 'TN-FPS-1201',
-    shop_name: 'Suramangalam Fair Price Outlet',
-    items: ['Boiled Rice (20 kg)', 'Sugar (2 kg)', 'Toor Dhal (1 kg)', 'Palm Oil (1 L)'],
-    status: 'Booked',
-    created_at: new Date().toISOString()
-  },
-  {
-    id: 'TN-BK-409182',
-    citizen_name: 'Kavitha Murugan',
-    mobile_number: '7904208464',
-    smart_card_no: '33/G/0123456',
-    date: 'Today',
-    time: '11:15 AM – 11:30 AM',
-    shop_code: 'TN-FPS-0102',
-    shop_name: 'Mylapore TUCS Cooperative Society',
-    items: ['Rice (20 kg)', 'Sugar (2 kg)', 'Palm Oil (1 L)'],
-    status: 'Pre-Packed',
-    created_at: new Date().toISOString()
-  },
-  {
-    id: 'TN-BK-193850',
-    citizen_name: 'Senthil Kumar',
-    mobile_number: '9876543210',
-    smart_card_no: '33/K/0789012',
-    date: 'Tomorrow',
-    time: '09:00 AM – 09:15 AM',
-    shop_code: 'TN-FPS-0504',
-    shop_name: 'Gandhipuram Primary Agri Coop Shop',
-    items: ['Rice (35 kg)', 'Sugar (3 kg)', 'Toor Dhal (2 kg)', 'Palm Oil (2 L)'],
-    status: 'Booked',
-    created_at: new Date().toISOString()
-  }
-];
+let inMemoryBookings = [];
 
 
 const inMemoryOtpStore = new Map(); // mobile -> { otp, expiresAt }
@@ -727,6 +688,60 @@ app.get('/api/bookings', (req, res) => {
     count: inMemoryBookings.length,
     bookings: inMemoryBookings
   });
+});
+
+// Reset all bookings to 0 (all slots 0 booked)
+app.post('/api/bookings/reset', (req, res) => {
+  inMemoryBookings = [];
+  console.log('🛡️ Admin reset all bookings to 0.');
+  res.json({ success: true, message: 'All bookings cleared. 0 slots booked initially.', count: 0, bookings: [] });
+});
+
+// Seed demo bookings
+app.post('/api/bookings/seed', (req, res) => {
+  inMemoryBookings = [
+    {
+      id: 'TN-BK-829104',
+      citizen_name: 'Vijay Anand',
+      mobile_number: '6382826805',
+      smart_card_no: '33/S/0998877',
+      date: 'Today',
+      time: '10:00 AM – 10:15 AM',
+      shop_code: 'TN-FPS-1201',
+      shop_name: 'Suramangalam Fair Price Outlet',
+      items: ['Boiled Rice (20 kg)', 'Sugar (2 kg)', 'Toor Dhal (1 kg)', 'Palm Oil (1 L)'],
+      status: 'Booked',
+      created_at: new Date().toISOString()
+    },
+    {
+      id: 'TN-BK-409182',
+      citizen_name: 'Kavitha Murugan',
+      mobile_number: '7904208464',
+      smart_card_no: '33/G/0123456',
+      date: 'Today',
+      time: '11:15 AM – 11:30 AM',
+      shop_code: 'TN-FPS-0102',
+      shop_name: 'Mylapore TUCS Cooperative Society',
+      items: ['Rice (20 kg)', 'Sugar (2 kg)', 'Palm Oil (1 L)'],
+      status: 'Pre-Packed',
+      created_at: new Date().toISOString()
+    },
+    {
+      id: 'TN-BK-193850',
+      citizen_name: 'Senthil Kumar',
+      mobile_number: '9876543210',
+      smart_card_no: '33/K/0789012',
+      date: 'Tomorrow',
+      time: '09:00 AM – 09:15 AM',
+      shop_code: 'TN-FPS-0504',
+      shop_name: 'Gandhipuram Primary Agri Coop Shop',
+      items: ['Rice (35 kg)', 'Sugar (3 kg)', 'Toor Dhal (2 kg)', 'Palm Oil (2 L)'],
+      status: 'Booked',
+      created_at: new Date().toISOString()
+    }
+  ];
+  console.log('🛡️ Admin seeded demo bookings.');
+  res.json({ success: true, message: 'Sample demo bookings seeded.', count: inMemoryBookings.length, bookings: inMemoryBookings });
 });
 
 // ---------------------------------------------------------------
