@@ -905,14 +905,14 @@ const state = {
   // Multi-User & OTP Authentication State
   citizen: null,
   citizensList: [
+    { id: 4, full_name: 'Vijay Anand', mobile_number: '6382826805', smart_card_no: '33/S/0998877', card_type: 'PHH (Rice)', district: 'Salem', taluk: 'West', fps_shop_code: 'TN-FPS-1201', fps_shop_name: 'Suramangalam Fair Price Outlet', rice_quota_kg: 20, sugar_quota_kg: 2, dhal_quota_kg: 1, oil_quota_liters: 1 },
     { id: 1, full_name: 'Kavitha Murugan', mobile_number: '7904208464', smart_card_no: '33/G/0123456', card_type: 'PHH (Rice)', district: 'Chennai', taluk: 'Mylapore', fps_shop_code: 'TN-FPS-0102', fps_shop_name: 'Mylapore TUCS Cooperative Society', rice_quota_kg: 20, sugar_quota_kg: 2, dhal_quota_kg: 1, oil_quota_liters: 1 },
     { id: 2, full_name: 'Senthil Kumar', mobile_number: '9876543210', smart_card_no: '33/K/0789012', card_type: 'AAY (Antyodaya)', district: 'Coimbatore', taluk: 'South', fps_shop_code: 'TN-FPS-0504', fps_shop_name: 'Gandhipuram Primary Agri Coop Shop', rice_quota_kg: 35, sugar_quota_kg: 3, dhal_quota_kg: 2, oil_quota_liters: 2 },
     { id: 3, full_name: 'Anitha Rajendran', mobile_number: '9123456780', smart_card_no: '33/M/0456789', card_type: 'NPHS (Sugar)', district: 'Madurai', taluk: 'Central', fps_shop_code: 'TN-FPS-0812', fps_shop_name: 'Simmakkal Cooperative Store', rice_quota_kg: 10, sugar_quota_kg: 4, dhal_quota_kg: 1, oil_quota_liters: 1 },
-    { id: 4, full_name: 'Vijay Anand', mobile_number: '6382826805', smart_card_no: '33/S/0998877', card_type: 'PHH (Rice)', district: 'Salem', taluk: 'West', fps_shop_code: 'TN-FPS-1201', fps_shop_name: 'Suramangalam Fair Price Outlet', rice_quota_kg: 20, sugar_quota_kg: 2, dhal_quota_kg: 1, oil_quota_liters: 1 },
     { id: 5, full_name: 'Meenakshi Sundaram', mobile_number: '9444112233', smart_card_no: '33/T/0334455', card_type: 'AAY (Antyodaya)', district: 'Tiruchirappalli', taluk: 'East', fps_shop_code: 'TN-FPS-1402', fps_shop_name: 'Srirangam Co-op Supermarket', rice_quota_kg: 35, sugar_quota_kg: 3, dhal_quota_kg: 2, oil_quota_liters: 2 }
   ],
-  selectedMobile: '7904208464',
-  selectedCardNo: '33/G/0123456',
+  selectedMobile: '6382826805',
+  selectedCardNo: '33/S/0998877',
   devOtp: null,
   countdown: 0,
   countdownInterval: null,
@@ -1103,9 +1103,10 @@ function landing() {
       <p class="muted" style="text-align:center;max-width:650px;margin:-15px auto 30px;">
         ${t("citizensDesc")}
       </p>
-      <div class="feature-grid">
-        ${state.citizensList.slice(0, 3).map((c, idx) => {
-          const borderColor = idx === 0 ? "var(--tn-green)" : idx === 1 ? "var(--tn-red)" : "var(--tn-black)";
+      <div class="feature-grid" style="grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));">
+        ${state.citizensList.map((c, idx) => {
+          const colors = ["var(--tn-green)", "var(--tn-red)", "var(--tn-black)"];
+          const borderColor = colors[idx % colors.length];
           return `
           <div class="feature-card" style="border-top:4px solid ${borderColor};">
             <span class="badge ${c.card_type.includes('PHH') ? 'available' : 'purple'}">${c.card_type}</span>
@@ -1231,7 +1232,7 @@ function quickLoginCitizen(mobile) {
 // =====================================================================
 function loginView() {
   const isTa = state.lang === "தமிழ்";
-  const mobile = state.selectedMobile || '7904208464';
+  const mobile = state.selectedMobile || '6382826805';
   const ntfyTopic = `tnpds-${mobile}`;
 
   return `
@@ -1270,7 +1271,7 @@ function loginView() {
 
       <!-- Ration Card Number -->
       <label>${t("smartCardNo")}</label>
-      <input id="cardNo" value="${state.selectedCardNo || '33/G/0123456'}" placeholder="33/G/XXXXXXX" oninput="state.selectedCardNo=this.value">
+      <input id="cardNo" value="${state.selectedCardNo || '33/S/0998877'}" placeholder="33/S/XXXXXXX" oninput="state.selectedCardNo=this.value">
 
       <!-- Registered Mobile Number -->
       <label>${t("registeredMobile")}</label>
@@ -1587,16 +1588,16 @@ async function submitNewCitizenRegistration() {
 function cardView() {
   const isTa = state.lang === "தமிழ்";
   const c = state.citizen || {
-    full_name: 'Kavitha Murugan',
-    mobile_number: '7904208464',
-    smart_card_no: '33/G/0123456',
+    full_name: 'Vijay Anand',
+    mobile_number: '6382826805',
+    smart_card_no: '33/S/0998877',
     card_type: 'PHH (Rice - Priority Household)',
-    family_head: 'Kavitha M',
+    family_head: 'Vijay Anand',
     family_members_count: 4,
-    district: 'Chennai',
-    taluk: 'Mylapore',
-    fps_shop_code: 'TN-FPS-0102',
-    fps_shop_name: 'Mylapore TUCS Cooperative Society',
+    district: 'Salem',
+    taluk: 'West',
+    fps_shop_code: 'TN-FPS-1201',
+    fps_shop_name: 'Suramangalam Fair Price Outlet',
     rice_quota_kg: 20,
     sugar_quota_kg: 2,
     dhal_quota_kg: 1,

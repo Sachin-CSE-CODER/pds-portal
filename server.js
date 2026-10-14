@@ -18,6 +18,10 @@ const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
+app.use((req, res, next) => {
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+  next();
+});
 app.use(express.static(__dirname));
 
 // ---------------------------------------------------------------
@@ -42,6 +46,23 @@ const CONFIG = {
 // Fallback in-memory store (active if PostgreSQL or Redis is offline)
 // ---------------------------------------------------------------
 const inMemoryCitizens = [
+  {
+    id: 4,
+    full_name: 'Vijay Anand',
+    mobile_number: '6382826805',
+    smart_card_no: '33/S/0998877',
+    card_type: 'PHH (Rice)',
+    family_head: 'Vijay Anand',
+    family_members_count: 4,
+    district: 'Salem',
+    taluk: 'West',
+    fps_shop_code: 'TN-FPS-1201',
+    fps_shop_name: 'Suramangalam Fair Price Outlet',
+    rice_quota_kg: 20,
+    sugar_quota_kg: 2,
+    dhal_quota_kg: 1,
+    oil_quota_liters: 1
+  },
   {
     id: 1,
     full_name: 'Kavitha Murugan',
@@ -90,23 +111,6 @@ const inMemoryCitizens = [
     fps_shop_name: 'Simmakkal Cooperative Store',
     rice_quota_kg: 10,
     sugar_quota_kg: 4,
-    dhal_quota_kg: 1,
-    oil_quota_liters: 1
-  },
-  {
-    id: 4,
-    full_name: 'Vijay Anand',
-    mobile_number: '6382826805',
-    smart_card_no: '33/S/0998877',
-    card_type: 'PHH (Rice)',
-    family_head: 'Vijay Anand',
-    family_members_count: 4,
-    district: 'Salem',
-    taluk: 'West',
-    fps_shop_code: 'TN-FPS-1201',
-    fps_shop_name: 'Suramangalam Fair Price Outlet',
-    rice_quota_kg: 20,
-    sugar_quota_kg: 2,
     dhal_quota_kg: 1,
     oil_quota_liters: 1
   },
