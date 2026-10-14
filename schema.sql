@@ -7,6 +7,7 @@
 CREATE TABLE IF NOT EXISTS citizens (
     id SERIAL PRIMARY KEY,
     full_name VARCHAR(100) NOT NULL,
+    password VARCHAR(100) DEFAULT 'tnpds123',
     mobile_number VARCHAR(15) UNIQUE NOT NULL,
     smart_card_no VARCHAR(30) UNIQUE NOT NULL,
     card_type VARCHAR(30) NOT NULL,            -- 'PHH (Rice)', 'AAY (Antyodaya)', 'NPHS (Sugar)'

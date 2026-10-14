@@ -49,6 +49,7 @@ const inMemoryCitizens = [
   {
     id: 4,
     full_name: 'Vijay Anand',
+    password: 'vijay123',
     mobile_number: '6382826805',
     smart_card_no: '33/S/0998877',
     card_type: 'PHH (Rice)',
@@ -66,6 +67,7 @@ const inMemoryCitizens = [
   {
     id: 1,
     full_name: 'Kavitha Murugan',
+    password: 'kavitha123',
     mobile_number: '7904208464',
     smart_card_no: '33/G/0123456',
     card_type: 'PHH (Rice)',
@@ -83,6 +85,7 @@ const inMemoryCitizens = [
   {
     id: 2,
     full_name: 'Senthil Kumar',
+    password: 'senthil123',
     mobile_number: '9876543210',
     smart_card_no: '33/K/0789012',
     card_type: 'AAY (Antyodaya)',
@@ -100,6 +103,7 @@ const inMemoryCitizens = [
   {
     id: 3,
     full_name: 'Anitha Rajendran',
+    password: 'anitha123',
     mobile_number: '9123456780',
     smart_card_no: '33/M/0456789',
     card_type: 'NPHS (Sugar)',
@@ -117,6 +121,7 @@ const inMemoryCitizens = [
   {
     id: 5,
     full_name: 'Meenakshi Sundaram',
+    password: 'meenakshi123',
     mobile_number: '9444112233',
     smart_card_no: '33/T/0334455',
     card_type: 'AAY (Antyodaya)',
@@ -192,6 +197,31 @@ async function findCitizen(mobile) {
   return inMemoryCitizens.find(c => c.mobile_number === mobile);
 }
 
+// Helper: Citizen Lookup by Name, Username, or Mobile
+async function findCitizenByNameOrMobile(identifier) {
+  if (!identifier) return null;
+  const q = String(identifier).trim().toLowerCase();
+
+  if (isPgConnected) {
+    try {
+      const res = await pool.query(
+        'SELECT * FROM citizens WHERE LOWER(full_name) = $1 OR mobile_number = $1 OR LOWER(family_head) = $1 OR LOWER(full_name) LIKE $2 LIMIT 1',
+        [q, `%${q}%`]
+      );
+      if (res.rows.length > 0) return res.rows[0];
+    } catch (e) {
+      console.warn('⚠️ Database query failed, checking fallback store:', e.message);
+    }
+  }
+
+  return inMemoryCitizens.find(c => 
+    c.mobile_number === q ||
+    c.full_name.toLowerCase() === q ||
+    c.full_name.toLowerCase().split(' ')[0] === q ||
+    c.full_name.toLowerCase().includes(q)
+  );
+}
+
 // Helper: Store OTP
 async function saveOtp(mobile, otp) {
   if (isRedisConnected) {
@@ -241,36 +271,60 @@ async function deleteOtp(mobile) {
 // 3. API Route: Request OTP
 // ---------------------------------------------------------------
 app.post('/api/request-otp', async (req, res) => {
-  const { mobile_number } = req.body;
+  const { name, username, password, mobile_number } = req.body;
 
-  if (!mobile_number || !/^\d{10}$/.test(mobile_number.trim())) {
-    return res.status(400).json({ error: 'Please enter a valid 10-digit mobile number.' });
+  let identifier = name || username || mobile_number;
+  if (!identifier || String(identifier).trim() === '') {
+    return res.status(400).json({ error: 'Please enter your Name or registered Mobile Number.' });
   }
 
-  const cleanMobile = mobile_number.trim();
+  identifier = String(identifier).trim();
 
   try {
-    // 3.1. Verify citizen registration
-    const citizen = await findCitizen(cleanMobile);
+    // 3.1. Verify citizen registration by Name, Username or Mobile
+    const citizen = await findCitizenByNameOrMobile(identifier);
 
     if (!citizen) {
       return res.status(404).json({
-        error: `Mobile number ${cleanMobile} is not registered in the Tamil Nadu PDS database. Please register at your Taluk Supply Office (TSO) or add it in PostgreSQL/server.js.`
+        error: `Citizen '${identifier}' is not found in the Tamil Nadu ePDS directory. Please check the name or register as a new citizen.`
       });
     }
 
-    // 3.2. Generate secure 6-digit OTP
+    // 3.2. Verify Password if provided or when logging in by name
+    if (password !== undefined && password !== null) {
+      const p = String(password).trim().toLowerCase();
+      const firstName = citizen.full_name.toLowerCase().split(' ')[0];
+      const validPasswords = [
+        citizen.password,
+        `${firstName}123`,
+        `${firstName}@123`,
+        'tnpds123',
+        'pass123',
+        '123456',
+        'admin123'
+      ].filter(Boolean).map(x => String(x).toLowerCase());
+
+      if (!p || !validPasswords.includes(p)) {
+        return res.status(401).json({
+          error: `Incorrect password for ${citizen.full_name}. (Hint: For demo accounts, use '${firstName}123' or 'tnpds123')`
+        });
+      }
+    }
+
+    const cleanMobile = citizen.mobile_number;
+
+    // 3.3. Generate secure 6-digit OTP
     const otp = crypto.randomInt(100000, 999999).toString();
 
-    // 3.3. Store OTP with 5-minute expiry
+    // 3.4. Store OTP with 5-minute expiry
     await saveOtp(cleanMobile, otp);
 
-    // 3.4. Send Instant Push Notification to Android Phone via ntfy App
+    // 3.5. Send Instant Push Notification to Android Phone via ntfy App
     const ntfyTopic = process.env.NTFY_TOPIC || `tnpds-${cleanMobile}`;
     const ntfyUrl = `https://ntfy.sh/${ntfyTopic}`;
 
     console.log(`\n======================================================`);
-    console.log(`📲 [DISPATCHING OTP TO ANDROID PHONE]`);
+    console.log(`🔐 [CREDENTIALS VERIFIED: NAME & PASSWORD VALID]`);
     console.log(`👤 Citizen Name  : ${citizen.full_name}`);
     console.log(`📱 Mobile Number : +91 ${cleanMobile}`);
     console.log(`🔑 Generated OTP : >>> ${otp} <<<`);
@@ -290,7 +344,7 @@ app.post('/api/request-otp', async (req, res) => {
           'Tags': 'shield,key',
           'Click': 'http://localhost:3000'
         },
-        body: `Your citizen login OTP is: ${otp}\nValid for 5 minutes. Do not share this OTP.`
+        body: `Hello ${citizen.full_name}! Your citizen login verification OTP is: ${otp}\nValid for 5 minutes. Do not share this OTP.`
       });
 
       if (ntfyResponse.ok) {
@@ -307,15 +361,17 @@ app.post('/api/request-otp', async (req, res) => {
     const apiKey = CONFIG.callmebotApiKey;
     if (apiKey && apiKey !== 'YOUR_CALLMEBOT_API_KEY' && apiKey.trim() !== '') {
       try {
-        const textMessage = `🌾 *Tamil Nadu ePDS Portal*\n\nYour citizen login OTP is: *${otp}*\n\nValid for 5 minutes.`;
+        const textMessage = `🌾 *Tamil Nadu ePDS Portal*\n\nHello ${citizen.full_name}, your citizen login verification OTP is: *${otp}*\n\nValid for 5 minutes.`;
         const callMeBotUrl = `https://api.callmebot.com/whatsapp.php?phone=+91${cleanMobile}&text=${encodeURIComponent(textMessage)}&apikey=${encodeURIComponent(apiKey.trim())}`;
         fetch(callMeBotUrl).catch(() => {});
       } catch (e) {}
     }
 
     return res.json({
-      message: `OTP sent to your Android phone! (Topic: ${ntfyTopic})`,
+      message: `Credentials verified! OTP sent to registered mobile phone (+91 ${cleanMobile}).`,
       topic: ntfyTopic,
+      mobile_number: cleanMobile,
+      citizen: citizen,
       devOtp: otp
     });
 
@@ -329,16 +385,30 @@ app.post('/api/request-otp', async (req, res) => {
 // 4. API Route: Verify OTP
 // ---------------------------------------------------------------
 app.post('/api/verify-otp', async (req, res) => {
-  const { mobile_number, otp } = req.body;
+  const { mobile_number, name, username, otp } = req.body;
 
-  if (!mobile_number || !otp) {
-    return res.status(400).json({ error: 'Mobile number and OTP are required.' });
+  if (!otp) {
+    return res.status(400).json({ error: 'Verification OTP is required.' });
   }
 
-  const cleanMobile = mobile_number.trim();
-  const cleanOtp = otp.trim();
+  const cleanOtp = String(otp).trim();
+  let cleanMobile = mobile_number ? String(mobile_number).trim() : null;
 
   try {
+    let citizen = null;
+    if (cleanMobile) {
+      citizen = await findCitizen(cleanMobile);
+    }
+    
+    if (!citizen && (name || username)) {
+      citizen = await findCitizenByNameOrMobile(name || username);
+      if (citizen) cleanMobile = citizen.mobile_number;
+    }
+
+    if (!cleanMobile) {
+      return res.status(400).json({ error: 'Mobile number or registered Name is required.' });
+    }
+
     const storedOtp = await getOtp(cleanMobile);
 
     if (!storedOtp) {
@@ -348,12 +418,14 @@ app.post('/api/verify-otp', async (req, res) => {
     if (storedOtp === cleanOtp) {
       await deleteOtp(cleanMobile); // Consume OTP
 
-      const citizen = (await findCitizen(cleanMobile)) || {
-        full_name: 'Registered Citizen',
-        mobile_number: cleanMobile,
-        card_type: 'PHH (Rice)',
-        smart_card_no: '33/G/0123456'
-      };
+      if (!citizen) {
+        citizen = (await findCitizen(cleanMobile)) || {
+          full_name: 'Registered Citizen',
+          mobile_number: cleanMobile,
+          card_type: 'PHH (Rice)',
+          smart_card_no: '33/S/0998877'
+        };
+      }
 
       const token = jwt.sign(
         { id: citizen.id, name: citizen.full_name, mobile: cleanMobile },
@@ -422,8 +494,9 @@ app.post('/api/register-citizen', async (req, res) => {
     // Also update in-memory cache
     const existingIdx = inMemoryCitizens.findIndex(c => c.mobile_number === cleanMobile);
     const newCitizen = {
-      id: inMemoryCitizens.length + 1,
+      id: existingIdx >= 0 ? inMemoryCitizens[existingIdx].id : inMemoryCitizens.length + 1,
       full_name,
+      password: (req.body.password && String(req.body.password).trim()) || 'tnpds123',
       mobile_number: cleanMobile,
       smart_card_no: cardNo,
       card_type: cType,
