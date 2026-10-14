@@ -6,7 +6,7 @@
 <title>Smart Ration — Tamil Nadu ePDS Digital Platform</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+Tamil:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root {
   --navy: #12304a;
@@ -30,7 +30,7 @@
 * { box-sizing: border-box; }
 body {
   margin: 0;
-  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  font-family: 'Plus Jakarta Sans', 'Noto Sans Tamil', system-ui, -apple-system, sans-serif;
   background: var(--bg);
   color: var(--text);
   -webkit-font-smoothing: antialiased;
@@ -126,8 +126,8 @@ button { cursor: pointer; border: 0; }
   text-transform: uppercase;
   letter-spacing: 1px;
 }
-.hero h1 { font-size: 50px; line-height: 1.1; margin: 14px 0; color: var(--navy); }
-.hero p { font-size: 18px; line-height: 1.7; color: var(--muted); max-width: 650px; }
+.hero h1 { font-size: 46px; line-height: 1.18; margin: 14px 0; color: var(--navy); }
+.hero p { font-size: 17px; line-height: 1.7; color: var(--muted); max-width: 650px; }
 .actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 26px; }
 
 /* Hero Mini Demo */
@@ -141,11 +141,11 @@ button { cursor: pointer; border: 0; }
 .mini-head { display: flex; justify-content: space-between; align-items: center; }
 .mini-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 18px; }
 .mini-card { padding: 16px; border: 1px solid var(--border); border-radius: 14px; background: #fafbfc; }
-.mini-value { font-size: 24px; font-weight: 800; color: var(--navy); margin-top: 6px; }
+.mini-value { font-size: 22px; font-weight: 800; color: var(--navy); margin-top: 6px; }
 
 /* General Sections */
 .section { padding: 70px 6%; }
-.section h2 { text-align: center; color: var(--navy); font-size: 30px; margin-bottom: 30px; }
+.section h2 { text-align: center; color: var(--navy); font-size: 28px; margin-bottom: 30px; }
 .feature-grid, .portal-grid, .product-grid, .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
 .feature-card, .portal-card, .card {
   background: #fff;
@@ -154,7 +154,7 @@ button { cursor: pointer; border: 0; }
   padding: 24px;
   box-shadow: var(--shadow);
 }
-.feature-card h3, .portal-card h3 { margin: 14px 0 8px; color: var(--navy); }
+.feature-card h3, .portal-card h3 { margin: 14px 0 8px; color: var(--navy); font-size: 18px; }
 .feature-card p, .portal-card p { color: var(--muted); line-height: 1.6; font-size: 14px; }
 .icon {
   width: 46px;
@@ -313,7 +313,7 @@ input:focus, select:focus, textarea:focus { border-color: var(--blue); box-shado
 .side-nav button:hover, .side-nav button.active { background: rgba(255,255,255,0.12); color: #fff; }
 .content { padding: 32px; overflow: auto; }
 .content-head { display: flex; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 25px; }
-.content-head h1 { margin: 0; color: var(--navy); font-size: 28px; }
+.content-head h1 { margin: 0; color: var(--navy); font-size: 26px; }
 .user-tools { display: flex; align-items: center; gap: 12px; }
 .avatar {
   width: 40px;
@@ -337,7 +337,7 @@ input:focus, select:focus, textarea:focus { border-color: var(--blue); box-shado
   box-shadow: var(--shadow);
 }
 .stat-card .label { color: var(--muted); font-size: 13px; font-weight: 600; }
-.stat-card .num { font-size: 28px; font-weight: 850; color: var(--navy); margin-top: 8px; }
+.stat-card .num { font-size: 26px; font-weight: 850; color: var(--navy); margin-top: 8px; }
 .stat-card .sub { font-size: 12px; margin-top: 6px; color: var(--green); font-weight: 600; }
 
 .two-col { display: grid; grid-template-columns: 1.3fr .7fr; gap: 18px; margin-top: 18px; }
@@ -508,7 +508,7 @@ input:focus, select:focus, textarea:focus { border-color: var(--blue); box-shado
   .nav { display: none; }
   .topbar { padding: 0 18px; }
   .hero { padding: 50px 20px; }
-  .hero h1 { font-size: 38px; }
+  .hero h1 { font-size: 34px; }
   .section { padding: 50px 20px; }
   .feature-grid, .portal-grid, .product-grid { grid-template-columns: 1fr; }
   .portal-layout { grid-template-columns: 1fr; }
@@ -531,6 +531,239 @@ input:focus, select:focus, textarea:focus { border-color: var(--blue); box-shado
 
 <script>
 // =====================================================================
+// BILINGUAL DICTIONARY (English & தமிழ்)
+// =====================================================================
+const I18N = {
+  English: {
+    brandName: "Smart Ration",
+    brandSubtitle: "Government of Tamil Nadu • Civil Supplies",
+    home: "Home",
+    how: "How It Works",
+    features: "Features",
+    transparency: "Transparency",
+    citizens: "Test Citizens",
+    loginBtn: "Login Portal →",
+    heroEyebrow: "Tamil Nadu Public Distribution System (ePDS)",
+    heroTitle: "Plan Your Ration Collection Before You Visit.",
+    heroDesc: "Check commodity availability, receive real-time push notifications on your phone, book 15-minute Fair Price Shop collection slots, and verify item-level distribution records.",
+    heroCta: "Citizen Login (OTP via Phone) 📲",
+    heroSecondary: "Explore How It Works",
+    liveDemoBadge: "● BACKEND LIVE",
+    monthlyEntitlement: "Monthly Entitlement",
+    phoneDelivery: "Phone Delivery",
+    instantNtfy: "Instant ntfy App",
+    activeShop: "Active FPS Shop",
+    slotWindows: "Slot Windows",
+    fifteenMinSlots: "15-Min Slots",
+    directPhoneAlert: "📲 Direct Phone Delivery: No SMS delay or TRAI blocks. OTP is pushed straight to your Android phone via the ntfy app!",
+    howTitle: "How Smart Ration Works",
+    how1Title: "1. Check Availability",
+    how1Desc: "See real-time stock of Rice, Sugar, Dhal, and Oil at your allotted Fair Price Shop before leaving home.",
+    how2Title: "2. Book Collection Slot",
+    how2Desc: "Select a 15-minute collection window based on shop capacity and avoid standing in long queues.",
+    how3Title: "3. Transparent Collection",
+    how3Desc: "Handover is authenticated biometrically with tamper-proof records and stock reconciliation.",
+    citizensTitle: "Multi-User Database Access",
+    citizensDesc: "Choose any of the pre-seeded Tamil Nadu citizens below to receive OTP on their dedicated topic, or register your own mobile number.",
+    loginAs: "Login as",
+    featuresTitle: "Designed for Zero Queues & Total Transparency",
+    feat1Title: "Stock-Aware Restock Alerts",
+    feat1Desc: "Register 'Notify Me' requests for out-of-stock items and get notified as soon as trucks arrive at the FPS.",
+    feat2Title: "Item-Level Traceability",
+    feat2Desc: "Every kilogram of rice and sugar requested, packed, and collected is permanently visible to the citizen.",
+    feat3Title: "Official Taluk Monitoring",
+    feat3Desc: "Civil Supplies officers can monitor demand hotspots, stock levels, and distribution speed across districts.",
+    footerText: "Tamil Nadu ePDS — Smart Public Distribution System Prototype",
+    footerDept: "Department of Civil Supplies & Consumer Protection, Government of Tamil Nadu",
+    footerSub: "Integrated with Redis OTP Cache & ntfy Android Push Notification Gateway",
+    // Login
+    beneficiaryPortal: "Beneficiary Portal",
+    citizenLogin: "Citizen Smart Card Login",
+    loginSubtitle: "Authenticate via 6-digit OTP dispatched directly to your mobile phone.",
+    selectFromDb: "Select Citizen from Database:",
+    smartCardNo: "Smart Ration Card Number",
+    registeredMobile: "Registered Mobile Number",
+    androidPushChannel: "Android Push Channel:",
+    openLiveFeed: "🔔 Open Live Web Feed on Browser →",
+    getOtpBtn: "Get OTP on Phone 📲",
+    dispatchingOtp: "⏳ Dispatching to Phone...",
+    enterOtp: "Enter 6-Digit OTP",
+    resendIn: "Resend OTP in",
+    resendBtn: "Resend OTP",
+    verifyLoginBtn: "Verify OTP & Access Portal ✓",
+    validating: "Validating...",
+    addNewCitizen: "➕ Register New Citizen / Phone Number",
+    closeReg: "▲ Close Registration",
+    backHome: "← Back to Home",
+    // Dashboard & Sidebar
+    navDashboard: "Dashboard",
+    navProducts: "Products",
+    navCart: "My Cart",
+    navSlots: "Book Slot",
+    navBookings: "My Bookings",
+    navHistory: "Collection History",
+    navLocation: "Change Location",
+    navFlow: "System Flow",
+    navNotifications: "Notifications",
+    navHelp: "Help",
+    navLogout: "Logout / Exit",
+    goodMorning: "Good Morning",
+    collectedSoFar: "Collected So Far",
+    pendingQuota: "Pending Entitlement",
+    viewProductsBtn: "View Eligible Products 🌾",
+    bookSlotBtn: "Book Collection Slot ◷",
+    proTip: "💡 Pro Tip: Book a 15-minute slot before visiting the Fair Price Shop to avoid waiting in line.",
+    openToday: "● OPEN TODAY",
+    importantGuidelines: "Important Guidelines",
+    guidelineText: "Booking ≠ Collection: Reserving a collection slot guarantees your 15-minute express window at the counter. Handover is recorded only after authorised biometric authentication.",
+    yourFps: "Your Fair Price Shop",
+    viewInventoryBtn: "View Shop Inventory Details",
+    // Products
+    eligibleCommodities: "Your Eligible Commodities",
+    eligibleSubtitle: "Based on your Smart Card category and government allocations.",
+    entitlement: "Your Entitlement",
+    shopStock: "Shop Stock",
+    availableInShop: "● AVAILABLE IN SHOP",
+    outOfStock: "● OUT OF STOCK",
+    addToCart: "Add to Cart",
+    notifyMe: "Notify Me When Available 🔔",
+    notificationRequested: "Notification Requested ✓",
+    productStockNotice: "Out-of-stock items will trigger an automated push notification to your phone as soon as the Fair Price Shop confirms delivery.",
+    // Slot Booking
+    chooseSlot: "Choose Express Collection Slot",
+    confirmSlotBooking: "Confirm Slot Booking ◷",
+    slotsAvailable: "slots available",
+    peakWindow: "Peak Window",
+    crowdAnalytics: "Real-Time Shop Crowd Analytics",
+    crowdDesc: "Hourly footfall distribution to help you pick the quickest window.",
+    collectionWindow: "Collection Window",
+    // Unit names
+    kg: "kg",
+    liters: "L",
+    rice: "Rice",
+    sugar: "Sugar",
+    wheat: "Wheat",
+    dal: "Dhal"
+  },
+  "தமிழ்": {
+    brandName: "ஸ்மார்ட் ரேஷன்",
+    brandSubtitle: "தமிழ்நாடு அரசு • உணவுப் பொருள் வழங்கல் துறை",
+    home: "முகப்பு",
+    how: "செயல்படும் முறை",
+    features: "சிறப்பம்சங்கள்",
+    transparency: "வெளிப்படைத்தன்மை",
+    citizens: "பயனாளர்கள்",
+    loginBtn: "உள்நுழைவு போர்டல் →",
+    heroEyebrow: "தமிழ்நாடு பொது விநியோகத் திட்டம் (ePDS)",
+    heroTitle: "ரேஷன் கடைக்குச் செல்லும் முன் உங்கள் பொருட்களைத் திட்டமிடுங்கள்.",
+    heroDesc: "பொருட்களின் இருப்பு நிலையை அறியலாம், உங்கள் கைபேசியில் நேரடி OTP பெறலாம், 15 நிமிட நேர முன்பதிவு செய்து வரிசையில் நிற்காமல் விரைவாகப் பொருட்களைப் பெறலாம்.",
+    heroCta: "பயனாளர் உள்நுழைவு (கைபேசி OTP) 📲",
+    heroSecondary: "செயல்படும் முறையை அறிய",
+    liveDemoBadge: "● நேரடி சேவை",
+    monthlyEntitlement: "மாதாந்திர ஒதுக்கீடு",
+    phoneDelivery: "கைபேசி அறிவிப்பு",
+    instantNtfy: "ntfy நேரடி செயலி",
+    activeShop: "நியாயவிலைக் கடை",
+    slotWindows: "நேர முன்பதிவு",
+    fifteenMinSlots: "15-நிமிட விரைவு நேரம்",
+    directPhoneAlert: "📲 நேரடி கைபேசி அறிவிப்பு: SMS தாமதமோ TRAI தடையோ இன்றி, OTP நேரடியாக உங்கள் ஆன்ட்ராய்டு போனில் ntfy செயலி மூலம் வந்து சேரும்!",
+    howTitle: "ஸ்மார்ட் ரேஷன் எவ்வாறு செயல்படுகிறது?",
+    how1Title: "1. இருப்பை அறிதல்",
+    how1Desc: "கடைக்குச் செல்லும் முன்பே அரிசி, சர்க்கரை, துவரம்பருப்பு, எண்ணெய் இருப்பை வீட்டில் இருந்தே தெரிந்து கொள்ளலாம்.",
+    how2Title: "2. நேர முன்பதிவு செய்தல்",
+    how2Desc: "உங்கள் வசதிக்கேற்ப 15 நிமிட நேரத்தைத் தேர்வு செய்து நீண்ட வரிசையில் நிற்பதைத் தவிர்க்கலாம்.",
+    how3Title: "3. வெளிப்படையான விநியோகம்",
+    how3Desc: "பயோமெட்ரிக் கைரேகை சரிபார்ப்புடன் சரியான எடையில் பொருட்கள் வழங்கப்பட்டு உடனுக்குடன் கணக்கில் பதியப்படும்.",
+    citizensTitle: "பயனாளர் தரவுத்தளம்",
+    citizensDesc: "கீழே உள்ள மாதிரி பயனாளர்களைத் தேர்வு செய்து உடனடியாகப் பரிசோதிக்கலாம் அல்லது உங்கள் கைபேசி எண்ணைப் பதிவு செய்யலாம்.",
+    loginAs: "உள்நுழைக",
+    featuresTitle: "வரிசையற்ற விரைவுச் சேவை & முழு வெளிப்படைத்தன்மை",
+    feat1Title: "சரக்கு வந்ததும் உடனடி அறிவிப்பு",
+    feat1Desc: "கையிருப்பு இல்லாத பொருட்களுக்கு 'Notify Me' கோரிக்கை வைத்தால், லாரி வந்தவுடன் உங்கள் கைபேசிக்கு அறிவிப்பு வரும்.",
+    feat2Title: "ஒவ்வொரு கிலோவிற்கும் வெளிப்படைத்தன்மை",
+    feat2Desc: "நீங்கள் கோரிய, ஊழியர் பேக் செய்த, மற்றும் பெற்றுக்கொண்ட ஒவ்வொரு கிலோ பொருளின் விவரமும் துல்லியமாகப் பதியப்படும்.",
+    feat3Title: "வட்ட வழங்கல் அலுவலர் கண்காணிப்பு",
+    feat3Desc: "உணவுப் பொருள் வழங்கல் துறை அதிகாரிகள் மாவட்ட வாரியாக நியாயவிலைக் கடைகளின் கையிருப்பு மற்றும் விற்பனையை நேரலையாகக் கண்காணிக்கலாம்.",
+    footerText: "தமிழ்நாடு அரசு பொது விநியோகத் திட்டம் — ஸ்மார்ட் ரேஷன் போர்டல்",
+    footerDept: "உணவுப் பொருள் வழங்கல் மற்றும் நுகர்வோர் பாதுகாப்புத் துறை, தமிழ்நாடு அரசு",
+    footerSub: "Redis OTP Cache & ntfy Android Push Notification உடன் இணைக்கப்பட்டுள்ளது",
+    // Login
+    beneficiaryPortal: "பயனாளர் உள்நுழைவு",
+    citizenLogin: "ஸ்மார்ட் குடும்ப அட்டை உள்நுழைவு",
+    loginSubtitle: "உங்கள் பதிவு செய்யப்பட்ட கைபேசி எண்ணிற்கு அனுப்பப்படும் 6-இலக்க OTP மூலம் உள்நுழையவும்.",
+    selectFromDb: "தரவுத்தளத்திலிருந்து பயனாளரைத் தேர்வு செய்க:",
+    smartCardNo: "குடும்ப அட்டை எண் (Smart Card No.)",
+    registeredMobile: "பதிவு செய்யப்பட்ட கைபேசி எண்",
+    androidPushChannel: "Android Push அறிவிப்பு சேனல்:",
+    openLiveFeed: "🔔 பிரவுசரில் நேரலை அறிவிப்பைப் பார்க்க →",
+    getOtpBtn: "கைபேசியில் OTP பெறுக 📲",
+    dispatchingOtp: "⏳ OTP அனுப்பப்படுகிறது...",
+    enterOtp: "6-இலக்க ஒருமுறை கடவுச்சொல் (OTP)",
+    resendIn: "மீண்டும் OTP அனுப்ப மீதமுள்ள நேரம்",
+    resendBtn: "மீண்டும் அனுப்புக",
+    verifyLoginBtn: "சரிபார்த்து உள்நுழைக ✓",
+    validating: "சரிபார்க்கப்படுகிறது...",
+    addNewCitizen: "➕ புதிய பயனாளர் / கைபேசி எண் பதிவு",
+    closeReg: "▲ பதிவை மூடுக",
+    backHome: "← முதன்மைப் பக்கத்திற்கு",
+    // Dashboard & Sidebar
+    navDashboard: "முகப்பு பலகை",
+    navProducts: "பொருட்கள்",
+    navCart: "தயாரிப்புக் கூடை",
+    navSlots: "நேர முன்பதிவு",
+    navBookings: "என் முன்பதிவுகள்",
+    navHistory: "விநியோக வரலாறு",
+    navLocation: "கடை மாற்றம் (Portability)",
+    navFlow: "திட்ட வரைபடம்",
+    navNotifications: "அறிவிப்புகள்",
+    navHelp: "உதவி மையம்",
+    navLogout: "வெளியேறு",
+    goodMorning: "இனிய காலை வணக்கம்",
+    collectedSoFar: "பெறப்பட்ட அளவு",
+    pendingQuota: "மீதமுள்ள ஒதுக்கீடு",
+    viewProductsBtn: "பொருட்களைப் பார்க்க 🌾",
+    bookSlotBtn: "நேர முன்பதிவு செய்க ◷",
+    proTip: "💡 குறிப்பு: கடைக்குச் செல்லும் முன் 15 நிமிட நேரத்தை முன்பதிவு செய்து வரிசையில் நிற்காமல் விரைவாகப் பெறலாம்.",
+    openToday: "● இன்று திறந்துள்ளது",
+    importantGuidelines: "முக்கிய வழிகாட்டுதல்கள்",
+    guidelineText: "முன்பதிவு ≠ விநியோகம்: நேர முன்பதிவு உங்கள் விரைவு விண்டோவை மட்டுமே உறுதி செய்கிறது. நியாயவிலைக் கடையில் பயோமெட்ரிக் சரிபார்ப்பிற்குப் பிறகே விநியோகம் உறுதி செய்யப்படும்.",
+    yourFps: "தங்களுக்குரிய நியாயவிலைக் கடை",
+    viewInventoryBtn: "கடை கையிருப்பு விவரங்களைப் பார்க்க",
+    // Products
+    eligibleCommodities: "தங்களுக்குரிய அத்தியாவசியப் பொருட்கள்",
+    eligibleSubtitle: "உங்கள் குடும்ப அட்டை வகை மற்றும் அரசின் ஒதுக்கீட்டின் அடிப்படையில்.",
+    entitlement: "தங்கள் ஒதுக்கீடு",
+    shopStock: "கடை கையிருப்பு",
+    availableInShop: "● கடையில் கையிருப்பு உள்ளது",
+    outOfStock: "● கையிருப்பு இல்லை",
+    addToCart: "கூடையில் சேர்க்க",
+    notifyMe: "சரக்கு வந்ததும் அறிவிக்கவும் 🔔",
+    notificationRequested: "அறிவிப்பு கோரப்பட்டது ✓",
+    productStockNotice: "கையிருப்பு இல்லாத பொருட்கள் கடைக்கு வந்தவுடன் உங்கள் கைபேசிக்கு தானியங்கி அறிவிப்பு அனுப்பப்படும்.",
+    // Slot Booking
+    chooseSlot: "விரைவு விநியோக நேரத்தைத் தேர்வு செய்யவும்",
+    confirmSlotBooking: "முன்பதிவை உறுதிப்படுத்துக ◷",
+    slotsAvailable: "இடங்கள் உள்ளன",
+    peakWindow: "அதிக கூட்டம்",
+    crowdAnalytics: "நேரலை கடை கூட்ட நெரிசல் வரைபடம்",
+    crowdDesc: "விரைவாகப் பெற்றுச்செல்ல குறைவான நெரிசல் உள்ள நேரத்தைத் தேர்வு செய்யவும்.",
+    collectionWindow: "விநியோக நாட்கள்",
+    // Unit names
+    kg: "கிலோ",
+    liters: "லிட்டர்",
+    rice: "அரிசி",
+    sugar: "சர்க்கரை",
+    wheat: "கோதுமை",
+    dal: "துவரம் பருப்பு"
+  }
+};
+
+function t(key) {
+  const lang = state.lang === "தமிழ்" ? "தமிழ்" : "English";
+  return (I18N[lang] && I18N[lang][key]) || (I18N["English"][key]) || key;
+}
+
+// =====================================================================
 // Global State & Data Store
 // =====================================================================
 const API_URL = window.location.protocol === 'file:' ? 'http://localhost:3000/api' : '/api';
@@ -538,7 +771,7 @@ const API_URL = window.location.protocol === 'file:' ? 'http://localhost:3000/ap
 const state = {
   page: "landing",
   role: null,
-  lang: "English",
+  lang: localStorage.getItem("smartRationLang") || "English",
   otpSent: false,
   verified: false,
   cardVerified: false,
@@ -578,10 +811,10 @@ const state = {
 };
 
 const products = [
-  { name: "Rice", eligible: 20, stock: 650, icon: "🌾", available: true },
-  { name: "Sugar", eligible: 2, stock: 0, icon: "🧂", available: false },
-  { name: "Wheat", eligible: 5, stock: 100, icon: "🌾", available: false },
-  { name: "Dal", eligible: 1, stock: 0, icon: "🥣", available: false }
+  { id: "rice", name: "Rice", nameTa: "அரிசி", eligible: 20, stock: 650, icon: "🌾", available: true },
+  { id: "sugar", name: "Sugar", nameTa: "சர்க்கரை", eligible: 2, stock: 0, icon: "🧂", available: false },
+  { id: "wheat", name: "Wheat", nameTa: "கோதுமை", eligible: 5, stock: 100, icon: "🌾", available: false },
+  { id: "dal", name: "Dal", nameTa: "துவரம் பருப்பு", eligible: 1, stock: 0, icon: "🥣", available: false }
 ];
 
 const slots = [
@@ -642,7 +875,6 @@ async function fetchCitizensFromBackend() {
       const data = await res.json();
       if (data.citizens && Array.isArray(data.citizens)) {
         state.citizensList = data.citizens;
-        // Keep selected mobile synced
         const found = state.citizensList.find(c => c.mobile_number === state.selectedMobile);
         if (found) {
           state.selectedCardNo = found.smart_card_no;
@@ -651,7 +883,7 @@ async function fetchCitizensFromBackend() {
       }
     }
   } catch (e) {
-    console.log("Using cached/fallback citizen list.");
+    console.log("Operating in offline/cached citizen mode.");
   }
 }
 
@@ -659,98 +891,103 @@ async function fetchCitizensFromBackend() {
 // Landing & Navigation Views
 // =====================================================================
 function landing() {
+  const isTa = state.lang === "தமிழ்";
+
   return `
   <div class="landing">
     <header class="topbar">
       <div class="brand">
         <div class="brandmark">🌾</div>
         <div class="brand-tn">
-          <span>Smart Ration</span>
-          <small>தமிழ்நாடு அரசு • Civil Supplies</small>
+          <span>${t("brandName")}</span>
+          <small>${t("brandSubtitle")}</small>
         </div>
       </div>
       <nav class="nav">
-        <a href="#home">Home</a>
-        <a href="#how">How It Works</a>
-        <a href="#features">Features</a>
-        <a href="#transparency">Transparency</a>
-        <a href="#citizens">Test Citizens</a>
+        <a href="#home">${t("home")}</a>
+        <a href="#how">${t("how")}</a>
+        <a href="#features">${t("features")}</a>
+        <a href="#citizens">${t("citizens")}</a>
       </nav>
       <div style="display:flex;gap:10px;align-items:center;">
-        <button class="btn btn-outline" onclick="openLanguage()">🌐 ${state.lang}</button>
-        <button class="btn btn-primary" onclick="openPortal()">Login Portal →</button>
+        <button class="btn btn-outline" style="border-color:var(--tn-green);color:var(--tn-green);font-weight:700;" onclick="openLanguage()">
+          🌐 ${state.lang === "தமிழ்" ? "தமிழ்" : "English"}
+        </button>
+        <button class="btn btn-primary" onclick="openPortal()">
+          ${t("loginBtn")}
+        </button>
       </div>
     </header>
 
     <section class="hero" id="home">
       <div>
-        <div class="eyebrow">Tamil Nadu Public Distribution System (ePDS)</div>
-        <h1>Plan Your Ration Collection Before You Visit.</h1>
-        <p>Check commodity availability, receive real-time push notifications on your phone, book 15-minute Fair Price Shop collection slots, and verify item-level distribution records.</p>
+        <div class="eyebrow">${t("heroEyebrow")}</div>
+        <h1>${t("heroTitle")}</h1>
+        <p>${t("heroDesc")}</p>
         <div class="actions">
-          <button class="btn btn-primary" style="padding:13px 24px;font-size:16px;" onclick="chooseRole('beneficiary')">
-            Citizen Login (OTP via Phone) 📲
+          <button class="btn btn-primary" style="padding:13px 24px;font-size:16px;background:var(--tn-green);" onclick="chooseRole('beneficiary')">
+            ${t("heroCta")}
           </button>
           <button class="btn btn-outline" style="padding:13px 20px;" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">
-            Explore How It Works
+            ${t("heroSecondary")}
           </button>
         </div>
       </div>
 
       <div class="hero-demo">
         <div class="mini-head">
-          <strong style="color:var(--navy);font-size:16px;">🌾 Tamil Nadu Smart Card Portal</strong>
-          <span class="badge available">● BACKEND LIVE</span>
+          <strong style="color:var(--navy);font-size:16px;">🌾 ${isTa ? "ஸ்மார்ட் குடும்ப அட்டை போர்டல்" : "Tamil Nadu Smart Card Portal"}</strong>
+          <span class="badge available">${t("liveDemoBadge")}</span>
         </div>
         <div class="mini-grid">
           <div class="mini-card">
-            <span class="muted">Monthly Entitlement</span>
-            <div class="mini-value">24 kg</div>
+            <span class="muted">${t("monthlyEntitlement")}</span>
+            <div class="mini-value">24 ${t("kg")}</div>
           </div>
           <div class="mini-card">
-            <span class="muted">Phone Delivery</span>
-            <div class="mini-value" style="font-size:18px;color:var(--green)">Instant ntfy App</div>
+            <span class="muted">${t("phoneDelivery")}</span>
+            <div class="mini-value" style="font-size:17px;color:var(--green)">${t("instantNtfy")}</div>
           </div>
           <div class="mini-card">
-            <span class="muted">Active FPS Shop</span>
-            <div class="mini-value" style="font-size:16px;">TN-FPS-0102</div>
+            <span class="muted">${t("activeShop")}</span>
+            <div class="mini-value" style="font-size:15px;">TN-FPS-0102</div>
           </div>
           <div class="mini-card">
-            <span class="muted">Slot Windows</span>
-            <div class="mini-value" style="font-size:16px;">15-Min Slots</div>
+            <span class="muted">${t("slotWindows")}</span>
+            <div class="mini-value" style="font-size:15px;">${t("fifteenMinSlots")}</div>
           </div>
         </div>
-        <div style="margin-top:20px;padding:12px;background:#f0fdf4;border-radius:12px;border:1px solid #bbf7d0;font-size:13px;color:#166534;">
-          📲 <strong>Direct Phone Delivery:</strong> No SMS delay or TRAI blocks. OTP is pushed straight to your Android phone via the <code>ntfy</code> app!
+        <div style="margin-top:20px;padding:12px;background:#f0fdf4;border-radius:12px;border:1px solid #bbf7d0;font-size:13px;color:#166534;line-height:1.5;">
+          ${t("directPhoneAlert")}
         </div>
       </div>
     </section>
 
     <section class="section" id="how">
-      <h2>How Smart Ration Works</h2>
+      <h2>${t("howTitle")}</h2>
       <div class="feature-grid">
         <div class="feature-card">
           <div class="icon">📦</div>
-          <h3>1. Check Availability</h3>
-          <p>See real-time stock of Rice, Sugar, Dhal, and Oil at your allotted Fair Price Shop before leaving home.</p>
+          <h3>${t("how1Title")}</h3>
+          <p>${t("how1Desc")}</p>
         </div>
         <div class="feature-card">
           <div class="icon">📅</div>
-          <h3>2. Book Collection Slot</h3>
-          <p>Select a 15-minute collection window based on shop capacity and avoid standing in long queues.</p>
+          <h3>${t("how2Title")}</h3>
+          <p>${t("how2Desc")}</p>
         </div>
         <div class="feature-card">
           <div class="icon">✓</div>
-          <h3>3. Transparent Collection</h3>
-          <p>Handover is authenticated biometrically with tamper-proof records and stock reconciliation.</p>
+          <h3>${t("how3Title")}</h3>
+          <p>${t("how3Desc")}</p>
         </div>
       </div>
     </section>
 
     <section class="section" id="citizens" style="background:#f8fafc;">
-      <h2>Multi-User Database Access</h2>
-      <p class="muted" style="text-align:center;max-width:600px;margin:-15px auto 30px;">
-        Choose any of the pre-seeded Tamil Nadu citizens below to receive OTP on their dedicated topic, or register your own mobile number.
+      <h2>${t("citizensTitle")}</h2>
+      <p class="muted" style="text-align:center;max-width:650px;margin:-15px auto 30px;">
+        ${t("citizensDesc")}
       </p>
       <div class="feature-grid">
         ${state.citizensList.slice(0, 3).map(c => `
@@ -760,7 +997,7 @@ function landing() {
             <p style="margin:4px 0;">📱 <b>+91 ${c.mobile_number}</b></p>
             <p class="muted" style="font-size:12px;">${c.taluk}, ${c.district} • FPS: ${c.fps_shop_code}</p>
             <button class="btn btn-outline" style="width:100%;margin-top:14px;font-size:13px;" onclick="quickLoginCitizen('${c.mobile_number}')">
-              Login as ${c.full_name.split(' ')[0]} 📲
+              ${t("loginAs")} ${c.full_name.split(' ')[0]} 📲
             </button>
           </div>
         `).join("")}
@@ -768,30 +1005,30 @@ function landing() {
     </section>
 
     <section class="section" id="features">
-      <h2>Designed for Zero Queues & Total Transparency</h2>
+      <h2>${t("featuresTitle")}</h2>
       <div class="feature-grid">
         <div class="feature-card">
           <div class="icon">🔔</div>
-          <h3>Stock-Aware Restock Alerts</h3>
-          <p>Register "Notify Me" requests for out-of-stock items and get notified as soon as trucks arrive at the FPS.</p>
+          <h3>${t("feat1Title")}</h3>
+          <p>${t("feat1Desc")}</p>
         </div>
         <div class="feature-card">
           <div class="icon">🧾</div>
-          <h3>Item-Level Traceability</h3>
-          <p>Every kilogram of rice and sugar requested, packed, and collected is permanently visible to the citizen.</p>
+          <h3>${t("feat2Title")}</h3>
+          <p>${t("feat2Desc")}</p>
         </div>
         <div class="feature-card">
           <div class="icon">📊</div>
-          <h3>Official Taluk Monitoring</h3>
-          <p>Civil Supplies officers can monitor demand hotspots, stock levels, and distribution speed across districts.</p>
+          <h3>${t("feat3Title")}</h3>
+          <p>${t("feat3Desc")}</p>
         </div>
       </div>
     </section>
 
     <footer>
-      <strong>Tamil Nadu ePDS — Smart Public Distribution System Prototype</strong><br>
-      Department of Civil Supplies & Consumer Protection, Government of Tamil Nadu<br>
-      <small style="opacity:0.8;">Integrated with Redis OTP Cache & ntfy Android Push Notification Gateway</small>
+      <strong>${t("footerText")}</strong><br>
+      ${t("footerDept")}<br>
+      <small style="opacity:0.8;">${t("footerSub")}</small>
     </footer>
   </div>`;
 }
@@ -799,14 +1036,16 @@ function landing() {
 function openLanguage() {
   modal(`
     <button class="close" onclick="closeModal()">×</button>
-    <h2>Select Your Language / மொழியைத் தேர்ந்தெடுக்கவும்</h2>
-    <p class="muted">Choose your preferred interface language.</p>
+    <h2>மொழியைத் தேர்ந்தெடுக்கவும் / Select Language</h2>
+    <p class="muted">தங்களுக்கு விருப்பமான மொழியைத் தேர்வு செய்யவும் / Choose your preferred language.</p>
     <div class="lang-options">
-      <button class="choice" onclick="chooseLanguage('English')">
-        <b>English</b><br><span class="muted">Continue in English</span>
+      <button class="choice" style="${state.lang === 'தமிழ்' ? 'border-color:var(--tn-green);background:#f0fdf4;' : ''}" onclick="chooseLanguage('தமிழ்')">
+        <b style="font-size:18px;color:var(--tn-green);">தமிழ் (Tamil)</b><br>
+        <span class="muted">போர்டல் முழுவதையும் தமிழில் பார்க்க</span>
       </button>
-      <button class="choice" onclick="chooseLanguage('தமிழ்')">
-        <b>தமிழ்</b><br><span class="muted">தொடர தமிழை தேர்வு செய்யவும்</span>
+      <button class="choice" style="${state.lang === 'English' ? 'border-color:var(--blue);background:#f6fbff;' : ''}" onclick="chooseLanguage('English')">
+        <b style="font-size:18px;color:var(--navy);">English</b><br>
+        <span class="muted">Continue with English interface</span>
       </button>
     </div>
   `);
@@ -814,34 +1053,36 @@ function openLanguage() {
 
 function chooseLanguage(l) {
   state.lang = l;
+  try { localStorage.setItem("smartRationLang", l); } catch (e) {}
   closeModal();
-  toast(l === "தமிழ்" ? "மொழி: தமிழ் தேர்ந்தெடுக்கப்பட்டது" : "Language: English selected");
+  toast(l === "தமிழ்" ? "மொழி: தமிழ் தேர்ந்தெடுக்கப்பட்டது ✓" : "Language: English selected ✓");
   render();
 }
 
 function openPortal() {
+  const isTa = state.lang === "தமிழ்";
   modal(`
     <button class="close" onclick="closeModal()">×</button>
-    <h2>Select Portal / பிரிவைத் தேர்ந்தெடுக்கவும்</h2>
-    <p class="muted">Choose the operational role for this session.</p>
+    <h2>${isTa ? "பிரிவைத் தேர்ந்தெடுக்கவும்" : "Select Portal"}</h2>
+    <p class="muted">${isTa ? "செயல்பாட்டுப் பிரிவைத் தேர்வு செய்யவும்" : "Choose the operational role for this session."}</p>
     <div class="portal-options">
       <button class="choice" onclick="chooseRole('beneficiary')">
         <div class="icon">👤</div>
-        <h3>Beneficiary</h3>
-        <p>Family smart card login & slot booking.</p>
-        <b>Continue 📲</b>
+        <h3>${isTa ? "பயனாளர்" : "Beneficiary"}</h3>
+        <p>${isTa ? "குடும்ப அட்டை & நேர முன்பதிவு" : "Family smart card login & slot booking."}</p>
+        <b style="color:var(--tn-green);">${isTa ? "தொடர்க 📲" : "Continue 📲"}</b>
       </button>
       <button class="choice" onclick="chooseRole('staff')">
         <div class="icon">🏪</div>
-        <h3>FPS Staff</h3>
-        <p>Fair Price Shop order packing & stock.</p>
-        <b>Continue →</b>
+        <h3>${isTa ? "கடை ஊழியர்" : "FPS Staff"}</h3>
+        <p>${isTa ? "பொருட்கள் பேக்கிங் & இருப்பு" : "Fair Price Shop order packing & stock."}</p>
+        <b>${isTa ? "தொடர்க →" : "Continue →"}</b>
       </button>
       <button class="choice" onclick="chooseRole('official')">
         <div class="icon">📊</div>
-        <h3>Officials</h3>
-        <p>Civil Supplies district monitoring.</p>
-        <b>Continue →</b>
+        <h3>${isTa ? "அதிகாரிகள்" : "Officials"}</h3>
+        <p>${isTa ? "மாவட்ட அளவிலான நேரலை ஆய்வு" : "Civil Supplies district monitoring."}</p>
+        <b>${isTa ? "தொடர்க →" : "Continue →"}</b>
       </button>
     </div>
   `);
@@ -865,14 +1106,14 @@ function quickLoginCitizen(mobile) {
   state.role = "beneficiary";
   state.page = "login";
   render();
-  toast(`Selected ${c ? c.full_name : mobile}`);
+  toast(state.lang === "தமிழ்" ? `${c ? c.full_name : mobile} தேர்ந்தெடுக்கப்பட்டது` : `Selected ${c ? c.full_name : mobile}`);
 }
 
 // =====================================================================
 // Beneficiary Login & OTP System (Integrated with Node & ntfy)
 // =====================================================================
 function loginView() {
-  const isTamil = state.lang === "தமிழ்";
+  const isTa = state.lang === "தமிழ்";
   const mobile = state.selectedMobile || '7904208464';
   const ntfyTopic = `tnpds-${mobile}`;
 
@@ -881,25 +1122,25 @@ function loginView() {
     <div class="brand" style="justify-content:center;margin-bottom:20px;">
       <div class="brandmark">🌾</div>
       <div class="brand-tn">
-        <span>Tamil Nadu ePDS</span>
-        <small>ஸ்மார்ட் குடும்ப அட்டை போர்டல்</small>
+        <span>${t("brandName")}</span>
+        <small>${t("brandSubtitle")}</small>
       </div>
     </div>
 
     <div class="login-box">
       <div class="login-stripe"></div>
-      <div class="eyebrow">${isTamil ? "பயனாளர் உள்நுழைவு" : "Beneficiary Portal"}</div>
+      <div class="eyebrow">${t("beneficiaryPortal")}</div>
       <h1 style="color:var(--navy);font-size:24px;margin:8px 0 4px;">
-        ${isTamil ? "குடும்ப அட்டை உள்நுழைவு" : "Citizen Smart Card Login"}
+        ${t("citizenLogin")}
       </h1>
       <p class="muted" style="margin-bottom:20px;">
-        ${isTamil ? "உங்கள் பதிவு செய்யப்பட்ட கைபேசி எண்ணிற்கு OTP அனுப்பப்படும்." : "Authenticate via 6-digit OTP dispatched directly to your mobile phone."}
+        ${t("loginSubtitle")}
       </p>
 
       <!-- Database Citizen Quick Selector -->
       <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:12px;margin-bottom:18px;text-align:left;">
         <label style="margin:0 0 6px;font-size:12px;color:var(--navy);text-transform:uppercase;letter-spacing:0.5px;">
-          👥 ${isTamil ? "தரவுத்தளத்திலிருந்து தேர்வு செய்:" : "Select Citizen from Database:"}
+          👥 ${t("selectFromDb")}
         </label>
         <select id="citizenSelectDropdown" onchange="onCitizenSelectChange(this.value)" style="font-weight:600;font-size:13px;">
           ${state.citizensList.map(c => `
@@ -911,11 +1152,11 @@ function loginView() {
       </div>
 
       <!-- Ration Card Number -->
-      <label>${isTamil ? "குடும்ப அட்டை எண் (Smart Card No.)" : "Smart Ration Card Number"}</label>
+      <label>${t("smartCardNo")}</label>
       <input id="cardNo" value="${state.selectedCardNo || '33/G/0123456'}" placeholder="33/G/XXXXXXX" oninput="state.selectedCardNo=this.value">
 
       <!-- Registered Mobile Number -->
-      <label>${isTamil ? "பதிவு செய்யப்பட்ட கைபேசி எண்" : "Registered Mobile Number"}</label>
+      <label>${t("registeredMobile")}</label>
       <div class="input-prefix-box">
         <span>🇮🇳 +91</span>
         <input id="mobile" type="tel" maxlength="10" value="${mobile}" placeholder="9876543210" oninput="onMobileInput(this.value)">
@@ -923,11 +1164,11 @@ function loginView() {
 
       <!-- Push Notification Channel Alert -->
       <div class="topic-info-box">
-        📲 <strong>Android Push Channel:</strong><br>
-        OTP is sent to ntfy topic: <code>${ntfyTopic}</code>
+        📲 <strong>${t("androidPushChannel")}</strong><br>
+        Topic: <code>${ntfyTopic}</code>
         <div style="margin-top:6px;">
           <a href="https://ntfy.sh/${ntfyTopic}" target="_blank" style="color:var(--tn-green);font-weight:700;text-decoration:underline;">
-            🔔 Open Live Web Feed on Browser →
+            ${t("openLiveFeed")}
           </a>
         </div>
       </div>
@@ -940,7 +1181,7 @@ function loginView() {
         onclick="requestOtpFromBackend()"
         ${state.isSendingOtp ? "disabled" : ""}
       >
-        ${state.isSendingOtp ? "⏳ Dispatching to Phone..." : "Get OTP on Phone 📲"}
+        ${state.isSendingOtp ? t("dispatchingOtp") : t("getOtpBtn")}
       </button>
 
       <!-- OTP Entry Section -->
@@ -952,12 +1193,12 @@ function loginView() {
             </div>
           ` : ""}
 
-          <label>${isTamil ? "ஒருமுறை கடவுச்சொல் (6-Digit OTP)" : "Enter 6-Digit OTP"}</label>
+          <label>${t("enterOtp")}</label>
           <input id="otp" type="tel" maxlength="6" placeholder="• • • • • •" style="font-size:20px;letter-spacing:6px;text-align:center;font-weight:800;">
 
           <div style="display:flex;justify-content:space-between;align-items:center;margin:10px 0 16px;font-size:12px;">
             <span class="muted">
-              ${state.countdown > 0 ? `Resend OTP in <b>${state.countdown}s</b>` : "Didn't receive OTP?"}
+              ${state.countdown > 0 ? `${t("resendIn")} <b>${state.countdown}s</b>` : (isTa ? "OTP வரவில்லையா?" : "Didn't receive OTP?")}
             </span>
             <button 
               class="btn btn-outline" 
@@ -965,7 +1206,7 @@ function loginView() {
               onclick="requestOtpFromBackend()" 
               ${state.countdown > 0 ? "disabled" : ""}
             >
-              Resend OTP
+              ${t("resendBtn")}
             </button>
           </div>
 
@@ -976,7 +1217,7 @@ function loginView() {
             onclick="verifyOtpWithBackend()"
             ${state.isVerifyingOtp ? "disabled" : ""}
           >
-            ${state.isVerifyingOtp ? "Validating..." : "Verify OTP & Access Portal ✓"}
+            ${state.isVerifyingOtp ? t("validating") : t("verifyLoginBtn")}
           </button>
         </div>
       ` : ""}
@@ -984,39 +1225,39 @@ function loginView() {
       <!-- Collapsible Registration Section -->
       <div style="margin-top:20px;text-align:center;">
         <button type="button" class="btn btn-outline" style="width:100%;font-size:13px;" onclick="toggleRegisterForm()">
-          ${state.showRegisterForm ? "▲ Close Registration" : "➕ Register New Citizen / Phone Number"}
+          ${state.showRegisterForm ? t("closeReg") : t("addNewCitizen")}
         </button>
       </div>
 
       ${state.showRegisterForm ? `
         <div style="margin-top:16px;padding:18px;background:#fafbfc;border:1px dashed var(--border);border-radius:12px;text-align:left;">
           <h4 style="margin:0 0 12px;color:var(--navy);font-size:14px;font-weight:800;">
-            ➕ Add Citizen to Tamil Nadu Database
+            ${isTa ? "➕ புதிய பயனாளரை தரவுத்தளத்தில் சேர்க்க" : "➕ Add Citizen to Tamil Nadu Database"}
           </h4>
-          <label style="margin:8px 0 4px;font-size:11px;">Full Name (பெயர்)</label>
+          <label style="margin:8px 0 4px;font-size:11px;">${isTa ? "முழு பெயர்" : "Full Name"}</label>
           <input id="regName" placeholder="e.g. Ramesh Chandran" style="padding:10px;font-size:13px;">
 
-          <label style="margin:8px 0 4px;font-size:11px;">Mobile Number (கைபேசி எண்)</label>
-          <input id="regMobile" type="tel" maxlength="10" placeholder="10-digit mobile" style="padding:10px;font-size:13px;">
+          <label style="margin:8px 0 4px;font-size:11px;">${isTa ? "கைபேசி எண் (10 இலக்கம்)" : "Mobile Number (10 digits)"}</label>
+          <input id="regMobile" type="tel" maxlength="10" placeholder="9876543210" style="padding:10px;font-size:13px;">
 
-          <label style="margin:8px 0 4px;font-size:11px;">Card Category (அட்டை வகை)</label>
+          <label style="margin:8px 0 4px;font-size:11px;">${isTa ? "குடும்ப அட்டை வகை" : "Card Category"}</label>
           <select id="regCardType" style="padding:10px;font-size:13px;">
-            <option value="PHH (Rice)">PHH (Rice - Priority Household)</option>
-            <option value="AAY (Antyodaya)">AAY (Antyodaya Anna Yojana)</option>
-            <option value="NPHS (Sugar)">NPHS (Sugar - Non-Priority)</option>
+            <option value="PHH (Rice)">PHH (Rice - Priority Household / முன்னுரிமை அட்டை)</option>
+            <option value="AAY (Antyodaya)">AAY (Antyodaya Anna Yojana / அந்தியோதயா அட்டை)</option>
+            <option value="NPHS (Sugar)">NPHS (Sugar - Non-Priority / சர்க்கரை அட்டை)</option>
           </select>
 
-          <label style="margin:8px 0 4px;font-size:11px;">District (மாவட்டம்)</label>
+          <label style="margin:8px 0 4px;font-size:11px;">${isTa ? "மாவட்டம்" : "District"}</label>
           <input id="regDistrict" value="Chennai" placeholder="e.g. Chennai, Coimbatore, Salem" style="padding:10px;font-size:13px;">
 
           <button class="btn btn-primary" style="width:100%;margin-top:14px;font-size:13px;" onclick="submitNewCitizenRegistration()">
-            Save Citizen to Database & Select
+            ${isTa ? "பயனாளரைச் சேமித்து உள்நுழைக" : "Save Citizen to Database & Select"}
           </button>
         </div>
       ` : ""}
 
       <button class="btn btn-outline" style="width:100%;margin-top:14px;font-size:13px;" onclick="setPage('landing')">
-        ← Back to Home
+        ${t("backHome")}
       </button>
     </div>
   </div>`;
@@ -1063,7 +1304,7 @@ async function requestOtpFromBackend() {
   const mobile = mobileInput ? mobileInput.value.trim() : state.selectedMobile;
 
   if (!mobile || mobile.length !== 10) {
-    toast("⚠️ Please enter a valid 10-digit mobile number.");
+    toast(state.lang === "தமிழ்" ? "⚠️ சரியான 10-இலக்க கைபேசி எண்ணை உள்ளிடவும்." : "⚠️ Please enter a valid 10-digit mobile number.");
     if (mobileInput) mobileInput.focus();
     return;
   }
@@ -1083,7 +1324,7 @@ async function requestOtpFromBackend() {
     if (res.ok) {
       state.otpSent = true;
       state.devOtp = data.devOtp || null;
-      toast(`📲 OTP sent to your phone! Topic: ${data.topic || 'tnpds-' + mobile}`);
+      toast(state.lang === "தமிழ்" ? `📲 உங்கள் கைபேசிக்கு OTP அனுப்பப்பட்டது! Topic: ${data.topic || 'tnpds-' + mobile}` : `📲 OTP sent to your phone! Topic: ${data.topic || 'tnpds-' + mobile}`);
 
       // Start 30s countdown
       clearInterval(state.countdownInterval);
@@ -1101,7 +1342,7 @@ async function requestOtpFromBackend() {
       toast(`❌ ${data.error || 'Failed to dispatch OTP.'}`);
     }
   } catch (err) {
-    toast(`❌ Backend offline. Ensure server is running on http://localhost:3000`);
+    toast(state.lang === "தமிழ்" ? "❌ சர்வரை இணைக்க முடியவில்லை (http://localhost:3000)" : "❌ Backend offline. Ensure server is running on http://localhost:3000");
   } finally {
     state.isSendingOtp = false;
     render();
@@ -1120,7 +1361,7 @@ async function verifyOtpWithBackend() {
   const otp = otpInput ? otpInput.value.trim() : '';
 
   if (!otp || otp.length !== 6) {
-    toast("⚠️ Please enter the full 6-digit OTP.");
+    toast(state.lang === "தமிழ்" ? "⚠️ முழுமையான 6-இலக்க OTP-ஐ உள்ளிடவும்." : "⚠️ Please enter the full 6-digit OTP.");
     if (otpInput) otpInput.focus();
     return;
   }
@@ -1141,7 +1382,6 @@ async function verifyOtpWithBackend() {
       state.verified = true;
       localStorage.setItem('tnpds_token', data.token);
 
-      // Bind authenticated citizen details to state
       const c = data.citizen || state.citizensList.find(x => x.mobile_number === mobile) || {
         full_name: 'Registered Citizen',
         mobile_number: mobile,
@@ -1166,7 +1406,7 @@ async function verifyOtpWithBackend() {
       if (c.dhal_quota_kg) products[3].eligible = c.dhal_quota_kg;
 
       audit("Beneficiary Logged In", "-", "Authenticated");
-      toast(`🎉 Welcome, ${c.full_name}!`);
+      toast(state.lang === "தமிழ்" ? `🎉 நல்வரவு, ${c.full_name}!` : `🎉 Welcome, ${c.full_name}!`);
 
       setTimeout(() => {
         setPage("card");
@@ -1176,7 +1416,7 @@ async function verifyOtpWithBackend() {
       toast(`❌ ${data.error || 'Incorrect OTP code.'}`);
     }
   } catch (err) {
-    toast(`❌ Verification failed: Backend unreachable.`);
+    toast(state.lang === "தமிழ்" ? "❌ சரிபார்ப்பு தோல்வி: சர்வரை இணைக்க முடியவில்லை." : "❌ Verification failed: Backend unreachable.");
   } finally {
     state.isVerifyingOtp = false;
     render();
@@ -1191,7 +1431,7 @@ async function submitNewCitizenRegistration() {
   const district = (document.getElementById('regDistrict').value || 'Chennai').trim();
 
   if (!name || !mobile || mobile.length !== 10) {
-    toast("⚠️ Please enter a valid name and 10-digit mobile number.");
+    toast(state.lang === "தமிழ்" ? "⚠️ சரியான பெயர் மற்றும் 10-இலக்க கைபேசி எண்ணை உள்ளிடவும்." : "⚠️ Please enter a valid name and 10-digit mobile number.");
     return;
   }
 
@@ -1211,7 +1451,7 @@ async function submitNewCitizenRegistration() {
 
     const data = await res.json();
     if (res.ok) {
-      toast(`✅ Citizen ${name} registered successfully!`);
+      toast(state.lang === "தமிழ்" ? `✅ பயனாளர் ${name} வெற்றிகரமாகப் பதிவு செய்யப்பட்டார்!` : `✅ Citizen ${name} registered successfully!`);
       state.showRegisterForm = false;
       state.selectedMobile = mobile;
       await fetchCitizensFromBackend();
@@ -1220,7 +1460,7 @@ async function submitNewCitizenRegistration() {
       toast(`❌ ${data.error || 'Registration failed.'}`);
     }
   } catch (e) {
-    toast("❌ Server offline. Could not save citizen.");
+    toast(state.lang === "தமிழ்" ? "❌ சர்வர் பிழை. பதிவைச் சேமிக்க முடியவில்லை." : "❌ Server offline. Could not save citizen.");
   }
 }
 
@@ -1228,6 +1468,7 @@ async function submitNewCitizenRegistration() {
 // e-Ration Card Verification View
 // =====================================================================
 function cardView() {
+  const isTa = state.lang === "தமிழ்";
   const c = state.citizen || {
     full_name: 'Kavitha Murugan',
     mobile_number: '7904208464',
@@ -1249,17 +1490,21 @@ function cardView() {
   <div class="portal">
     <div class="login-box" style="max-width:720px;padding:34px;">
       <div class="login-stripe"></div>
-      <div class="eyebrow">Tamil Nadu ePDS • Verification</div>
+      <div class="eyebrow">${isTa ? "தமிழ்நாடு பொது விநியோகத் திட்டம் • சரிபார்ப்பு" : "Tamil Nadu ePDS • Verification"}</div>
       <h1 style="color:var(--navy);font-size:26px;margin:8px 0 16px;">
-        மின்னணு குடும்ப அட்டை (e-Smart Card)
+        ${isTa ? "மின்னணு குடும்ப அட்டை (e-Smart Card)" : "e-Smart Ration Card"}
       </h1>
 
       <!-- Graphic Smart Card UI -->
       <div class="ration-card-ui">
         <div class="card-header-row">
           <div>
-            <div style="font-size:12px;opacity:0.85;text-transform:uppercase;letter-spacing:1px;">தமிழ்நாடு அரசு • Civil Supplies</div>
-            <div style="font-size:19px;font-weight:800;letter-spacing:0.5px;">TAMIL NADU SMART RATION CARD</div>
+            <div style="font-size:12px;opacity:0.85;text-transform:uppercase;letter-spacing:1px;">
+              ${isTa ? "தமிழ்நாடு அரசு • உணவுப் பொருள் வழங்கல் துறை" : "GOVERNMENT OF TAMIL NADU • CIVIL SUPPLIES"}
+            </div>
+            <div style="font-size:19px;font-weight:800;letter-spacing:0.5px;">
+              ${isTa ? "தமிழ்நாடு ஸ்மார்ட் குடும்ப அட்டை" : "TAMIL NADU SMART RATION CARD"}
+            </div>
           </div>
           <span class="badge available" style="background:white;color:var(--tn-green);font-size:12px;">
             ${c.card_type}
@@ -1268,39 +1513,39 @@ function cardView() {
 
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13px;">
           <div>
-            <span style="opacity:0.75;font-size:11px;display:block;">CARD NUMBER</span>
+            <span style="opacity:0.75;font-size:11px;display:block;">${isTa ? "குடும்ப அட்டை எண்" : "CARD NUMBER"}</span>
             <b style="font-size:16px;letter-spacing:1px;">${c.smart_card_no}</b>
           </div>
           <div>
-            <span style="opacity:0.75;font-size:11px;display:block;">HEAD OF FAMILY</span>
+            <span style="opacity:0.75;font-size:11px;display:block;">${isTa ? "குடும்பத் தலைவர்" : "HEAD OF FAMILY"}</span>
             <b style="font-size:15px;">${c.family_head || c.full_name}</b>
           </div>
           <div>
-            <span style="opacity:0.75;font-size:11px;display:block;">REGISTERED MOBILE</span>
+            <span style="opacity:0.75;font-size:11px;display:block;">${isTa ? "பதிவு செய்யப்பட்ட கைபேசி" : "REGISTERED MOBILE"}</span>
             <b>+91 ${c.mobile_number}</b>
           </div>
           <div>
-            <span style="opacity:0.75;font-size:11px;display:block;">TALUK / JURISDICTION</span>
+            <span style="opacity:0.75;font-size:11px;display:block;">${isTa ? "வட்டம் / மாவட்டம்" : "TALUK / DISTRICT"}</span>
             <b>${c.taluk || 'Mylapore'}, ${c.district || 'Chennai'}</b>
           </div>
         </div>
 
         <div class="card-quota-grid">
           <div class="card-quota-item">
-            <span style="font-size:11px;opacity:0.8;">RICE</span>
-            <b>${c.rice_quota_kg || 20} kg</b>
+            <span style="font-size:11px;opacity:0.8;">${t("rice")}</span>
+            <b>${c.rice_quota_kg || 20} ${t("kg")}</b>
           </div>
           <div class="card-quota-item">
-            <span style="font-size:11px;opacity:0.8;">SUGAR</span>
-            <b>${c.sugar_quota_kg || 2} kg</b>
+            <span style="font-size:11px;opacity:0.8;">${t("sugar")}</span>
+            <b>${c.sugar_quota_kg || 2} ${t("kg")}</b>
           </div>
           <div class="card-quota-item">
-            <span style="font-size:11px;opacity:0.8;">DHAL</span>
-            <b>${c.dhal_quota_kg || 1} kg</b>
+            <span style="font-size:11px;opacity:0.8;">${t("dal")}</span>
+            <b>${c.dhal_quota_kg || 1} ${t("kg")}</b>
           </div>
           <div class="card-quota-item">
-            <span style="font-size:11px;opacity:0.8;">OIL</span>
-            <b>${c.oil_quota_liters || 1} L</b>
+            <span style="font-size:11px;opacity:0.8;">${isTa ? "எண்ணெய்" : "OIL"}</span>
+            <b>${c.oil_quota_liters || 1} ${t("liters")}</b>
           </div>
         </div>
       </div>
@@ -1308,19 +1553,19 @@ function cardView() {
       <div class="card" style="box-shadow:none;background:#f8fafc;margin-bottom:20px;">
         <div style="display:flex;justify-content:space-between;align-items:center;">
           <div>
-            <span class="muted" style="font-size:12px;display:block;">ALLOTTED FAIR PRICE SHOP</span>
+            <span class="muted" style="font-size:12px;display:block;">${isTa ? "ஒதுக்கப்பட்ட நியாயவிலைக் கடை" : "ALLOTTED FAIR PRICE SHOP"}</span>
             <strong style="color:var(--navy);font-size:15px;">${c.fps_shop_code || 'TN-FPS-0102'} — ${c.fps_shop_name || 'Mylapore TUCS Cooperative Society'}</strong>
           </div>
-          <span class="badge available">● ACTIVE SHOP</span>
+          <span class="badge available">${isTa ? "● நடைமுறையில் உள்ளது" : "● ACTIVE SHOP"}</span>
         </div>
       </div>
 
       <div class="actions">
-        <button class="btn btn-primary" style="padding:13px 24px;font-size:15px;" onclick="confirmCard()">
-          Confirm Details & Access Dashboard →
+        <button class="btn btn-primary" style="padding:13px 24px;font-size:15px;background:var(--tn-green);" onclick="confirmCard()">
+          ${isTa ? "விவரங்களை உறுதிசெய்து முகப்பிற்குச் செல்க →" : "Confirm Details & Access Dashboard →"}
         </button>
         <button class="btn btn-outline" onclick="logoutCitizen()">
-          Switch Citizen / Logout
+          ${isTa ? "வெளியேறு / மாற்று அட்டை" : "Switch Citizen / Logout"}
         </button>
       </div>
     </div>
@@ -1330,7 +1575,7 @@ function cardView() {
 function confirmCard() {
   state.cardVerified = true;
   audit("e-Ration Card Verified");
-  toast("Smart Ration Card confirmed ✓");
+  toast(state.lang === "தமிழ்" ? "ஸ்மார்ட் குடும்ப அட்டை விவரங்கள் உறுதி செய்யப்பட்டன ✓" : "Smart Ration Card confirmed ✓");
   setTimeout(() => setPage("beneficiary"), 350);
 }
 
@@ -1343,7 +1588,7 @@ function logoutCitizen() {
   state.cart = [];
   state.selectedSlot = null;
   state.booking = null;
-  toast("Logged out of session.");
+  toast(state.lang === "தமிழ்" ? "போர்டலிலிருந்து வெளியேற்றப்பட்டீர்கள்." : "Logged out of session.");
   setPage("landing");
 }
 
@@ -1351,19 +1596,42 @@ function logoutCitizen() {
 // App Shell Layout (Beneficiary, FPS Staff, Official)
 // =====================================================================
 function shell(role, body, active) {
-  let title = role === "beneficiary" ? "Beneficiary Portal" : role === "staff" ? "FPS Staff Portal" : "Officials Dashboard";
+  const isTa = state.lang === "தமிழ்";
+  let title = role === "beneficiary" 
+    ? (isTa ? "பயனாளர் போர்டல்" : "Beneficiary Portal") 
+    : role === "staff" 
+    ? (isTa ? "நியாயவிலைக் கடை ஊழியர் போர்டல்" : "FPS Staff Portal") 
+    : (isTa ? "துறை அதிகாரிகள் டாஷ்போர்டு" : "Officials Dashboard");
+
   let menus = role === "beneficiary" ? [
-    ["beneficiary", "Dashboard"], ["products", "Products"], ["cart", "My Cart"], ["slots", "Book Slot"],
-    ["bookings", "My Bookings"], ["history", "Collection History"], ["location", "Change Location"],
-    ["flow", "System Flow"], ["notifications", "Notifications"], ["help", "Help"]
+    ["beneficiary", t("navDashboard")],
+    ["products", t("navProducts")],
+    ["cart", t("navCart")],
+    ["slots", t("navSlots")],
+    ["bookings", t("navBookings")],
+    ["history", t("navHistory")],
+    ["location", t("navLocation")],
+    ["flow", t("navFlow")],
+    ["notifications", t("navNotifications")],
+    ["help", t("navHelp")]
   ] : role === "staff" ? [
-    ["staff", "Dashboard"], ["staffbookings", "Today's Bookings"], ["prepare", "Orders to Prepare"],
-    ["stock", "Stock"], ["notify", "Notify Me Requests"], ["collection", "Collection Updates"],
-    ["reschedule", "Missed Slots"], ["audit", "Audit Log"]
+    ["staff", isTa ? "முகப்பு" : "Dashboard"],
+    ["staffbookings", isTa ? "இன்றைய முன்பதிவுகள்" : "Today's Bookings"],
+    ["prepare", isTa ? "தயார் செய்ய வேண்டியவை" : "Orders to Prepare"],
+    ["stock", isTa ? "இருப்பு" : "Stock"],
+    ["notify", isTa ? "அறிவிப்பு கோரிக்கைகள்" : "Notify Me Requests"],
+    ["collection", isTa ? "விநியோகப் பதிவு" : "Collection Updates"],
+    ["reschedule", isTa ? "தவறிய நேரங்கள்" : "Missed Slots"],
+    ["audit", isTa ? "தணிக்கை பதிவு" : "Audit Log"]
   ] : [
-    ["official", "Overview"], ["shops", "Shops"], ["stockofficial", "Stock"],
-    ["analytics", "Distribution"], ["slotdemand", "Slot Demand"], ["notifyofficial", "Notify Me"],
-    ["collections", "Collections"], ["audit", "Audit Logs"]
+    ["official", isTa ? "பொது விவரம்" : "Overview"],
+    ["shops", isTa ? "கடைகள்" : "Shops"],
+    ["stockofficial", isTa ? "இருப்பு கண்காணிப்பு" : "Stock"],
+    ["analytics", isTa ? "விநியோக பகுப்பாய்வு" : "Distribution"],
+    ["slotdemand", isTa ? "நேரத் தேவை" : "Slot Demand"],
+    ["notifyofficial", isTa ? "அறிவிப்புகள்" : "Notify Me"],
+    ["collections", isTa ? "விநியோகங்கள்" : "Collections"],
+    ["audit", isTa ? "பதிவேடுகள்" : "Audit Logs"]
   ];
 
   const citizenInitials = state.citizen
@@ -1374,7 +1642,7 @@ function shell(role, body, active) {
   <div class="portal-layout">
     <aside class="sidebar" id="sidebar">
       <div class="side-brand">
-        <span>🌾</span> Smart Ration
+        <span>🌾</span> ${t("brandName")}
       </div>
       <div class="side-nav">
         ${menus.map(m => `
@@ -1383,7 +1651,7 @@ function shell(role, body, active) {
           </button>
         `).join("")}
         <button style="margin-top:20px;color:#fca5a5;" onclick="logoutCitizen()">
-          🚪 &nbsp;Logout / Exit
+          🚪 &nbsp;${t("navLogout")}
         </button>
       </div>
     </aside>
@@ -1394,10 +1662,13 @@ function shell(role, body, active) {
           <button class="mobile-menu" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
           <h1>${title}</h1>
           <span class="muted">
-            ${state.citizen ? `Logged in: <b>${state.citizen.full_name}</b> (+91 ${state.citizen.mobile_number}) • ${state.citizen.card_type}` : 'Department of Civil Supplies, Tamil Nadu'}
+            ${state.citizen ? `${isTa ? 'உள்நுழைந்துள்ள பயனாளர்' : 'Logged in'}: <b>${state.citizen.full_name}</b> (+91 ${state.citizen.mobile_number}) • ${state.citizen.card_type}` : t("footerDept")}
           </span>
         </div>
         <div class="user-tools">
+          <button class="btn btn-outline" style="border-color:var(--tn-green);color:var(--tn-green);padding:7px 11px;font-size:12px;" onclick="openLanguage()">
+            🌐 ${state.lang === "தமிழ்" ? "தமிழ்" : "English"}
+          </button>
           <button class="btn btn-outline" style="padding:8px 12px;" onclick="openNotifications()">🔔</button>
           <span class="avatar">${role === "beneficiary" ? citizenInitials : role === "staff" ? "SF" : "OF"}</span>
         </div>
@@ -1422,6 +1693,7 @@ function menuIcon(x) {
 // Beneficiary Dashboard & Modules
 // =====================================================================
 function dashboard() {
+  const isTa = state.lang === "தமிழ்";
   const c = state.citizen || {
     full_name: 'Kavitha Murugan',
     rice_quota_kg: 20,
@@ -1437,86 +1709,89 @@ function dashboard() {
   return shell("beneficiary", `
     <div class="stat-grid">
       <div class="stat-card">
-        <div class="label">Monthly Entitlement</div>
-        <div class="num">${totalQuota} kg</div>
-        <div class="sub">Valid for this month</div>
+        <div class="label">${t("monthlyEntitlement")}</div>
+        <div class="num">${totalQuota} ${t("kg")}</div>
+        <div class="sub">${isTa ? "இந்த மாதத்திற்கான ஒதுக்கீடு" : "Valid for this month"}</div>
       </div>
       <div class="stat-card">
-        <div class="label">Collected So Far</div>
-        <div class="num">8 kg</div>
-        <div class="sub">33% complete</div>
+        <div class="label">${t("collectedSoFar")}</div>
+        <div class="num">8 ${t("kg")}</div>
+        <div class="sub">${isTa ? "33% பெறப்பட்டது" : "33% complete"}</div>
       </div>
       <div class="stat-card">
-        <div class="label">Pending Entitlement</div>
-        <div class="num">${totalQuota - 8} kg</div>
-        <div class="sub">Eligible to collect</div>
+        <div class="label">${t("pendingQuota")}</div>
+        <div class="num">${totalQuota - 8} ${t("kg")}</div>
+        <div class="sub">${isTa ? "பெறக்கூடிய மீத அளவு" : "Eligible to collect"}</div>
       </div>
       <div class="stat-card">
-        <div class="label">Allotted FPS Shop</div>
-        <div class="num" style="font-size:20px;">${c.fps_shop_code || 'FPS-1024'}</div>
-        <div class="sub">● OPEN TODAY</div>
+        <div class="label">${t("activeShop")}</div>
+        <div class="num" style="font-size:18px;">${c.fps_shop_code || 'FPS-1024'}</div>
+        <div class="sub">${t("openToday")}</div>
       </div>
     </div>
 
     <div class="two-col">
       <div class="card">
-        <h2>Good Morning, ${c.full_name}</h2>
+        <h2>${t("goodMorning")}, ${c.full_name}</h2>
         <div class="progress-label">
-          <span>Monthly Ration Quota Progress</span>
-          <b>8 kg / ${totalQuota} kg</b>
+          <span>${isTa ? "மாதாந்திர ரேஷன் ஒதுக்கீடு முன்னேற்றம்" : "Monthly Ration Quota Progress"}</span>
+          <b>8 ${t("kg")} / ${totalQuota} ${t("kg")}</b>
         </div>
         <div class="progress"><span style="width:33%"></span></div>
         <div class="notice">
-          💡 <b>Pro Tip:</b> Book a 15-minute slot before visiting the Fair Price Shop to avoid waiting in line.
+          ${t("proTip")}
         </div>
         <div class="actions">
-          <button class="btn btn-primary" onclick="setPage('products')">View Eligible Products 🌾</button>
-          <button class="btn btn-outline" onclick="setPage('slots')">Book Collection Slot ◷</button>
+          <button class="btn btn-primary" style="background:var(--tn-green);" onclick="setPage('products')">${t("viewProductsBtn")}</button>
+          <button class="btn btn-outline" onclick="setPage('slots')">${t("bookSlotBtn")}</button>
         </div>
       </div>
 
       <div class="card">
-        <h3>Your Fair Price Shop</h3>
-        <strong style="color:var(--navy);font-size:16px;">${c.fps_shop_code || 'TN-FPS-0102'} — ${c.fps_shop_name || 'Mylapore TUCS Cooperative Society'}</strong>
-        <p class="muted">${c.taluk || 'Mylapore'}, ${c.district || 'Chennai'}, Tamil Nadu</p>
-        <span class="badge available">● OPEN TODAY</span>
+        <h3>${t("yourFps")}</h3>
+        <strong style="color:var(--navy);font-size:15px;">${c.fps_shop_code || 'TN-FPS-0102'} — ${c.fps_shop_name || 'Mylapore TUCS Cooperative Society'}</strong>
+        <p class="muted">${c.taluk || 'Mylapore'}, ${c.district || 'Chennai'}, ${isTa ? "தமிழ்நாடு" : "Tamil Nadu"}</p>
+        <span class="badge available">${t("openToday")}</span>
         <p class="muted" style="margin-top:10px;font-size:12px;">
-          Morning: 8:30 AM – 12:30 PM<br>
-          Evening: 3:00 PM – 7:00 PM
+          ${isTa ? "காலை: 8:30 – 12:30 | மாலை: 3:00 – 7:00" : "Morning: 8:30 AM – 12:30 PM | Evening: 3:00 PM – 7:00 PM"}
         </p>
-        <button class="btn btn-outline" style="width:100%;margin-top:8px;font-size:13px;" onclick="toast('Opening Shop Inventory Details...')">
-          View Shop Inventory Details
+        <button class="btn btn-outline" style="width:100%;margin-top:8px;font-size:13px;" onclick="toast(state.lang === 'தமிழ்' ? 'கடை சரக்கு இருப்பு பட்டியல் திறக்கப்படுகிறது...' : 'Opening Shop Inventory Details...')">
+          ${t("viewInventoryBtn")}
         </button>
       </div>
     </div>
 
     <div class="card" style="margin-top:18px">
-      <h3>Important Guidelines (முக்கிய விதிகள்)</h3>
+      <h3>${t("importantGuidelines")}</h3>
       <div class="notice">
-        <b>Booking ≠ Collection:</b> Reserving a collection slot guarantees your 15-minute express window at the counter. Handover is recorded only after authorised biometric authentication.
+        <b>${t("guidelineText")}</b>
       </div>
     </div>
   `, `beneficiary`);
 }
 
 function productsView() {
+  const isTa = state.lang === "தமிழ்";
+
   return shell("beneficiary", `
     <div class="content-head">
       <div>
-        <h2>Your Eligible Commodities (உரிய பொருட்கள்)</h2>
-        <span class="muted">Based on your Smart Card category and government allocations.</span>
+        <h2>${t("eligibleCommodities")}</h2>
+        <span class="muted">${t("eligibleSubtitle")}</span>
       </div>
     </div>
 
     <div class="product-grid">
-      ${products.map((p, i) => `
+      ${products.map((p, i) => {
+        const prodName = isTa ? (p.nameTa || p.name) : p.name;
+        return `
         <div class="product-card">
           <div class="product-icon">${p.icon}</div>
-          <h3>${p.name}</h3>
-          <p class="muted">Your Entitlement: <b>${p.eligible} kg</b></p>
-          <p class="muted">Shop Stock: <b>${p.stock} kg</b></p>
+          <h3>${prodName}</h3>
+          <p class="muted">${t("entitlement")}: <b>${p.eligible} ${t("kg")}</b></p>
+          <p class="muted">${t("shopStock")}: <b>${p.stock} ${t("kg")}</b></p>
           <span class="badge ${p.available ? 'available' : 'out'}" style="margin-bottom:12px;">
-            ${p.available ? '● AVAILABLE IN SHOP' : '● OUT OF STOCK'}
+            ${p.available ? t("availableInShop") : t("outOfStock")}
           </span>
           ${p.available ? `
             <div class="qty">
@@ -1524,21 +1799,21 @@ function productsView() {
               <span id="q${i}">0</span>
               <button onclick="changeQty(${i}, 1)">+</button>
             </div>
-            <button class="btn btn-primary" style="width:100%;margin-top:auto;" onclick="addCart(${i})">
-              Add to Cart
+            <button class="btn btn-primary" style="width:100%;margin-top:auto;background:var(--tn-green);" onclick="addCart(${i})">
+              ${t("addToCart")}
             </button>
           ` : `
-            <button class="btn btn-outline" style="width:100%;margin-top:auto;" onclick="notifyProduct('${p.name}')">
-              ${state.notified[p.name] ? 'Notification Requested ✓' : 'Notify Me When Available 🔔'}
+            <button class="btn btn-outline" style="width:100%;margin-top:auto;" onclick="notifyProduct('${prodName}')">
+              ${state.notified[p.name] ? t("notificationRequested") : t("notifyMe")}
             </button>
           `}
         </div>
-      `).join("")}
+      `;}).join("")}
     </div>
 
     <div class="card" style="margin-top:18px">
       <div class="notice">
-        Out-of-stock items will trigger an automated push notification to your phone as soon as the Fair Price Shop confirms delivery.
+        ${t("productStockNotice")}
       </div>
     </div>
   `, `products`);
@@ -1553,30 +1828,34 @@ function changeQty(i, d) {
 
 function addCart(i) {
   const p = products[i], q = quantities[i] || 0;
-  if (!q) return toast("⚠️ Please select a quantity first");
+  const isTa = state.lang === "தமிழ்";
+  const prodName = isTa ? (p.nameTa || p.name) : p.name;
+
+  if (!q) return toast(isTa ? "⚠️ தயவுசெய்து அளவைத் தேர்வு செய்யவும்." : "⚠️ Please select a quantity first");
   const found = state.cart.find(x => x.name === p.name);
   if (found) found.qty = Math.min(p.eligible, found.qty + q);
-  else state.cart.push({ name: p.name, qty: q, eligible: p.eligible, status: "Ready" });
+  else state.cart.push({ name: p.name, nameTa: p.nameTa, qty: q, eligible: p.eligible, status: "Ready" });
   quantities[i] = 0;
   const counter = document.getElementById("q" + i);
   if (counter) counter.textContent = "0";
   audit("Added to Ration Cart", p.name);
-  toast(`✓ ${q} kg ${p.name} added to preparation cart`);
+  toast(isTa ? `✓ ${q} ${t("kg")} ${prodName} கூடையில் சேர்க்கப்பட்டது` : `✓ ${q} kg ${p.name} added to preparation cart`);
   render();
 }
 
 function notifyProduct(name) {
-  if (state.notified[name]) return toast("Notification already requested for " + name);
+  const isTa = state.lang === "தமிழ்";
+  if (state.notified[name]) return toast(isTa ? "ஏற்கனவே அறிவிப்பு கோரப்பட்டுள்ளது" : "Notification already requested for " + name);
   modal(`
     <button class="close" onclick="closeModal()">×</button>
-    <h2>Commodity Notification Request</h2>
-    <p>Product <b>${name}</b> is currently out of stock at your allotted FPS.</p>
+    <h2>${isTa ? "சரக்கு இருப்பு அறிவிப்புக் கோரிக்கை" : "Commodity Notification Request"}</h2>
+    <p>${isTa ? `<b>${name}</b> தற்போது உங்கள் நியாயவிலைக் கடையில் கையிருப்பு இல்லை.` : `Product <b>${name}</b> is currently out of stock at your allotted FPS.`}</p>
     <div class="notice">
-      <b>Status:</b> Awaiting fresh truck delivery from Civil Supplies Godown.<br>
-      <b>Push Channel:</b> Instant alert to your phone via ntfy app.
+      <b>${isTa ? "நிலை" : "Status"}:</b> ${isTa ? "குடோனில் இருந்து சரக்கு வாகனம் வர காத்திருக்கிறது." : "Awaiting fresh truck delivery from Civil Supplies Godown."}<br>
+      <b>${isTa ? "அறிவிப்பு சேனல்" : "Push Channel"}:</b> ${isTa ? "ntfy செயலி மூலம் உங்கள் கைபேசிக்கு நேரடி அறிவிப்பு வரும்." : "Instant alert to your phone via ntfy app."}
     </div>
-    <button class="btn btn-primary" style="width:100%" onclick="registerNotify('${name}')">
-      Register Phone Notification Request
+    <button class="btn btn-primary" style="width:100%;background:var(--tn-green);" onclick="registerNotify('${name}')">
+      ${isTa ? "கைபேசி அறிவிப்பைப் பதிவு செய்க" : "Register Phone Notification Request"}
     </button>
   `);
 }
@@ -1584,42 +1863,44 @@ function notifyProduct(name) {
 function registerNotify(name) {
   state.notified[name] = true;
   state.notifications.unshift({
-    text: `Restock alert registered for ${name}. You will receive a push notification when restocked.`,
+    text: state.lang === "தமிழ்" ? `${name} சரக்கு வந்ததும் உங்கள் கைபேசிக்கு அறிவிப்பு வரும்.` : `Restock alert registered for ${name}. You will receive a push notification when restocked.`,
     type: "Stock",
     time: "Now"
   });
   audit("Notify Me Requested", name, "Requested");
   closeModal();
-  toast(`✓ Push notification alert registered for ${name}`);
+  toast(state.lang === "தமிழ்" ? `✓ ${name} சரக்கு அறிவிப்பு பதிவு செய்யப்பட்டது` : `✓ Push notification alert registered for ${name}`);
   render();
 }
 
 function cartView() {
+  const isTa = state.lang === "தமிழ்";
   let total = state.cart.reduce((a, x) => a + x.qty, 0);
+
   return shell("beneficiary", `
     <div class="card">
-      <h2>My Ration Cart (ரேஷன் தயாரிப்புக் கூடை)</h2>
-      <p class="muted">This is an express pre-packing request for your FPS shop staff, not a commercial order.</p>
+      <h2>${isTa ? "ரேஷன் தயாரிப்புக் கூடை" : "My Ration Cart"}</h2>
+      <p class="muted">${isTa ? "இது நியாயவிலைக் கடை ஊழியர் முன்கூட்டியே பொருட்களைப் பேக் செய்வதற்கான கோரிக்கையாகும்." : "This is an express pre-packing request for your FPS shop staff, not a commercial order."}</p>
       ${state.cart.length ? `
         <div class="table-wrap">
           <table class="table">
             <thead>
               <tr>
-                <th>Commodity</th>
-                <th>Quantity</th>
-                <th>Monthly Entitlement</th>
-                <th>Status</th>
-                <th>Action</th>
+                <th>${isTa ? "பொருள்" : "Commodity"}</th>
+                <th>${isTa ? "அளவு" : "Quantity"}</th>
+                <th>${isTa ? "மாத ஒதுக்கீடு" : "Monthly Entitlement"}</th>
+                <th>${isTa ? "நிலை" : "Status"}</th>
+                <th>${isTa ? "செயல்" : "Action"}</th>
               </tr>
             </thead>
             <tbody>
               ${state.cart.map((x, i) => `
                 <tr>
-                  <td><b>${x.name}</b></td>
-                  <td>${x.qty} kg</td>
-                  <td>${x.eligible} kg</td>
-                  <td><span class="badge prepared">Ready for Pack</span></td>
-                  <td><button class="btn btn-outline" style="padding:6px 12px;font-size:12px;" onclick="removeCart(${i})">Remove</button></td>
+                  <td><b>${isTa ? (x.nameTa || x.name) : x.name}</b></td>
+                  <td>${x.qty} ${t("kg")}</td>
+                  <td>${x.eligible} ${t("kg")}</td>
+                  <td><span class="badge prepared">${isTa ? "பேக்கிங் தயார்" : "Ready for Pack"}</span></td>
+                  <td><button class="btn btn-outline" style="padding:6px 12px;font-size:12px;" onclick="removeCart(${i})">${isTa ? "நீக்கு" : "Remove"}</button></td>
                 </tr>
               `).join("")}
             </tbody>
@@ -1627,18 +1908,18 @@ function cartView() {
         </div>
         <div class="actions" style="margin-top:22px;display:flex;justify-content:space-between;align-items:center;">
           <div>
-            <b>Total Items: ${state.cart.length}</b> &nbsp;|&nbsp; 
-            <b>Total Weight: ${total} kg</b>
+            <b>${isTa ? "மொத்த பொருட்கள்" : "Total Items"}: ${state.cart.length}</b> &nbsp;|&nbsp; 
+            <b>${isTa ? "மொத்த எடை" : "Total Weight"}: ${total} ${t("kg")}</b>
           </div>
-          <button class="btn btn-primary" onclick="setPage('slots')">
-            Proceed to 15-Minute Slot Booking →
+          <button class="btn btn-primary" style="background:var(--tn-green);" onclick="setPage('slots')">
+            ${isTa ? "15-நிமிட நேர முன்பதிவிற்குச் செல்க →" : "Proceed to 15-Minute Slot Booking →"}
           </button>
         </div>
       ` : `
         <div class="empty">
-          Your ration preparation cart is empty.<br>
-          <button class="btn btn-primary" style="margin-top:14px" onclick="setPage('products')">
-            Browse Eligible Commodities
+          ${isTa ? "உங்கள் ரேஷன் தயாரிப்புக் கூடை காலியாக உள்ளது." : "Your ration preparation cart is empty."}<br>
+          <button class="btn btn-primary" style="margin-top:14px;background:var(--tn-green);" onclick="setPage('products')">
+            ${isTa ? "பொருட்களைப் பார்க்க" : "Browse Eligible Commodities"}
           </button>
         </div>
       `}
@@ -1648,30 +1929,32 @@ function cartView() {
 
 function removeCart(i) {
   state.cart.splice(i, 1);
-  toast("Item removed from cart");
+  toast(state.lang === "தமிழ்" ? "பொருள் நீக்கப்பட்டது" : "Item removed from cart");
   render();
 }
 
 function slotsView() {
+  const isTa = state.lang === "தமிழ்";
   const c = state.citizen || { fps_shop_code: 'TN-FPS-0102', fps_shop_name: 'Mylapore TUCS Cooperative' };
+
   return shell("beneficiary", `
     <div class="two-col">
       <div class="card">
-        <h2>Choose Express Collection Slot</h2>
-        <p class="muted">Shop: <b>${c.fps_shop_code} — ${c.fps_shop_name}</b></p>
+        <h2>${t("chooseSlot")}</h2>
+        <p class="muted">${isTa ? "கடை" : "Shop"}: <b>${c.fps_shop_code} — ${c.fps_shop_name}</b></p>
         <div class="slot-grid">
           ${slots.map((s, i) => `
             <button class="slot ${state.selectedSlot === i ? 'selected' : ''}" onclick="selectSlot(${i})">
               <strong>${s[0]}</strong>
-              <span class="capacity">${s[2]} / ${s[1]} slots available</span>
-              ${(i === 2 || i === 5) ? '<br><span class="badge warning" style="margin-top:8px">Peak Window</span>' : ''}
+              <span class="capacity">${s[2]} / ${s[1]} ${t("slotsAvailable")}</span>
+              ${(i === 2 || i === 5) ? `<br><span class="badge warning" style="margin-top:8px">${t("peakWindow")}</span>` : ''}
             </button>
           `).join("")}
         </div>
         ${state.selectedSlot !== null ? `
           <div class="actions" style="margin-top:24px;">
-            <button class="btn btn-primary" style="padding:13px 24px;font-size:15px;" onclick="confirmBooking()">
-              Confirm Slot Booking ◷
+            <button class="btn btn-primary" style="padding:13px 24px;font-size:15px;background:var(--tn-green);" onclick="confirmBooking()">
+              ${t("confirmSlotBooking")}
             </button>
           </div>
         ` : ""}
@@ -1679,8 +1962,8 @@ function slotsView() {
 
       <div>
         <div class="card">
-          <h3>Real-Time Shop Crowd Analytics</h3>
-          <p class="muted">Hourly footfall distribution to help you pick the quickest window.</p>
+          <h3>${t("crowdAnalytics")}</h3>
+          <p class="muted">${t("crowdDesc")}</p>
           <div class="chart">
             ${[35, 48, 65, 42, 55, 78, 40, 31].map((v, i) => `
               <div class="bar" style="height:${v}%">
@@ -1689,13 +1972,13 @@ function slotsView() {
               </div>
             `).join("")}
           </div>
-          <small class="muted" style="display:block;margin-top:28px;">Based on current week biometric check-ins</small>
+          <small class="muted" style="display:block;margin-top:28px;">${isTa ? "நடப்பு வார பயோமெட்ரிக் வருகையின் அடிப்படையில்" : "Based on current week biometric check-ins"}</small>
         </div>
 
         <div class="card" style="margin-top:18px">
-          <h3>Collection Window</h3>
+          <h3>${t("collectionWindow")}</h3>
           <div class="timeline">
-            ${["Today", "Tomorrow", "Thursday"].map((x, i) => `
+            ${[isTa ? "இன்று" : "Today", isTa ? "நாளை" : "Tomorrow", isTa ? "வியாழன்" : "Thursday"].map((x, i) => `
               <div class="step ${i === 0 ? 'current' : ''}">
                 <div class="dot">${i + 1}</div>
                 <p>${x}</p>
@@ -1709,33 +1992,34 @@ function slotsView() {
 }
 
 function selectSlot(i) {
-  if (slots[i][2] <= 0) return toast("⚠️ No capacity remaining in this slot");
+  if (slots[i][2] <= 0) return toast(state.lang === "தமிழ்" ? "⚠️ இந்த நேரத்தில் இடங்கள் இல்லை." : "⚠️ No capacity remaining in this slot");
   state.selectedSlot = i;
   render();
 }
 
 function confirmBooking() {
   if (state.selectedSlot === null) return;
+  const isTa = state.lang === "தமிழ்";
   const s = slots[state.selectedSlot];
   const c = state.citizen || { fps_shop_code: 'TN-FPS-0102' };
   const bookingId = `TN-BK-${Date.now().toString().slice(-6)}`;
   state.booking = {
     id: bookingId,
-    date: "Today",
+    date: isTa ? "இன்று" : "Today",
     time: s[0],
     shop: c.fps_shop_code || "TN-FPS-0102"
   };
   audit("Slot Booked", s[0]);
   modal(`
     <button class="close" onclick="closeModal()">×</button>
-    <h2>Confirm Collection Slot</h2>
-    <p><b>Booking Token:</b> <code style="font-size:16px;">${bookingId}</code></p>
-    <p><b>Fair Price Shop:</b> ${state.booking.shop}</p>
-    <p><b>Time Window:</b> ${s[0]}</p>
-    <p><b>Pre-Packed Items:</b><br>${state.cart.map(x => `• ${x.name} — ${x.qty} kg`).join("<br>") || "Standard Monthly Entitlement"}</p>
-    <span class="badge available">Express Window Reserved</span>
-    <button class="btn btn-primary" style="width:100%;margin-top:20px;padding:12px;" onclick="finishBooking()">
-      Confirm & Receive Booking Pass ✓
+    <h2>${isTa ? "நேர முன்பதிவை உறுதிசெய்க" : "Confirm Collection Slot"}</h2>
+    <p><b>${isTa ? "முன்பதிவு டோக்கன்" : "Booking Token"}:</b> <code style="font-size:16px;">${bookingId}</code></p>
+    <p><b>${isTa ? "நியாயவிலைக் கடை" : "Fair Price Shop"}:</b> ${state.booking.shop}</p>
+    <p><b>${isTa ? "நேரம்" : "Time Window"}:</b> ${s[0]}</p>
+    <p><b>${isTa ? "பொருட்கள்" : "Pre-Packed Items"}:</b><br>${state.cart.map(x => `• ${isTa ? (x.nameTa || x.name) : x.name} — ${x.qty} ${t("kg")}`).join("<br>") || (isTa ? "மாதாந்திர அத்தியாவசிய ஒதுக்கீடு" : "Standard Monthly Entitlement")}</p>
+    <span class="badge available">${isTa ? "விரைவு கவுண்டர் இடம் உறுதி செய்யப்பட்டது" : "Express Window Reserved"}</span>
+    <button class="btn btn-primary" style="width:100%;margin-top:20px;padding:12px;background:var(--tn-green);" onclick="finishBooking()">
+      ${isTa ? "டோக்கன் பெற்று உறுதிசெய்க ✓" : "Confirm & Receive Booking Pass ✓"}
     </button>
   `);
 }
@@ -1744,30 +2028,32 @@ function finishBooking() {
   closeModal();
   state.booking.status = "Booked";
   state.notifications.unshift({
-    text: `Slot confirmed for ${state.booking.time}. Show your token ${state.booking.id} at the counter.`,
+    text: state.lang === "தமிழ்" ? `முன்பதிவு உறுதி செய்யப்பட்டது (${state.booking.time}). கவுண்டரில் டோக்கன் ${state.booking.id} காட்டவும்.` : `Slot confirmed for ${state.booking.time}. Show token ${state.booking.id} at the counter.`,
     type: "Bookings",
     time: "Now"
   });
   audit("Booking Confirmed", state.booking.id);
-  toast(`✓ Slot Confirmed! Pass Token: ${state.booking.id}`);
+  toast(state.lang === "தமிழ்" ? `✓ முன்பதிவு உறுதியானது! டோக்கன்: ${state.booking.id}` : `✓ Slot Confirmed! Pass Token: ${state.booking.id}`);
   setPage("bookings");
 }
 
 function bookingsView() {
+  const isTa = state.lang === "தமிழ்";
+
   return shell("beneficiary", `
     <div class="card">
-      <h2>My Active Collection Bookings</h2>
+      <h2>${isTa ? "என் நேர முன்பதிவுகள்" : "My Active Collection Bookings"}</h2>
       ${state.booking ? `
         <div class="two-col">
           <div>
             <div class="notice">
-              <b>Booking Token:</b> <code style="font-size:16px;background:#fff;padding:2px 8px;border-radius:4px;">${state.booking.id}</code>
+              <b>${isTa ? "முன்பதிவு டோக்கன்" : "Booking Token"}:</b> <code style="font-size:16px;background:#fff;padding:2px 8px;border-radius:4px;">${state.booking.id}</code>
             </div>
             <h3>${state.booking.shop}</h3>
-            <p><b>Collection Day:</b> ${state.booking.date}<br><b>Time Slot:</b> ${state.booking.time}</p>
-            <span class="badge booked">BOOKED & RESERVED</span>
+            <p><b>${isTa ? "நாள்" : "Day"}:</b> ${state.booking.date}<br><b>${isTa ? "நேரம்" : "Time Slot"}:</b> ${state.booking.time}</p>
+            <span class="badge booked">${isTa ? "முன்பதிவு செய்யப்பட்டுள்ளது" : "BOOKED & RESERVED"}</span>
             <div class="timeline" style="margin-top:24px">
-              ${["Booked", "Pre-Packed", "Biometric Auth", "Handed Over"].map((x, i) => `
+              ${[isTa ? "முன்பதிவு" : "Booked", isTa ? "பேக்கிங்" : "Pre-Packed", isTa ? "கைரேகை" : "Biometric Auth", isTa ? "விநியோகம்" : "Handed Over"].map((x, i) => `
                 <div class="step ${i === 0 ? 'current' : ''}">
                   <div class="dot">${i + 1}</div>
                   <p>${x}</p>
@@ -1776,20 +2062,27 @@ function bookingsView() {
             </div>
           </div>
           <div class="rule">
-            <h3>How to Collect at FPS</h3>
+            <h3>${isTa ? "பொருட்களைப் பெறும் முறை" : "How to Collect at FPS"}</h3>
             <p class="muted">
-              1. Arrive 5 minutes before your time window.<br>
-              2. Proceed directly to the Express Collection Counter.<br>
-              3. Present your token number or Smart Card.<br>
-              4. Complete Aadhaar biometric authentication to receive your ration.
+              ${isTa ? `
+                1. தங்களுக்குரிய நேரத்திற்கு 5 நிமிடங்களுக்கு முன் வரவும்.<br>
+                2. நேராக விரைவு கவுண்டருக்குச் செல்லவும்.<br>
+                3. டோக்கன் எண் அல்லது ஸ்மார்ட் கார்டைக் காட்டவும்.<br>
+                4. பயோமெட்ரிக் கைரேகை பதிவு செய்து பொருட்களைப் பெறவும்.
+              ` : `
+                1. Arrive 5 minutes before your time window.<br>
+                2. Proceed directly to the Express Collection Counter.<br>
+                3. Present your token number or Smart Card.<br>
+                4. Complete Aadhaar biometric authentication to receive your ration.
+              `}
             </p>
           </div>
         </div>
       ` : `
         <div class="empty">
-          You have no active slot bookings.<br>
-          <button class="btn btn-primary" style="margin-top:14px" onclick="setPage('slots')">
-            Book an Express Slot
+          ${isTa ? "தற்போது எந்த முன்பதிவும் இல்லை." : "You have no active slot bookings."}<br>
+          <button class="btn btn-primary" style="margin-top:14px;background:var(--tn-green);" onclick="setPage('slots')">
+            ${isTa ? "விரைவு நேர முன்பதிவு செய்க" : "Book an Express Slot"}
           </button>
         </div>
       `}
@@ -1798,58 +2091,60 @@ function bookingsView() {
 }
 
 function historyView() {
+  const isTa = state.lang === "தமிழ்";
+
   return shell("beneficiary", `
     <div class="card">
-      <h2>My Collection History (விநியோக வரலாறு)</h2>
+      <h2>${isTa ? "விநியோக வரலாறு" : "My Collection History"}</h2>
       <div class="table-wrap">
         <table class="table">
           <thead>
             <tr>
-              <th>Commodity</th>
-              <th>Entitled</th>
-              <th>Requested</th>
-              <th>Packed</th>
-              <th>Collected</th>
-              <th>Pending</th>
-              <th>Status</th>
+              <th>${isTa ? "பொருள்" : "Commodity"}</th>
+              <th>${isTa ? "ஒதுக்கீடு" : "Entitled"}</th>
+              <th>${isTa ? "கோரியது" : "Requested"}</th>
+              <th>${isTa ? "பேக்கிங்" : "Packed"}</th>
+              <th>${isTa ? "பெற்றது" : "Collected"}</th>
+              <th>${isTa ? "மீதம்" : "Pending"}</th>
+              <th>${isTa ? "நிலை" : "Status"}</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td><b>Rice (அரிசி)</b></td>
-              <td>20 kg</td>
-              <td>20 kg</td>
-              <td>20 kg</td>
-              <td>20 kg</td>
-              <td>0 kg</td>
-              <td><span class="badge collected">Collected</span></td>
+              <td><b>${t("rice")}</b></td>
+              <td>20 ${t("kg")}</td>
+              <td>20 ${t("kg")}</td>
+              <td>20 ${t("kg")}</td>
+              <td>20 ${t("kg")}</td>
+              <td>0 ${t("kg")}</td>
+              <td><span class="badge collected">${isTa ? "பெறப்பட்டது" : "Collected"}</span></td>
             </tr>
             <tr>
-              <td><b>Sugar (சர்க்கரை)</b></td>
-              <td>2 kg</td>
-              <td>2 kg</td>
-              <td>2 kg</td>
-              <td>2 kg</td>
-              <td>0 kg</td>
-              <td><span class="badge collected">Collected</span></td>
+              <td><b>${t("sugar")}</b></td>
+              <td>2 ${t("kg")}</td>
+              <td>2 ${t("kg")}</td>
+              <td>2 ${t("kg")}</td>
+              <td>2 ${t("kg")}</td>
+              <td>0 ${t("kg")}</td>
+              <td><span class="badge collected">${isTa ? "பெறப்பட்டது" : "Collected"}</span></td>
             </tr>
             <tr>
-              <td><b>Dhal (பருப்பு)</b></td>
-              <td>1 kg</td>
-              <td>1 kg</td>
-              <td>0 kg</td>
-              <td>0 kg</td>
-              <td>1 kg</td>
-              <td><span class="badge out">Awaiting Stock</span></td>
+              <td><b>${t("dal")}</b></td>
+              <td>1 ${t("kg")}</td>
+              <td>1 ${t("kg")}</td>
+              <td>0 ${t("kg")}</td>
+              <td>0 ${t("kg")}</td>
+              <td>1 ${t("kg")}</td>
+              <td><span class="badge out">${isTa ? "சரக்கு வரவுள்ளது" : "Awaiting Stock"}</span></td>
             </tr>
           </tbody>
         </table>
       </div>
 
       <div class="card" style="margin-top:22px;box-shadow:none;background:#fafbfc;">
-        <h3>Item-Level Traceability Lifecycle</h3>
+        <h3>${isTa ? "விநியோக படிநிலைகள்" : "Item-Level Traceability Lifecycle"}</h3>
         <div class="timeline">
-          ${["Eligible", "Requested", "Restocked", "Slot Booked", "Staff Packed", "Biometric Auth", "Handed Over"].map((x, i) => `
+          ${[isTa ? "ஒதுக்கீடு" : "Eligible", isTa ? "கோரிக்கை" : "Requested", isTa ? "சரக்கு வரவு" : "Restocked", isTa ? "முன்பதிவு" : "Slot Booked", isTa ? "பேக்கிங்" : "Staff Packed", isTa ? "கைரேகை" : "Biometric Auth", isTa ? "வழங்கப்பட்டது" : "Handed Over"].map((x, i) => `
             <div class="step ${i < 3 ? 'done' : ''} ${i === 2 ? 'current' : ''}">
               <div class="dot">${i + 1}</div>
               <p>${x}</p>
@@ -1862,41 +2157,43 @@ function historyView() {
 }
 
 function locationView() {
+  const isTa = state.lang === "தமிழ்";
   const c = state.citizen || { fps_shop_code: 'TN-FPS-0102' };
+
   return shell("beneficiary", `
     <div class="two-col">
       <div class="card">
-        <h2>Change Collection Location (Portability)</h2>
-        <label>Current Assigned Shop</label>
+        <h2>${isTa ? "கடை மாற்றம் (Portability)" : "Change Collection Location (Portability)"}</h2>
+        <label>${isTa ? "தற்போதைய நியாயவிலைக் கடை" : "Current Assigned Shop"}</label>
         <input value="${c.fps_shop_code || state.location} — Mylapore TUCS" disabled>
 
-        <label>New Portability Location</label>
+        <label>${isTa ? "மாற விரும்பும் புதிய கடை" : "New Portability Location"}</label>
         <select id="newLocation">
-          <option>TN-FPS-0103 — Alwarpet Primary Cooperative Store</option>
-          <option>TN-FPS-0104 — Triplicane Urban Cooperative Outlet</option>
-          <option>TN-FPS-0105 — Royapettah Fair Price Center</option>
+          <option>TN-FPS-0103 — ஆழ்வார்பேட்டை கூட்டுறவு அங்காடி</option>
+          <option>TN-FPS-0104 — திருவல்லிக்கேணி கூட்டுறவு கடை</option>
+          <option>TN-FPS-0105 — ராயப்பேட்டை நியாயவிலைக் கடை</option>
         </select>
 
-        <label>Reason for Temporary Transfer</label>
-        <textarea id="reason" rows="3" placeholder="e.g. Temporary work transfer, family relocation"></textarea>
+        <label>${isTa ? "மாற்றத்திற்கான காரணம்" : "Reason for Temporary Transfer"}</label>
+        <textarea id="reason" rows="3" placeholder="${isTa ? 'எ.கா: தற்காலிக பணி மாற்றம், இருப்பிட மாற்றம்' : 'e.g. Temporary work transfer, family relocation'}"></textarea>
 
         <label style="font-weight:600;margin-top:14px;">
           <input type="checkbox" id="locationConfirm" style="width:auto"> 
-          I confirm that this portability transfer is for monthly ration collection under One Nation One Ration Card (ONORC) guidelines.
+          ${isTa ? "ஒரே நாடு ஒரே ரேஷன் அட்டை விதிகளின்படி இந்த மாத ரேஷன் பொருட்களைப் பெற கடை மாற்றத்தை உறுதி செய்கிறேன்." : "I confirm that this portability transfer is for monthly ration collection under One Nation One Ration Card (ONORC) guidelines."}
         </label>
 
-        <button class="btn btn-primary" style="margin-top:16px;" onclick="changeLocation()">
-          Confirm Location Change
+        <button class="btn btn-primary" style="margin-top:16px;background:var(--tn-green);" onclick="changeLocation()">
+          ${isTa ? "கடை மாற்றத்தை உறுதிசெய்க" : "Confirm Location Change"}
         </button>
       </div>
 
       <div class="card">
-        <h3>Portability Regulations</h3>
+        <h3>${isTa ? "கடை மாற்ற விதிமுறைகள்" : "Portability Regulations"}</h3>
         <div class="notice">
-          No manual office approvals required. Instant digital shop migration is supported under National Food Security Act portability guidelines.
+          ${isTa ? "அலுவலகத்திற்கு நேரில் செல்ல வேண்டிய அவசியமில்லை. தேசிய உணவுப் பாதுகாப்புச் சட்ட விதிகளின்படி உடனடியாக டிஜிட்டல் முறையில் கடை மாற்றிக்கொள்ளலாம்." : "No manual office approvals required. Instant digital shop migration is supported under National Food Security Act portability guidelines."}
         </div>
         <p class="muted">
-          Location changes are valid for the active monthly cycle. You can switch back or choose another shop in subsequent cycles.
+          ${isTa ? "இந்த மாற்றம் நடப்பு மாதத்திற்கு மட்டுமே பொருந்தும். அடுத்த மாதத்தில் தங்களது சொந்த கடைக்கு தானாகவே மாறிவிடும்." : "Location changes are valid for the active monthly cycle. You can switch back or choose another shop in subsequent cycles."}
         </p>
       </div>
     </div>
@@ -1904,32 +2201,48 @@ function locationView() {
 }
 
 function changeLocation() {
-  if (state.collectionDone) return toast("⚠️ Location change blocked after monthly collection is already done.");
-  if (!document.getElementById("locationConfirm").checked) return toast("⚠️ Please check the declaration checkbox.");
+  const isTa = state.lang === "தமிழ்";
+  if (state.collectionDone) return toast(isTa ? "⚠️ ஏற்கனவே இந்த மாதம் பொருட்கள் பெறப்பட்டுவிட்டதால் கடை மாற்ற இயலாது." : "⚠️ Location change blocked after monthly collection is already done.");
+  if (!document.getElementById("locationConfirm").checked) return toast(isTa ? "⚠️ உறுதிமொழிப் பெட்டியை டிக் செய்யவும்." : "⚠️ Please check the declaration checkbox.");
   state.location = document.getElementById("newLocation").value.split("—")[0].trim();
   state.locationChanged = true;
   audit("Collection Location Changed", state.location);
-  toast(`✓ Collection shop transferred to ${state.location}`);
+  toast(isTa ? `✓ நியாயவிலைக் கடை ${state.location} ஆக மாற்றப்பட்டது` : `✓ Collection shop transferred to ${state.location}`);
   render();
 }
 
 function flowView() {
+  const isTa = state.lang === "தமிழ்";
+
+  const steps = isTa ? [
+    "பயனாளர் உள்நுழைவு (ntfy செயலி மூலம் கைபேசி OTP)",
+    "ஆதார் / ஸ்மார்ட் கார்டு சரிபார்ப்பு",
+    "நியாயவிலைக் கடை இருப்பு நிலையை அறிதல்",
+    "தேவையான பொருட்களைத் தேர்வு செய்தல் & தயாரிப்புக் கூடை",
+    "15-நிமிட விரைவு நேர முன்பதிவு",
+    "கடை ஊழியர் முன்கூட்டியே பைகளில் பேக்கிங் செய்தல்",
+    "பயனாளர் விரைவு கவுண்டருக்கு வருதல்",
+    "ePOS கருவியில் கைரேகை / கண்விழி சரிபார்ப்பு",
+    "பொருட்கள் ஒப்படைப்பு & டிஜிட்டல் ரசீது",
+    "மாநில உணவு வழங்கல் துறை மத்திய இருப்பு கணக்கில் உடனடிப் பதிவு"
+  ] : [
+    "Beneficiary Login (Push Notification OTP via ntfy)",
+    "Aadhaar / Smart Card Verification",
+    "Allotted Fair Price Shop Stock Verification",
+    "Eligible Commodity Selection & Ration Cart",
+    "Express 15-Minute Slot Booking",
+    "FPS Staff Advance Packing & Bagging",
+    "Beneficiary Arrival at Express Counter",
+    "ePOS Biometric Fingerprint / Iris Handshake",
+    "Commodity Handover & Transparent Digital Receipt",
+    "Central Civil Supplies Inventory Auto-Reconciliation"
+  ];
+
   return shell("beneficiary", `
     <div class="card">
-      <h2 style="text-align:center">End-to-End System Workflow</h2>
+      <h2 style="text-align:center">${isTa ? "திட்டத்தின் முழு செயல்முறை வரைபடம்" : "End-to-End System Workflow"}</h2>
       <div class="flow">
-        ${[
-          "Beneficiary Login (Push Notification OTP via ntfy)",
-          "Aadhaar / Smart Card Verification",
-          "Allotted Fair Price Shop Stock Verification",
-          "Eligible Commodity Selection & Ration Cart",
-          "Express 15-Minute Slot Booking",
-          "FPS Staff Advance Packing & Bagging",
-          "Beneficiary Arrival at Express Counter",
-          "ePOS Biometric Fingerprint / Iris Handshake",
-          "Commodity Handover & Transparent Digital Receipt",
-          "Central Civil Supplies Inventory Auto-Reconciliation"
-        ].map((x, i) => `
+        ${steps.map((x, i) => `
           <div class="flow-item">${i + 1}. ${x}</div>
           ${i < 9 ? '<div class="arrow">↓</div>' : ''}
         `).join("")}
@@ -1939,14 +2252,16 @@ function flowView() {
 }
 
 function notificationsView() {
+  const isTa = state.lang === "தமிழ்";
+
   return shell("beneficiary", `
     <div class="card">
-      <h2>Notification Centre (அறிவிப்புகள்)</h2>
+      <h2>${isTa ? "அறிவிப்பு மையம்" : "Notification Centre"}</h2>
       <div class="actions" style="margin-bottom:18px;">
-        <span class="badge booked">All</span>
-        <span class="badge purple">Bookings</span>
-        <span class="badge warning">Stock</span>
-        <span class="badge collected">Collection</span>
+        <span class="badge booked">${isTa ? "அனைத்தும்" : "All"}</span>
+        <span class="badge purple">${isTa ? "முன்பதிவுகள்" : "Bookings"}</span>
+        <span class="badge warning">${isTa ? "சரக்கு இருப்பு" : "Stock"}</span>
+        <span class="badge collected">${isTa ? "விநியோகம்" : "Collection"}</span>
       </div>
       ${state.notifications.map(n => `
         <div class="notice" style="margin:10px 0">
@@ -1959,24 +2274,26 @@ function notificationsView() {
 }
 
 function helpView() {
+  const isTa = state.lang === "தமிழ்";
+
   return shell("beneficiary", `
     <div class="card">
-      <h2>Citizen Support & Grievance Helpline</h2>
-      <p class="muted">Department of Civil Supplies and Consumer Protection, Government of Tamil Nadu.</p>
+      <h2>${isTa ? "குடிமக்கள் உதவி மையம் & புகார் பிரிவு" : "Citizen Support & Grievance Helpline"}</h2>
+      <p class="muted">${t("footerDept")}</p>
       <div class="stat-grid" style="margin:20px 0;">
         <div class="stat-card">
-          <div class="label">Toll-Free Helpline</div>
+          <div class="label">${isTa ? "கட்டணமில்லா உதவி எண்" : "Toll-Free Helpline"}</div>
           <div class="num" style="font-size:22px;">1967</div>
-          <div class="sub">24x7 Support</div>
+          <div class="sub">${isTa ? "24 மணி நேர சேவை" : "24x7 Support"}</div>
         </div>
         <div class="stat-card">
-          <div class="label">Consumer Grievance</div>
+          <div class="label">${isTa ? "நுகர்வோர் குறைதீர்ப்பு எண்" : "Consumer Grievance"}</div>
           <div class="num" style="font-size:22px;">1800-425-5901</div>
-          <div class="sub">Free Calling</div>
+          <div class="sub">${isTa ? "இலவச அழைப்பு" : "Free Calling"}</div>
         </div>
       </div>
       <div class="notice">
-        <b>Fraud Prevention:</b> Never share your OTP with shopkeepers or unauthorized agents. The Fair Price Shop staff will only require your biometric confirmation during handover.
+        <b>${isTa ? "மோசடி தடுப்பு எச்சரிக்கை" : "Fraud Prevention"}:</b> ${isTa ? "உங்கள் OTP எண்ணை எவருடனும் பகிர வேண்டாம். நியாயவிலைக் கடையில் பொருட்கள் பெறும்போது கைரேகை மட்டுமே போதுமானது." : "Never share your OTP with shopkeepers or unauthorized agents. The Fair Price Shop staff will only require your biometric confirmation during handover."}
       </div>
     </div>
   `, `help`);
@@ -2424,7 +2741,7 @@ function officialSimple(title, active, body) {
 function openNotifications() {
   modal(`
     <button class="close" onclick="closeModal()">×</button>
-    <h2>Notifications & Real-Time Alerts</h2>
+    <h2>${state.lang === "தமிழ்" ? "அறிவிப்புகள் & நேரலை எச்சரிக்கைகள்" : "Notifications & Real-Time Alerts"}</h2>
     ${state.notifications.slice(0, 6).map(n => `
       <div class="notice" style="margin:10px 0;">
         <b>${n.text}</b><br>
@@ -2464,13 +2781,14 @@ function render() {
   else if (p === "audit") root.innerHTML = auditView();
   else if (p === "official") root.innerHTML = officialDashboard();
   else if (["shops", "stockofficial", "analytics", "slotdemand", "notifyofficial", "collections"].includes(p)) {
+    const isTa = state.lang === "தமிழ்";
     const titles = {
-      shops: "Fair Price Shops Overview",
-      stockofficial: "Stock Reconciliation Monitoring",
-      analytics: "Distribution Analytics",
-      slotdemand: "Hourly Demand Hotspots",
-      notifyofficial: "Restock Notification Funnel",
-      collections: "Verified Handover Reports"
+      shops: isTa ? "நியாயவிலைக் கடைகள் பட்டியல்" : "Fair Price Shops Overview",
+      stockofficial: isTa ? "இருப்பு கண்காணிப்பு" : "Stock Reconciliation Monitoring",
+      analytics: isTa ? "விநியோக பகுப்பாய்வு" : "Distribution Analytics",
+      slotdemand: isTa ? "நேரத் தேவை அளவீடு" : "Hourly Demand Hotspots",
+      notifyofficial: isTa ? "அறிவிப்புக் கோரிக்கைகள்" : "Restock Notification Funnel",
+      collections: isTa ? "விநியோக அறிக்கைகள்" : "Verified Handover Reports"
     };
     const bodies = {
       shops: `<div class="notice">128 registered Fair Price Shops across Chennai and suburban taluks.</div><div class="stat-grid"><div class="stat-card"><div class="label">Open Shops</div><div class="num">119</div></div><div class="stat-card"><div class="label">Stock Critical</div><div class="num">9</div></div></div>`,
