@@ -939,8 +939,9 @@ const state = {
   ],
   // 2-Step Login State (Name + Password -> Mobile OTP Verification)
   authStep: 1, // 1 = Name + Password, 2 = Mobile OTP
-  inputName: 'Vijay Anand',
-  inputPassword: 'vijay123',
+  isAdminVerified: false, // Default is false for normal citizens (autofill, presets & dev OTP hidden)
+  inputName: '',
+  inputPassword: '',
   showPassword: false,
   selectedMobile: '6382826805',
   selectedCardNo: '33/S/0998877',
@@ -1254,7 +1255,7 @@ function quickLoginCitizen(mobile) {
   if (c) {
     state.inputName = c.full_name;
     const firstName = c.full_name.toLowerCase().split(' ')[0];
-    state.inputPassword = c.password || `${firstName}123`;
+    state.inputPassword = state.isAdminVerified ? (c.password || `${firstName}123`) : '';
     state.selectedCardNo = c.smart_card_no;
   }
   state.authStep = 1;
@@ -1272,7 +1273,7 @@ function onCitizenSelectChange(mobile) {
   if (found) {
     state.inputName = found.full_name;
     const firstName = found.full_name.toLowerCase().split(' ')[0];
-    state.inputPassword = found.password || `${firstName}123`;
+    state.inputPassword = state.isAdminVerified ? (found.password || `${firstName}123`) : '';
     state.selectedCardNo = found.smart_card_no;
   }
   state.authStep = 1;
@@ -1317,16 +1318,106 @@ function toggleRegisterForm() {
   render();
 }
 
+function openAdminModal() {
+  const isTa = state.lang === "தமிழ்";
+  modal(`
+    <div style="text-align:center;padding:12px 6px;">
+      <div style="font-size:42px;margin-bottom:8px;">🛡️</div>
+      <h2 style="font-size:20px;color:var(--tn-black);margin-bottom:8px;font-weight:800;">
+        ${isTa ? 'நிர்வாகி சரிபார்ப்பாளர் உள்நுழைவு' : 'Admin Verifier Authentication'}
+      </h2>
+      <p class="muted" style="font-size:13px;line-height:1.5;margin-bottom:20px;">
+        ${isTa 
+          ? 'தானியங்கு நிரப்புதல், மாதிரி கணக்குகள் மற்றும் டெவலப்பர் OTP கருவிகளைத் திறக்க நிர்வாக கடவுச்சொல்லை உள்ளிடவும்.' 
+          : 'Enter the Admin Password (tnpds123) to unlock autofill options, citizen presets, and developer OTP tools.'}
+      </p>
+
+      <form onsubmit="event.preventDefault(); verifyAdminPassword();">
+        <div style="text-align:left;margin-bottom:18px;">
+          <label style="font-size:12px;font-weight:700;margin-bottom:6px;display:block;">
+            🔒 ${isTa ? 'நிர்வாக கடவுச்சொல்' : 'Admin Password'}
+          </label>
+          <input 
+            type="password" 
+            id="adminSecretPassword" 
+            placeholder="${isTa ? 'கடவுச்சொல்லை உள்ளிடவும் (tnpds123)' : 'Enter admin password (tnpds123)'}" 
+            style="font-size:14px;padding:12px;width:100%;border:1px solid #cbd5e1;border-radius:8px;"
+            autofocus
+            required
+          >
+          <div style="font-size:11px;color:#64748b;margin-top:6px;">
+            🔑 ${isTa ? 'நிர்வாக கடவுச்சொல்:' : 'Admin Key:'} <code>tnpds123</code>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:10px;">
+          <button type="button" class="btn btn-outline" style="flex:1;" onclick="closeModal()">
+            ${isTa ? 'ரத்து' : 'Cancel'}
+          </button>
+          <button type="submit" class="btn btn-primary" style="flex:1;font-weight:800;">
+            ${isTa ? 'சரிபார்த்து திற' : 'Verify & Unlock 🔓'}
+          </button>
+        </div>
+      </form>
+    </div>
+  `);
+
+  setTimeout(() => {
+    const input = document.getElementById('adminSecretPassword');
+    if (input) input.focus();
+  }, 100);
+}
+
+function verifyAdminPassword() {
+  const input = document.getElementById('adminSecretPassword');
+  const password = input ? input.value.trim() : '';
+
+  if (password === 'tnpds123') {
+    state.isAdminVerified = true;
+    closeModal();
+    const sel = state.citizensList.find(c => c.mobile_number === state.selectedMobile) || state.citizensList[0];
+    state.inputName = sel.full_name;
+    const firstName = sel.full_name.toLowerCase().split(' ')[0];
+    state.inputPassword = sel.password || `${firstName}123`;
+    toast(state.lang === "தமிழ்" ? "🛡️ நிர்வாகி சரிபார்ப்பு வெற்றிகரமாக முடிந்தது! Autofill திறக்கப்பட்டது." : "🛡️ Admin Verifier Verified! Autofill & Dev OTP Unlocked.");
+    render();
+  } else {
+    toast(state.lang === "தமிழ்" ? "❌ தவறான நிர்வாக கடவுச்சொல். அனுமதி மறுக்கப்பட்டது." : "❌ Incorrect admin password. Access denied.");
+    if (input) {
+      input.value = '';
+      input.focus();
+    }
+  }
+}
+
+function exitAdminMode() {
+  state.isAdminVerified = false;
+  state.inputName = "";
+  state.inputPassword = "";
+  state.devOtp = null;
+  toast(state.lang === "தமிழ்" ? "🔒 நிர்வாகி முறை பூட்டப்பட்டது. பொது பயனாளி முறைக்கு மாறியது." : "🔒 Admin Verifier Locked. Switched to Normal Citizen View.");
+  render();
+}
+
 // =====================================================================
 // Beneficiary Login & 2FA OTP System (Name + Password -> Mobile OTP)
 // =====================================================================
 function loginView() {
   const isTa = state.lang === "தமிழ்";
   const selectedCitizen = state.citizensList.find(c => c.mobile_number === state.selectedMobile) || state.citizensList[0];
-  const currentName = state.inputName !== undefined ? state.inputName : selectedCitizen.full_name;
   const firstName = selectedCitizen.full_name.toLowerCase().split(' ')[0];
   const demoPass = selectedCitizen.password || `${firstName}123`;
-  const currentPassword = state.inputPassword !== undefined ? state.inputPassword : demoPass;
+
+  // Normal users: blank inputs by default (no autofill)
+  // Admin users: pre-fills with selected citizen
+  let currentName = state.inputName || "";
+  let currentPassword = state.inputPassword || "";
+
+  if (state.isAdminVerified) {
+    if (!currentName) currentName = selectedCitizen.full_name;
+    if (!currentPassword) currentPassword = demoPass;
+  }
+
   const mobile = state.selectedMobile || selectedCitizen.mobile_number;
   const ntfyTopic = `tnpds-${mobile}`;
 
@@ -1335,6 +1426,22 @@ function loginView() {
     <div class="login-box" style="max-width:520px;padding:32px 30px;">
       <div class="login-stripe"></div>
       
+      <!-- Admin Verifier Mode Header Bar -->
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid #f1f5f9;">
+        <span style="font-size:12px;color:#64748b;font-weight:700;">
+          ${state.isAdminVerified ? `🛡️ <b style="color:var(--tn-green);">${isTa ? 'நிர்வாகி முறை செயலில் உள்ளது' : 'Admin Verifier Mode Active'}</b>` : `👤 ${isTa ? 'பொது பயனாளி உள்நுழைவு' : 'Citizen Login'}`}
+        </span>
+        ${state.isAdminVerified ? `
+          <button type="button" onclick="exitAdminMode()" style="background:#fee2e2;border:1px solid #fca5a5;color:#b91c1c;padding:3px 10px;border-radius:6px;font-size:11px;font-weight:800;cursor:pointer;">
+            🔒 ${isTa ? 'வெளியேறு' : 'Lock Admin'}
+          </button>
+        ` : `
+          <button type="button" onclick="openAdminModal()" style="background:#f1f5f9;border:1px solid #cbd5e1;color:#334155;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:4px;">
+            🛡️ ${isTa ? 'நிர்வாகி சரிபார்ப்பாளர்' : 'Admin Verifier'}
+          </button>
+        `}
+      </div>
+
       <!-- Official Emblem Branding Header -->
       <div style="text-align:center;margin-bottom:16px;">
         <img src="tn-emblem.png" class="brand-emblem-large" alt="Tamil Nadu Government Emblem" style="width:72px;height:72px;object-fit:contain;margin-bottom:6px;">
@@ -1362,19 +1469,21 @@ function loginView() {
           ${t("step1Desc")}
         </p>
 
-        <!-- Database Citizen Quick Selector -->
-        <div style="background:#f8fafc;border:1px solid var(--border);border-left:4px solid var(--tn-green);border-radius:12px;padding:12px;margin-bottom:18px;text-align:left;">
-          <label style="margin:0 0 6px;font-size:11px;color:var(--tn-black);text-transform:uppercase;letter-spacing:0.5px;font-weight:800;">
-            👥 ${t("selectFromDb")}
-          </label>
-          <select id="citizenSelectDropdown" onchange="onCitizenSelectChange(this.value)" style="font-weight:700;font-size:13px;width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:#fff;">
-            ${state.citizensList.map(c => `
-              <option value="${c.mobile_number}" ${c.mobile_number === mobile ? "selected" : ""}>
-                ${c.full_name} (${c.district || 'TN'}) — ${c.mobile_number}
-              </option>
-            `).join("")}
-          </select>
-        </div>
+        <!-- Database Citizen Quick Selector (Admin Verifier Only) -->
+        ${state.isAdminVerified ? `
+          <div style="background:#f8fafc;border:1px solid var(--border);border-left:4px solid var(--tn-green);border-radius:12px;padding:12px;margin-bottom:18px;text-align:left;">
+            <label style="margin:0 0 6px;font-size:11px;color:var(--tn-black);text-transform:uppercase;letter-spacing:0.5px;font-weight:800;">
+              👥 ${t("selectFromDb")} (Admin Tool)
+            </label>
+            <select id="citizenSelectDropdown" onchange="onCitizenSelectChange(this.value)" style="font-weight:700;font-size:13px;width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:#fff;">
+              ${state.citizensList.map(c => `
+                <option value="${c.mobile_number}" ${c.mobile_number === mobile ? "selected" : ""}>
+                  ${c.full_name} (${c.district || 'TN'}) — ${c.mobile_number}
+                </option>
+              `).join("")}
+            </select>
+          </div>
+        ` : ""}
 
         <form id="loginCredentialsForm" onsubmit="event.preventDefault(); submitCredentialsAndRequestOtp();">
           <!-- Citizen Name / Username Field -->
@@ -1384,7 +1493,7 @@ function loginView() {
           <input 
             id="loginName" 
             value="${currentName}" 
-            placeholder="e.g. Vijay Anand" 
+            placeholder="${isTa ? 'உங்கள் பெயரை உள்ளிடவும் (எ.கா. Vijay Anand)' : 'Enter your registered name (e.g. Vijay Anand)'}" 
             oninput="state.inputName=this.value"
             style="font-size:14px;font-weight:600;padding:12px 14px;"
             required
@@ -1413,13 +1522,17 @@ function loginView() {
             >
           </div>
 
-          <!-- Password Auto-Fill Hint Box -->
-          <div style="margin:10px 0 18px;font-size:12px;color:#475569;background:#f1f5f9;border:1px solid #e2e8f0;padding:8px 12px;border-radius:8px;display:flex;justify-content:space-between;align-items:center;">
-            <span>💡 ${t("demoPassHint")}: <code style="font-weight:800;color:var(--tn-green);font-size:13px;">${demoPass}</code></span>
-            <button type="button" class="btn" style="background:#fff;border:1px solid #cbd5e1;padding:4px 9px;font-size:11px;border-radius:6px;cursor:pointer;font-weight:700;" onclick="fillPassword('${demoPass}')">
-              ${t("autoFill")} ⚡
-            </button>
-          </div>
+          <!-- Password Auto-Fill Hint Box (Admin Verifier Only) -->
+          ${state.isAdminVerified ? `
+            <div style="margin:10px 0 18px;font-size:12px;color:#475569;background:#f1f5f9;border:1px solid #e2e8f0;padding:8px 12px;border-radius:8px;display:flex;justify-content:space-between;align-items:center;">
+              <span>💡 ${t("demoPassHint")}: <code style="font-weight:800;color:var(--tn-green);font-size:13px;">${demoPass}</code></span>
+              <button type="button" class="btn" style="background:#fff;border:1px solid #cbd5e1;padding:4px 9px;font-size:11px;border-radius:6px;cursor:pointer;font-weight:700;" onclick="fillPassword('${demoPass}')">
+                ${t("autoFill")} ⚡
+              </button>
+            </div>
+          ` : `
+            <div style="margin-bottom:14px;"></div>
+          `}
 
           <!-- Primary Submit Button -->
           <button 
@@ -1505,8 +1618,8 @@ function loginView() {
           </div>
         </div>
 
-        <!-- Dev Mode OTP Chip -->
-        ${state.devOtp ? `
+        <!-- Dev Mode OTP Chip (Admin Verifier Only) -->
+        ${(state.isAdminVerified && state.devOtp) ? `
           <div class="demo-note" style="cursor:pointer;margin:12px 0 16px;" onclick="autofillOtp('${state.devOtp}')">
             ⚡ <b>Dev Mode OTP: <code style="font-size:16px;background:#fecaca;color:var(--tn-red-dark);padding:2px 8px;border-radius:4px;">${state.devOtp}</code></b> (Click to autofill)
           </div>
@@ -1566,7 +1679,6 @@ function loginView() {
       <button class="btn btn-outline" style="width:100%;margin-top:14px;font-size:13px;" onclick="setPage('landing')">
         ${t("backHome")}
       </button>
-    </div>
   </div>`;
 }
 

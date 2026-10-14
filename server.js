@@ -524,7 +524,20 @@ app.post('/api/register-citizen', async (req, res) => {
 });
 
 // ---------------------------------------------------------------
-// 7. Health Check
+// 7. API Route: Admin Verifier Authentication
+// ---------------------------------------------------------------
+app.post('/api/verify-admin', (req, res) => {
+  const { password } = req.body;
+  if (password && String(password).trim() === 'tnpds123') {
+    console.log('🛡️ Admin Verifier authenticated successfully.');
+    return res.json({ success: true, message: 'Admin verified successfully.' });
+  } else {
+    return res.status(401).json({ success: false, error: 'Incorrect admin password.' });
+  }
+});
+
+// ---------------------------------------------------------------
+// 8. Health Check
 // ---------------------------------------------------------------
 app.get('/api/health', (req, res) => {
   res.json({
