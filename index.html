@@ -8,25 +8,41 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+Tamil:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
+/* =====================================================================
+   TAMIL NADU GOVT COLOR PALETTE: GREEN, WHITE, RED & BLACK
+   ===================================================================== */
 :root {
-  --navy: #12304a;
-  --blue: #1769aa;
-  --teal: #008b8b;
-  --green: #18864b;
-  --orange: #d97706;
-  --red: #c62828;
-  --purple: #7048b8;
-  --bg: #f4f7fa;
-  --card: #fff;
-  --text: #17212b;
-  --muted: #667585;
-  --border: #dfe6ec;
-  --shadow: 0 8px 24px rgba(18,48,74,.08);
-  --radius: 16px;
   --tn-green: #0a6638;
-  --tn-maroon: #821414;
-  --tn-gold: #e5a93c;
+  --tn-green-dark: #064525;
+  --tn-green-light: #e8f7ee;
+  --tn-green-border: #bbf7d0;
+
+  --tn-red: #c62828;
+  --tn-red-dark: #8e1c1c;
+  --tn-red-light: #fef2f2;
+  --tn-red-border: #fecaca;
+
+  --tn-black: #0f172a;
+  --tn-black-pure: #000000;
+  --tn-white: #ffffff;
+
+  /* Aliased tokens matching the palette */
+  --navy: #0f172a;
+  --blue: #0a6638;
+  --teal: #0a6638;
+  --green: #0a6638;
+  --orange: #c62828;
+  --red: #c62828;
+  --purple: #0f172a;
+  --bg: #f8fafc;
+  --card: #ffffff;
+  --text: #0f172a;
+  --muted: #475569;
+  --border: #e2e8f0;
+  --shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  --radius: 14px;
 }
+
 * { box-sizing: border-box; }
 body {
   margin: 0;
@@ -39,13 +55,38 @@ button, input, select, textarea { font: inherit; }
 button { cursor: pointer; border: 0; }
 .hidden { display: none !important; }
 
+/* Emblem Images */
+.brand-emblem {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.12));
+}
+.brand-emblem-large {
+  width: 84px;
+  height: 84px;
+  object-fit: contain;
+  margin: 0 auto 12px;
+  display: block;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));
+}
+.brand-emblem-card {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  background: #ffffff;
+  border-radius: 50%;
+  padding: 3px;
+  border: 1px solid rgba(0,0,0,0.12);
+}
+
 /* Layout & Topbar */
 .app { min-height: 100vh; }
 .landing { min-height: 100vh; }
 .topbar {
-  height: 72px;
-  background: #fff;
-  border-bottom: 1px solid var(--border);
+  height: 74px;
+  background: var(--tn-white);
+  border-bottom: 2px solid var(--tn-green);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -53,6 +94,7 @@ button { cursor: pointer; border: 0; }
   position: sticky;
   top: 0;
   z-index: 20;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.04);
 }
 .brand {
   display: flex;
@@ -60,33 +102,28 @@ button { cursor: pointer; border: 0; }
   gap: 12px;
   font-size: 21px;
   font-weight: 800;
-  color: var(--navy);
+  color: var(--tn-black);
   text-decoration: none;
-}
-.brandmark {
-  width: 40px;
-  height: 40px;
-  border-radius: 11px;
-  background: var(--navy);
-  color: white;
-  display: grid;
-  place-items: center;
-  font-size: 16px;
-  font-weight: 900;
 }
 .brand-tn {
   display: flex;
   flex-direction: column;
 }
+.brand-tn span {
+  font-size: 19px;
+  font-weight: 800;
+  color: var(--tn-black);
+  line-height: 1.2;
+}
 .brand-tn small {
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--tn-green);
   letter-spacing: 0.5px;
 }
 .nav { display: flex; gap: 26px; }
-.nav a { color: #425466; text-decoration: none; font-size: 14px; font-weight: 600; }
-.nav a:hover { color: var(--blue); }
+.nav a { color: var(--tn-black); text-decoration: none; font-size: 14px; font-weight: 700; }
+.nav a:hover { color: var(--tn-green); }
 
 /* Buttons */
 .btn {
@@ -100,14 +137,14 @@ button { cursor: pointer; border: 0; }
   gap: 8px;
   text-decoration: none;
 }
-.btn-primary { background: var(--blue); color: #fff; }
-.btn-primary:hover { background: #10598f; transform: translateY(-1px); }
-.btn-outline { background: #fff; border: 1px solid var(--border); color: var(--navy); }
-.btn-outline:hover { background: #f8fafc; border-color: #cbd5e1; }
-.btn-success { background: var(--green); color: #fff; }
-.btn-success:hover { background: #136f3e; }
-.btn-warning { background: var(--orange); color: #fff; }
-.btn-danger { background: var(--red); color: #fff; }
+.btn-primary { background: var(--tn-green); color: var(--tn-white); }
+.btn-primary:hover { background: var(--tn-green-dark); transform: translateY(-1px); }
+.btn-outline { background: var(--tn-white); border: 1.5px solid var(--tn-black); color: var(--tn-black); }
+.btn-outline:hover { background: #f8fafc; border-color: var(--tn-green); color: var(--tn-green); }
+.btn-success { background: var(--tn-green); color: var(--tn-white); }
+.btn-success:hover { background: var(--tn-green-dark); }
+.btn-warning { background: var(--tn-red); color: var(--tn-white); }
+.btn-danger { background: var(--tn-red); color: var(--tn-white); }
 .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none !important; }
 
 /* Hero Section */
@@ -117,61 +154,73 @@ button { cursor: pointer; border: 0; }
   grid-template-columns: 1.1fr .9fr;
   gap: 60px;
   align-items: center;
-  background: linear-gradient(180deg, #fff, #f3f8fb);
+  background: linear-gradient(180deg, #ffffff 0%, #f0fdf4 100%);
+  border-bottom: 1px solid var(--border);
 }
 .eyebrow {
-  color: var(--teal);
+  color: var(--tn-red);
   font-weight: 800;
   font-size: 13px;
   text-transform: uppercase;
   letter-spacing: 1px;
 }
-.hero h1 { font-size: 46px; line-height: 1.18; margin: 14px 0; color: var(--navy); }
+.hero h1 { font-size: 46px; line-height: 1.18; margin: 14px 0; color: var(--tn-black); font-weight: 800; }
 .hero p { font-size: 17px; line-height: 1.7; color: var(--muted); max-width: 650px; }
 .actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 26px; }
 
 /* Hero Mini Demo */
 .hero-demo {
-  background: #fff;
+  background: var(--tn-white);
   border: 1px solid var(--border);
-  border-radius: 22px;
+  border-top: 4px solid var(--tn-green);
+  border-radius: 20px;
   padding: 24px;
   box-shadow: var(--shadow);
 }
 .mini-head { display: flex; justify-content: space-between; align-items: center; }
 .mini-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 18px; }
-.mini-card { padding: 16px; border: 1px solid var(--border); border-radius: 14px; background: #fafbfc; }
-.mini-value { font-size: 22px; font-weight: 800; color: var(--navy); margin-top: 6px; }
+.mini-card { padding: 16px; border: 1px solid var(--border); border-radius: 12px; background: #fafbfc; }
+.mini-value { font-size: 22px; font-weight: 800; color: var(--tn-black); margin-top: 6px; }
 
 /* General Sections */
 .section { padding: 70px 6%; }
-.section h2 { text-align: center; color: var(--navy); font-size: 28px; margin-bottom: 30px; }
+.section h2 { text-align: center; color: var(--tn-black); font-size: 28px; margin-bottom: 30px; font-weight: 800; }
 .feature-grid, .portal-grid, .product-grid, .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
 .feature-card, .portal-card, .card {
-  background: #fff;
+  background: var(--tn-white);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 24px;
   box-shadow: var(--shadow);
 }
-.feature-card h3, .portal-card h3 { margin: 14px 0 8px; color: var(--navy); font-size: 18px; }
+.feature-card h3, .portal-card h3 { margin: 14px 0 8px; color: var(--tn-black); font-size: 18px; font-weight: 700; }
 .feature-card p, .portal-card p { color: var(--muted); line-height: 1.6; font-size: 14px; }
 .icon {
-  width: 46px;
-  height: 46px;
+  width: 48px;
+  height: 48px;
   border-radius: 12px;
-  background: #e9f3fb;
+  background: var(--tn-green-light);
+  color: var(--tn-green);
   display: grid;
   place-items: center;
   font-size: 22px;
+  border: 1px solid var(--tn-green-border);
 }
-footer { padding: 32px 6%; background: var(--navy); color: #dce8f0; text-align: center; font-size: 13px; line-height: 1.8; }
+footer {
+  padding: 36px 6%;
+  background: var(--tn-black);
+  color: #f1f5f9;
+  text-align: center;
+  font-size: 13px;
+  line-height: 1.8;
+  border-top: 4px solid var(--tn-green);
+}
 
 /* Modals */
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(12, 28, 42, .6);
+  background: rgba(15, 23, 42, 0.7);
   display: grid;
   place-items: center;
   z-index: 100;
@@ -179,18 +228,19 @@ footer { padding: 32px 6%; background: var(--navy); color: #dce8f0; text-align: 
   backdrop-filter: blur(4px);
 }
 .modal {
-  background: #fff;
+  background: var(--tn-white);
   border-radius: 20px;
   max-width: 580px;
   width: 100%;
   padding: 30px;
-  box-shadow: 0 25px 70px rgba(0,0,0,.25);
+  box-shadow: 0 25px 70px rgba(0,0,0,.3);
   animation: slide .25s ease-out;
+  border-top: 4px solid var(--tn-green);
 }
-.modal h2 { margin-top: 0; color: var(--navy); font-size: 24px; }
+.modal h2 { margin-top: 0; color: var(--tn-black); font-size: 24px; font-weight: 800; }
 .close {
   float: right;
-  background: #eef2f5;
+  background: #f1f5f9;
   border-radius: 50%;
   width: 34px;
   height: 34px;
@@ -198,29 +248,30 @@ footer { padding: 32px 6%; background: var(--navy); color: #dce8f0; text-align: 
   font-weight: 700;
   display: grid;
   place-items: center;
+  color: var(--tn-black);
 }
 .close:hover { background: #e2e8f0; }
 .lang-options, .portal-options { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-top: 20px; }
 .portal-options { grid-template-columns: repeat(3, 1fr); }
 .choice {
-  border: 1px solid var(--border);
-  background: #fff;
+  border: 1.5px solid var(--border);
+  background: var(--tn-white);
   padding: 20px;
   border-radius: 14px;
   text-align: left;
   transition: all .2s;
 }
-.choice:hover { border-color: var(--blue); background: #f6fbff; transform: translateY(-2px); }
+.choice:hover { border-color: var(--tn-green); background: var(--tn-green-light); transform: translateY(-2px); }
 
 /* Portal & Forms */
-.portal { min-height: 100vh; padding: 60px 6%; background: #f5f8fb; }
+.portal { min-height: 100vh; padding: 60px 6%; background: var(--bg); }
 .portal-title { text-align: center; margin-bottom: 35px; }
-.portal-title h1 { color: var(--navy); font-size: 32px; }
+.portal-title h1 { color: var(--tn-black); font-size: 32px; font-weight: 800; }
 
 .login-box {
   max-width: 520px;
   margin: 20px auto;
-  background: #fff;
+  background: var(--tn-white);
   padding: 32px;
   border-radius: 20px;
   border: 1px solid var(--border);
@@ -232,57 +283,58 @@ footer { padding: 32px 6%; background: var(--navy); color: #dce8f0; text-align: 
   top: 0; left: 0; right: 0;
   height: 5px;
   border-radius: 20px 20px 0 0;
-  background: linear-gradient(90deg, var(--tn-maroon) 0%, var(--tn-green) 50%, var(--tn-gold) 100%);
+  background: linear-gradient(90deg, var(--tn-red) 0%, var(--tn-black) 45%, var(--tn-green) 100%);
 }
-label { font-size: 13px; font-weight: 700; color: #455564; display: block; margin: 16px 0 7px; text-align: left; }
+label { font-size: 13px; font-weight: 700; color: var(--tn-black); display: block; margin: 16px 0 7px; text-align: left; }
 input, select, textarea {
   width: 100%;
   padding: 12px 14px;
-  border: 1px solid #ccd6de;
+  border: 1.5px solid #cbd5e1;
   border-radius: 10px;
   outline: none;
-  background: #fff;
+  background: var(--tn-white);
+  color: var(--tn-black);
   transition: border-color .2s;
 }
-input:focus, select:focus, textarea:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(23, 105, 170, 0.12); }
+input:focus, select:focus, textarea:focus { border-color: var(--tn-green); box-shadow: 0 0 0 3px rgba(10, 102, 56, 0.15); }
 .input-prefix-box {
   display: flex;
   align-items: center;
-  background: #fff;
-  border: 1px solid #ccd6de;
+  background: var(--tn-white);
+  border: 1.5px solid #cbd5e1;
   border-radius: 10px;
   overflow: hidden;
 }
-.input-prefix-box:focus-within { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(23, 105, 170, 0.12); }
+.input-prefix-box:focus-within { border-color: var(--tn-green); box-shadow: 0 0 0 3px rgba(10, 102, 56, 0.15); }
 .input-prefix-box span {
   padding: 12px 14px;
   background: #f8fafc;
-  color: #64748b;
-  font-weight: 700;
+  color: var(--tn-black);
+  font-weight: 800;
   font-size: 13px;
-  border-right: 1px solid #ccd6de;
+  border-right: 1.5px solid #cbd5e1;
   user-select: none;
 }
 .input-prefix-box input { border: 0; box-shadow: none; border-radius: 0; }
 
 .demo-note {
-  background: #fff8e8;
-  border: 1px solid #f2d59a;
+  background: var(--tn-red-light);
+  border: 1px solid var(--tn-red-border);
   padding: 12px;
   border-radius: 10px;
   font-size: 13px;
-  color: #76520c;
+  color: var(--tn-red-dark);
   margin-top: 15px;
   text-align: left;
 }
 .topic-info-box {
-  background: #f0fdf4;
-  border: 1px solid #bbf7d0;
+  background: var(--tn-green-light);
+  border: 1px solid var(--tn-green-border);
   border-radius: 10px;
   padding: 12px 14px;
   margin-top: 16px;
   font-size: 12px;
-  color: #166534;
+  color: var(--tn-green-dark);
   text-align: left;
   line-height: 1.5;
 }
@@ -291,18 +343,35 @@ input:focus, select:focus, textarea:focus { border-color: var(--blue); box-shado
   padding: 2px 6px;
   border-radius: 4px;
   font-weight: 700;
-  color: #14532d;
+  color: var(--tn-green-dark);
 }
 
 /* Portal App Shell */
 .portal-layout { display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; }
-.sidebar { background: var(--navy); color: #fff; padding: 22px 16px; position: sticky; top: 0; height: 100vh; }
-.side-brand { padding: 10px 12px 25px; font-size: 20px; font-weight: 800; display: flex; align-items: center; gap: 10px; }
+.sidebar {
+  background: var(--tn-black);
+  color: var(--tn-white);
+  padding: 22px 16px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  border-right: 3px solid var(--tn-green);
+}
+.side-brand {
+  padding: 10px 12px 25px;
+  font-size: 19px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.12);
+  margin-bottom: 14px;
+}
 .side-nav button {
   width: 100%;
   text-align: left;
   background: transparent;
-  color: #d8e4ec;
+  color: #cbd5e1;
   padding: 12px 14px;
   border-radius: 10px;
   margin: 3px 0;
@@ -310,41 +379,44 @@ input:focus, select:focus, textarea:focus { border-color: var(--blue); box-shado
   font-size: 14px;
   transition: all .15s;
 }
-.side-nav button:hover, .side-nav button.active { background: rgba(255,255,255,0.12); color: #fff; }
+.side-nav button:hover { background: rgba(255,255,255,0.1); color: var(--tn-white); }
+.side-nav button.active { background: var(--tn-green); color: var(--tn-white); font-weight: 800; }
 .content { padding: 32px; overflow: auto; }
 .content-head { display: flex; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 25px; }
-.content-head h1 { margin: 0; color: var(--navy); font-size: 26px; }
+.content-head h1 { margin: 0; color: var(--tn-black); font-size: 26px; font-weight: 800; }
 .user-tools { display: flex; align-items: center; gap: 12px; }
 .avatar {
   width: 40px;
   height: 40px;
-  background: #dcecf7;
-  color: var(--navy);
+  background: var(--tn-green-light);
+  color: var(--tn-green);
   display: grid;
   place-items: center;
   border-radius: 50%;
   font-weight: 800;
   font-size: 14px;
+  border: 1.5px solid var(--tn-green);
 }
 
 /* Stat Cards & Dashboard */
 .stat-grid { grid-template-columns: repeat(4, 1fr); }
 .stat-card {
-  background: #fff;
+  background: var(--tn-white);
   border: 1px solid var(--border);
+  border-top: 3px solid var(--tn-green);
   border-radius: 14px;
   padding: 20px;
   box-shadow: var(--shadow);
 }
-.stat-card .label { color: var(--muted); font-size: 13px; font-weight: 600; }
-.stat-card .num { font-size: 26px; font-weight: 850; color: var(--navy); margin-top: 8px; }
-.stat-card .sub { font-size: 12px; margin-top: 6px; color: var(--green); font-weight: 600; }
+.stat-card .label { color: var(--muted); font-size: 13px; font-weight: 700; }
+.stat-card .num { font-size: 26px; font-weight: 850; color: var(--tn-black); margin-top: 8px; }
+.stat-card .sub { font-size: 12px; margin-top: 6px; color: var(--tn-green); font-weight: 700; }
 
 .two-col { display: grid; grid-template-columns: 1.3fr .7fr; gap: 18px; margin-top: 18px; }
-.card h2, .card h3 { color: var(--navy); margin-top: 0; }
-.progress { height: 12px; background: #e7edf1; border-radius: 20px; overflow: hidden; }
-.progress span { display: block; height: 100%; background: var(--teal); border-radius: 20px; }
-.progress-label { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); margin: 8px 0; font-weight: 600; }
+.card h2, .card h3 { color: var(--tn-black); margin-top: 0; font-weight: 800; }
+.progress { height: 12px; background: #e2e8f0; border-radius: 20px; overflow: hidden; }
+.progress span { display: block; height: 100%; background: var(--tn-green); border-radius: 20px; }
+.progress-label { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); margin: 8px 0; font-weight: 700; }
 
 /* Badges */
 .badge {
@@ -357,16 +429,16 @@ input:focus, select:focus, textarea:focus { border-color: var(--blue); box-shado
   font-weight: 800;
   letter-spacing: 0.3px;
 }
-.available, .prepared, .collected { background: #e8f7ee; color: var(--green); }
-.warning, .pending { background: #fff3df; color: #9b5c00; }
-.out, .missed { background: #fdeaea; color: var(--red); }
-.booked { background: #e9f1fb; color: var(--blue); }
-.purple { background: #f1ebfb; color: var(--purple); }
+.available, .prepared, .collected { background: var(--tn-green-light); color: var(--tn-green); border: 1px solid var(--tn-green-border); }
+.warning, .pending { background: #fffbeb; color: #b45309; border: 1px solid #fde68a; }
+.out, .missed { background: var(--tn-red-light); color: var(--tn-red); border: 1px solid var(--tn-red-border); }
+.booked { background: var(--tn-green-light); color: var(--tn-green); border: 1px solid var(--tn-green-border); }
+.purple { background: #f1f5f9; color: var(--tn-black); border: 1px solid #cbd5e1; }
 
 /* Products Grid */
 .product-grid { grid-template-columns: repeat(4, 1fr); }
 .product-card {
-  background: #fff;
+  background: var(--tn-white);
   border: 1px solid var(--border);
   border-radius: 16px;
   padding: 20px;
@@ -374,113 +446,151 @@ input:focus, select:focus, textarea:focus { border-color: var(--blue); box-shado
   display: flex;
   flex-direction: column;
 }
-.product-icon { height: 95px; border-radius: 12px; background: #edf5f7; display: grid; place-items: center; font-size: 45px; }
-.product-card h3 { margin: 12px 0 5px; font-size: 18px; }
+.product-icon {
+  height: 95px;
+  border-radius: 12px;
+  background: #f8fafc;
+  border: 1px solid #f1f5f9;
+  display: grid;
+  place-items: center;
+  font-size: 45px;
+}
+.product-card h3 { margin: 12px 0 5px; font-size: 18px; font-weight: 800; color: var(--tn-black); }
 .muted { color: var(--muted); font-size: 13px; }
 .qty { display: flex; gap: 8px; align-items: center; margin: 14px 0; }
-.qty button { width: 32px; height: 32px; border-radius: 8px; background: #eef2f5; font-weight: 800; font-size: 16px; }
-.qty button:hover { background: #e2e8f0; }
+.qty button { width: 32px; height: 32px; border-radius: 8px; background: #e2e8f0; font-weight: 800; font-size: 16px; color: var(--tn-black); }
+.qty button:hover { background: var(--tn-green); color: white; }
 .qty span { min-width: 32px; text-align: center; font-weight: 800; font-size: 15px; }
 
 /* Tables */
 .table-wrap { overflow: auto; }
 .table { width: 100%; border-collapse: collapse; min-width: 760px; }
 .table th, .table td { text-align: left; padding: 14px; border-bottom: 1px solid var(--border); font-size: 13px; }
-.table th { background: #f7f9fb; color: #526373; font-weight: 700; }
+.table th { background: #f8fafc; color: var(--tn-black); font-weight: 800; border-bottom: 2px solid var(--border); }
 .table tr:hover td { background: #fafcfd; }
 
 /* Slots & Charts */
 .slot-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
 .slot {
-  border: 1px solid var(--border);
+  border: 1.5px solid var(--border);
   border-radius: 14px;
   padding: 16px;
-  background: #fff;
+  background: var(--tn-white);
   text-align: left;
   transition: all .2s;
 }
-.slot:hover, .slot.selected { border: 2px solid var(--blue); background: #f5fbff; }
-.slot strong { display: block; color: var(--navy); margin-bottom: 8px; font-size: 15px; }
+.slot:hover, .slot.selected { border: 2px solid var(--tn-green); background: var(--tn-green-light); }
+.slot strong { display: block; color: var(--tn-black); margin-bottom: 8px; font-size: 15px; font-weight: 800; }
 .slot .capacity { font-size: 12px; color: var(--muted); font-weight: 600; }
 .chart { height: 210px; display: flex; align-items: end; gap: 15px; padding: 20px 10px 10px; border-top: 1px solid var(--border); }
-.bar { flex: 1; background: #75a9c9; border-radius: 6px 6px 0 0; position: relative; min-height: 10px; }
-.bar span { position: absolute; top: -20px; font-size: 11px; left: 50%; transform: translateX(-50%); font-weight: 700; color: var(--navy); }
-.bar small { position: absolute; bottom: -25px; left: 50%; transform: translateX(-50%); white-space: nowrap; color: var(--muted); font-size: 10px; }
+.bar { flex: 1; background: var(--tn-green); border-radius: 6px 6px 0 0; position: relative; min-height: 10px; }
+.bar span { position: absolute; top: -20px; font-size: 11px; left: 50%; transform: translateX(-50%); font-weight: 800; color: var(--tn-black); }
+.bar small { position: absolute; bottom: -25px; left: 50%; transform: translateX(-50%); white-space: nowrap; color: var(--muted); font-size: 10px; font-weight: 700; }
 
 /* Timeline */
 .timeline { display: flex; align-items: center; gap: 0; overflow: auto; padding: 20px 0; }
 .step { min-width: 115px; text-align: center; position: relative; }
-.step:not(:last-child):after { content: ""; height: 3px; background: #dce4ea; width: 100%; position: absolute; top: 18px; left: 50%; z-index: 0; }
+.step:not(:last-child):after { content: ""; height: 3px; background: #e2e8f0; width: 100%; position: absolute; top: 18px; left: 50%; z-index: 0; }
 .dot {
   width: 38px;
   height: 38px;
   border-radius: 50%;
   display: grid;
   place-items: center;
-  background: #e7edf1;
+  background: #f1f5f9;
   margin: auto;
   position: relative;
   z-index: 1;
   font-weight: 800;
-  color: #607180;
+  color: var(--tn-black);
 }
-.step.done .dot { background: #dff4e8; color: var(--green); }
-.step.current .dot { background: #dcecf9; color: var(--blue); box-shadow: 0 0 0 5px rgba(220,236,249,.5); }
-.step p { font-size: 11px; color: var(--muted); margin-top: 8px; font-weight: 600; }
+.step.done .dot { background: var(--tn-green); color: var(--tn-white); }
+.step.current .dot { background: var(--tn-white); color: var(--tn-green); border: 2px solid var(--tn-green); box-shadow: 0 0 0 4px rgba(10,102,56,0.18); }
+.step p { font-size: 11px; color: var(--muted); margin-top: 8px; font-weight: 700; }
 
 /* System Flow */
 .flow { display: grid; gap: 8px; max-width: 680px; margin: auto; }
-.flow-item { padding: 14px; background: #fff; border: 1px solid var(--border); border-radius: 11px; text-align: center; font-weight: 700; color: var(--navy); }
-.arrow { text-align: center; color: var(--teal); font-size: 20px; }
+.flow-item {
+  padding: 14px;
+  background: var(--tn-white);
+  border: 1.5px solid var(--border);
+  border-left: 5px solid var(--tn-green);
+  border-radius: 11px;
+  text-align: center;
+  font-weight: 700;
+  color: var(--tn-black);
+}
+.arrow { text-align: center; color: var(--tn-red); font-size: 20px; font-weight: 900; }
 
 /* Toast */
 .toast {
   position: fixed;
   right: 24px;
   bottom: 24px;
-  background: var(--navy);
-  color: #fff;
+  background: var(--tn-black);
+  color: var(--tn-white);
   padding: 15px 20px;
   border-radius: 12px;
-  box-shadow: 0 12px 40px rgba(0,0,0,.25);
+  box-shadow: 0 12px 40px rgba(0,0,0,.35);
+  border-left: 4px solid var(--tn-green);
   z-index: 200;
   animation: slide .25s ease-out;
-  font-weight: 600;
+  font-weight: 700;
   font-size: 14px;
 }
 .mobile-menu { display: none; }
 @keyframes slide { from { transform: translateY(20px); opacity: 0; } to { transform: none; opacity: 1; } }
 
 /* Notices & Rules */
-.notice { padding: 14px 16px; border-radius: 11px; background: #edf7fb; border-left: 4px solid var(--teal); font-size: 13px; margin: 14px 0; line-height: 1.5; }
-.rule { background: #faf7ff; border: 1px solid #e4d9f5; border-radius: 12px; padding: 16px; }
+.notice {
+  padding: 14px 16px;
+  border-radius: 11px;
+  background: var(--tn-green-light);
+  border-left: 4px solid var(--tn-green);
+  font-size: 13px;
+  margin: 14px 0;
+  line-height: 1.5;
+  color: var(--tn-green-dark);
+}
+.rule {
+  background: #fafbfc;
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--tn-red);
+  border-radius: 12px;
+  padding: 16px;
+}
 .empty { padding: 40px; text-align: center; color: var(--muted); font-size: 15px; }
 
 /* Smart Card Graphic */
 .ration-card-ui {
-  background: linear-gradient(135deg, #0a4f2c 0%, #0d6e3e 100%);
-  color: white;
+  background: linear-gradient(135deg, #074726 0%, #0a6638 55%, #05331b 100%);
+  color: #ffffff;
   border-radius: 18px;
   padding: 24px;
-  box-shadow: 0 15px 35px rgba(10,79,44,0.25);
+  box-shadow: 0 15px 35px rgba(10,102,56,0.3);
   position: relative;
   overflow: hidden;
   margin-bottom: 22px;
+  border: 2px solid #05331b;
 }
 .ration-card-ui::after {
-  content: "🏛️";
+  content: "";
   position: absolute;
-  right: -10px;
-  bottom: -20px;
-  font-size: 130px;
-  opacity: 0.12;
+  right: 10px;
+  bottom: -15px;
+  width: 140px;
+  height: 140px;
+  background-image: url('tn-emblem.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  opacity: 0.14;
   pointer-events: none;
 }
 .card-header-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid rgba(255,255,255,0.2);
+  border-bottom: 1px solid rgba(255,255,255,0.25);
   padding-bottom: 12px;
   margin-bottom: 16px;
 }
@@ -488,13 +598,14 @@ input:focus, select:focus, textarea:focus { border-color: var(--blue); box-shado
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 10px;
-  background: rgba(255,255,255,0.1);
+  background: rgba(0, 0, 0, 0.25);
   padding: 12px;
   border-radius: 10px;
   margin-top: 16px;
   text-align: center;
+  border: 1px solid rgba(255,255,255,0.15);
 }
-.card-quota-item b { display: block; font-size: 16px; margin-top: 4px; }
+.card-quota-item b { display: block; font-size: 16px; margin-top: 4px; color: #ffffff; }
 
 /* Responsive */
 @media(max-width: 1050px) {
@@ -508,14 +619,14 @@ input:focus, select:focus, textarea:focus { border-color: var(--blue); box-shado
   .nav { display: none; }
   .topbar { padding: 0 18px; }
   .hero { padding: 50px 20px; }
-  .hero h1 { font-size: 34px; }
+  .hero h1 { font-size: 32px; }
   .section { padding: 50px 20px; }
   .feature-grid, .portal-grid, .product-grid { grid-template-columns: 1fr; }
   .portal-layout { grid-template-columns: 1fr; }
   .sidebar { height: auto; position: fixed; left: -270px; width: 250px; z-index: 80; transition: .25s; }
   .sidebar.open { left: 0; }
   .content { padding: 18px; }
-  .mobile-menu { display: block; background: #eef3f7; border-radius: 8px; padding: 9px 12px; }
+  .mobile-menu { display: block; background: #e2e8f0; border-radius: 8px; padding: 9px 12px; }
   .stat-grid { grid-template-columns: 1fr 1fr; }
   .slot-grid { grid-template-columns: 1fr; }
   .portal-options { grid-template-columns: 1fr; }
@@ -897,7 +1008,7 @@ function landing() {
   <div class="landing">
     <header class="topbar">
       <div class="brand">
-        <div class="brandmark">🌾</div>
+        <img src="tn-emblem.png" class="brand-emblem" alt="Tamil Nadu Government Emblem">
         <div class="brand-tn">
           <span>${t("brandName")}</span>
           <small>${t("brandSubtitle")}</small>
@@ -910,7 +1021,7 @@ function landing() {
         <a href="#citizens">${t("citizens")}</a>
       </nav>
       <div style="display:flex;gap:10px;align-items:center;">
-        <button class="btn btn-outline" style="border-color:var(--tn-green);color:var(--tn-green);font-weight:700;" onclick="openLanguage()">
+        <button class="btn btn-outline" style="border-color:var(--tn-green);color:var(--tn-green);font-weight:800;" onclick="openLanguage()">
           🌐 ${state.lang === "தமிழ்" ? "தமிழ்" : "English"}
         </button>
         <button class="btn btn-primary" onclick="openPortal()">
@@ -925,10 +1036,10 @@ function landing() {
         <h1>${t("heroTitle")}</h1>
         <p>${t("heroDesc")}</p>
         <div class="actions">
-          <button class="btn btn-primary" style="padding:13px 24px;font-size:16px;background:var(--tn-green);" onclick="chooseRole('beneficiary')">
+          <button class="btn btn-primary" style="padding:14px 26px;font-size:16px;" onclick="chooseRole('beneficiary')">
             ${t("heroCta")}
           </button>
-          <button class="btn btn-outline" style="padding:13px 20px;" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">
+          <button class="btn btn-outline" style="padding:14px 22px;" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">
             ${t("heroSecondary")}
           </button>
         </div>
@@ -936,7 +1047,10 @@ function landing() {
 
       <div class="hero-demo">
         <div class="mini-head">
-          <strong style="color:var(--navy);font-size:16px;">🌾 ${isTa ? "ஸ்மார்ட் குடும்ப அட்டை போர்டல்" : "Tamil Nadu Smart Card Portal"}</strong>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <img src="tn-emblem.png" style="width:34px;height:34px;object-fit:contain;" alt="TN Emblem">
+            <strong style="color:var(--tn-black);font-size:15px;">${isTa ? "ஸ்மார்ட் குடும்ப அட்டை போர்டல்" : "Tamil Nadu Smart Card Portal"}</strong>
+          </div>
           <span class="badge available">${t("liveDemoBadge")}</span>
         </div>
         <div class="mini-grid">
@@ -946,7 +1060,7 @@ function landing() {
           </div>
           <div class="mini-card">
             <span class="muted">${t("phoneDelivery")}</span>
-            <div class="mini-value" style="font-size:17px;color:var(--green)">${t("instantNtfy")}</div>
+            <div class="mini-value" style="font-size:17px;color:var(--tn-green);">${t("instantNtfy")}</div>
           </div>
           <div class="mini-card">
             <span class="muted">${t("activeShop")}</span>
@@ -957,7 +1071,7 @@ function landing() {
             <div class="mini-value" style="font-size:15px;">${t("fifteenMinSlots")}</div>
           </div>
         </div>
-        <div style="margin-top:20px;padding:12px;background:#f0fdf4;border-radius:12px;border:1px solid #bbf7d0;font-size:13px;color:#166534;line-height:1.5;">
+        <div style="margin-top:20px;padding:12px;background:var(--tn-green-light);border-radius:12px;border:1px solid var(--tn-green-border);font-size:13px;color:var(--tn-green-dark);line-height:1.5;">
           ${t("directPhoneAlert")}
         </div>
       </div>
@@ -966,32 +1080,34 @@ function landing() {
     <section class="section" id="how">
       <h2>${t("howTitle")}</h2>
       <div class="feature-grid">
-        <div class="feature-card">
+        <div class="feature-card" style="border-top:4px solid var(--tn-green);">
           <div class="icon">📦</div>
           <h3>${t("how1Title")}</h3>
           <p>${t("how1Desc")}</p>
         </div>
-        <div class="feature-card">
-          <div class="icon">📅</div>
+        <div class="feature-card" style="border-top:4px solid var(--tn-black);">
+          <div class="icon" style="background:#f1f5f9;color:var(--tn-black);border-color:#cbd5e1;">📅</div>
           <h3>${t("how2Title")}</h3>
           <p>${t("how2Desc")}</p>
         </div>
-        <div class="feature-card">
-          <div class="icon">✓</div>
+        <div class="feature-card" style="border-top:4px solid var(--tn-red);">
+          <div class="icon" style="background:var(--tn-red-light);color:var(--tn-red);border-color:var(--tn-red-border);">✓</div>
           <h3>${t("how3Title")}</h3>
           <p>${t("how3Desc")}</p>
         </div>
       </div>
     </section>
 
-    <section class="section" id="citizens" style="background:#f8fafc;">
+    <section class="section" id="citizens" style="background:#f8fafc;border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
       <h2>${t("citizensTitle")}</h2>
       <p class="muted" style="text-align:center;max-width:650px;margin:-15px auto 30px;">
         ${t("citizensDesc")}
       </p>
       <div class="feature-grid">
-        ${state.citizensList.slice(0, 3).map(c => `
-          <div class="feature-card" style="border-top:4px solid var(--tn-green);">
+        ${state.citizensList.slice(0, 3).map((c, idx) => {
+          const borderColor = idx === 0 ? "var(--tn-green)" : idx === 1 ? "var(--tn-red)" : "var(--tn-black)";
+          return `
+          <div class="feature-card" style="border-top:4px solid ${borderColor};">
             <span class="badge ${c.card_type.includes('PHH') ? 'available' : 'purple'}">${c.card_type}</span>
             <h3 style="margin-top:8px;">${c.full_name}</h3>
             <p style="margin:4px 0;">📱 <b>+91 ${c.mobile_number}</b></p>
@@ -1000,25 +1116,25 @@ function landing() {
               ${t("loginAs")} ${c.full_name.split(' ')[0]} 📲
             </button>
           </div>
-        `).join("")}
+        `;}).join("")}
       </div>
     </section>
 
     <section class="section" id="features">
       <h2>${t("featuresTitle")}</h2>
       <div class="feature-grid">
-        <div class="feature-card">
+        <div class="feature-card" style="border-top:4px solid var(--tn-green);">
           <div class="icon">🔔</div>
           <h3>${t("feat1Title")}</h3>
           <p>${t("feat1Desc")}</p>
         </div>
-        <div class="feature-card">
-          <div class="icon">🧾</div>
+        <div class="feature-card" style="border-top:4px solid var(--tn-black);">
+          <div class="icon" style="background:#f1f5f9;color:var(--tn-black);border-color:#cbd5e1;">🧾</div>
           <h3>${t("feat2Title")}</h3>
           <p>${t("feat2Desc")}</p>
         </div>
-        <div class="feature-card">
-          <div class="icon">📊</div>
+        <div class="feature-card" style="border-top:4px solid var(--tn-red);">
+          <div class="icon" style="background:var(--tn-red-light);color:var(--tn-red);border-color:var(--tn-red-border);">📊</div>
           <h3>${t("feat3Title")}</h3>
           <p>${t("feat3Desc")}</p>
         </div>
@@ -1026,9 +1142,10 @@ function landing() {
     </section>
 
     <footer>
-      <strong>${t("footerText")}</strong><br>
-      ${t("footerDept")}<br>
-      <small style="opacity:0.8;">${t("footerSub")}</small>
+      <img src="tn-emblem.png" style="width:48px;height:48px;object-fit:contain;margin-bottom:10px;background:white;border-radius:50%;padding:3px;" alt="Tamil Nadu Emblem"><br>
+      <strong style="font-size:15px;letter-spacing:0.5px;">${t("footerText")}</strong><br>
+      <span style="opacity:0.85;">${t("footerDept")}</span><br>
+      <small style="opacity:0.75;display:inline-block;margin-top:6px;">${t("footerSub")}</small>
     </footer>
   </div>`;
 }
@@ -1039,12 +1156,12 @@ function openLanguage() {
     <h2>மொழியைத் தேர்ந்தெடுக்கவும் / Select Language</h2>
     <p class="muted">தங்களுக்கு விருப்பமான மொழியைத் தேர்வு செய்யவும் / Choose your preferred language.</p>
     <div class="lang-options">
-      <button class="choice" style="${state.lang === 'தமிழ்' ? 'border-color:var(--tn-green);background:#f0fdf4;' : ''}" onclick="chooseLanguage('தமிழ்')">
+      <button class="choice" style="${state.lang === 'தமிழ்' ? 'border-color:var(--tn-green);background:var(--tn-green-light);' : ''}" onclick="chooseLanguage('தமிழ்')">
         <b style="font-size:18px;color:var(--tn-green);">தமிழ் (Tamil)</b><br>
         <span class="muted">போர்டல் முழுவதையும் தமிழில் பார்க்க</span>
       </button>
-      <button class="choice" style="${state.lang === 'English' ? 'border-color:var(--blue);background:#f6fbff;' : ''}" onclick="chooseLanguage('English')">
-        <b style="font-size:18px;color:var(--navy);">English</b><br>
+      <button class="choice" style="${state.lang === 'English' ? 'border-color:var(--tn-green);background:#f6fbff;' : ''}" onclick="chooseLanguage('English')">
+        <b style="font-size:18px;color:var(--tn-black);">English</b><br>
         <span class="muted">Continue with English interface</span>
       </button>
     </div>
@@ -1073,13 +1190,13 @@ function openPortal() {
         <b style="color:var(--tn-green);">${isTa ? "தொடர்க 📲" : "Continue 📲"}</b>
       </button>
       <button class="choice" onclick="chooseRole('staff')">
-        <div class="icon">🏪</div>
+        <div class="icon" style="background:#f1f5f9;color:var(--tn-black);border-color:#cbd5e1;">🏪</div>
         <h3>${isTa ? "கடை ஊழியர்" : "FPS Staff"}</h3>
         <p>${isTa ? "பொருட்கள் பேக்கிங் & இருப்பு" : "Fair Price Shop order packing & stock."}</p>
         <b>${isTa ? "தொடர்க →" : "Continue →"}</b>
       </button>
       <button class="choice" onclick="chooseRole('official')">
-        <div class="icon">📊</div>
+        <div class="icon" style="background:var(--tn-red-light);color:var(--tn-red);border-color:var(--tn-red-border);">📊</div>
         <h3>${isTa ? "அதிகாரிகள்" : "Officials"}</h3>
         <p>${isTa ? "மாவட்ட அளவிலான நேரலை ஆய்வு" : "Civil Supplies district monitoring."}</p>
         <b>${isTa ? "தொடர்க →" : "Continue →"}</b>
@@ -1119,30 +1236,30 @@ function loginView() {
 
   return `
   <div class="portal">
-    <div class="brand" style="justify-content:center;margin-bottom:20px;">
-      <div class="brandmark">🌾</div>
-      <div class="brand-tn">
-        <span>${t("brandName")}</span>
-        <small>${t("brandSubtitle")}</small>
-      </div>
-    </div>
-
     <div class="login-box">
       <div class="login-stripe"></div>
-      <div class="eyebrow">${t("beneficiaryPortal")}</div>
-      <h1 style="color:var(--navy);font-size:24px;margin:8px 0 4px;">
+      
+      <!-- Official Emblem Branding Header -->
+      <div style="text-align:center;margin-bottom:18px;">
+        <img src="tn-emblem.png" class="brand-emblem-large" alt="Tamil Nadu Government Emblem">
+        <div style="font-size:20px;font-weight:800;color:var(--tn-black);">${t("brandName")}</div>
+        <div style="font-size:12px;color:var(--tn-green);font-weight:700;letter-spacing:0.5px;">${t("brandSubtitle")}</div>
+      </div>
+
+      <div class="eyebrow" style="text-align:center;margin-bottom:4px;">${t("beneficiaryPortal")}</div>
+      <h1 style="color:var(--tn-black);font-size:22px;margin:4px 0 6px;text-align:center;">
         ${t("citizenLogin")}
       </h1>
-      <p class="muted" style="margin-bottom:20px;">
+      <p class="muted" style="margin-bottom:20px;text-align:center;">
         ${t("loginSubtitle")}
       </p>
 
       <!-- Database Citizen Quick Selector -->
-      <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:12px;margin-bottom:18px;text-align:left;">
-        <label style="margin:0 0 6px;font-size:12px;color:var(--navy);text-transform:uppercase;letter-spacing:0.5px;">
+      <div style="background:#f8fafc;border:1px solid var(--border);border-left:4px solid var(--tn-green);border-radius:12px;padding:12px;margin-bottom:18px;text-align:left;">
+        <label style="margin:0 0 6px;font-size:12px;color:var(--tn-black);text-transform:uppercase;letter-spacing:0.5px;">
           👥 ${t("selectFromDb")}
         </label>
-        <select id="citizenSelectDropdown" onchange="onCitizenSelectChange(this.value)" style="font-weight:600;font-size:13px;">
+        <select id="citizenSelectDropdown" onchange="onCitizenSelectChange(this.value)" style="font-weight:700;font-size:13px;">
           ${state.citizensList.map(c => `
             <option value="${c.mobile_number}" ${c.mobile_number === mobile ? "selected" : ""}>
               ${c.full_name} (${c.district || 'TN'}) — ${c.mobile_number} [${c.card_type}]
@@ -1167,7 +1284,7 @@ function loginView() {
         📲 <strong>${t("androidPushChannel")}</strong><br>
         Topic: <code>${ntfyTopic}</code>
         <div style="margin-top:6px;">
-          <a href="https://ntfy.sh/${ntfyTopic}" target="_blank" style="color:var(--tn-green);font-weight:700;text-decoration:underline;">
+          <a href="https://ntfy.sh/${ntfyTopic}" target="_blank" style="color:var(--tn-green);font-weight:800;text-decoration:underline;">
             ${t("openLiveFeed")}
           </a>
         </div>
@@ -1177,7 +1294,7 @@ function loginView() {
       <button 
         id="btnSendOtp" 
         class="btn btn-primary" 
-        style="width:100%;margin-top:20px;padding:13px;font-size:15px;background-color:var(--tn-green);" 
+        style="width:100%;margin-top:20px;padding:14px;font-size:15px;" 
         onclick="requestOtpFromBackend()"
         ${state.isSendingOtp ? "disabled" : ""}
       >
@@ -1189,12 +1306,12 @@ function loginView() {
         <div style="margin-top:22px;padding-top:20px;border-top:1px dashed var(--border);animation:slide .25s ease-out;">
           ${state.devOtp ? `
             <div class="demo-note" style="cursor:pointer;" onclick="autofillOtp('${state.devOtp}')">
-              ⚡ <b>Dev Mode OTP: <code style="font-size:15px;background:#fae8b4;padding:2px 6px;border-radius:4px;">${state.devOtp}</code></b> (Click to autofill)
+              ⚡ <b>Dev Mode OTP: <code style="font-size:15px;background:#fecaca;color:var(--tn-red-dark);padding:2px 6px;border-radius:4px;">${state.devOtp}</code></b> (Click to autofill)
             </div>
           ` : ""}
 
           <label>${t("enterOtp")}</label>
-          <input id="otp" type="tel" maxlength="6" placeholder="• • • • • •" style="font-size:20px;letter-spacing:6px;text-align:center;font-weight:800;">
+          <input id="otp" type="tel" maxlength="6" placeholder="• • • • • •" style="font-size:22px;letter-spacing:6px;text-align:center;font-weight:800;border-color:var(--tn-green);">
 
           <div style="display:flex;justify-content:space-between;align-items:center;margin:10px 0 16px;font-size:12px;">
             <span class="muted">
@@ -1212,8 +1329,8 @@ function loginView() {
 
           <button 
             id="btnVerifyOtp" 
-            class="btn btn-success" 
-            style="width:100%;padding:13px;font-size:15px;" 
+            class="btn btn-primary" 
+            style="width:100%;padding:14px;font-size:15px;" 
             onclick="verifyOtpWithBackend()"
             ${state.isVerifyingOtp ? "disabled" : ""}
           >
@@ -1230,8 +1347,8 @@ function loginView() {
       </div>
 
       ${state.showRegisterForm ? `
-        <div style="margin-top:16px;padding:18px;background:#fafbfc;border:1px dashed var(--border);border-radius:12px;text-align:left;">
-          <h4 style="margin:0 0 12px;color:var(--navy);font-size:14px;font-weight:800;">
+        <div style="margin-top:16px;padding:18px;background:#fafbfc;border:1px dashed var(--border);border-left:4px solid var(--tn-red);border-radius:12px;text-align:left;">
+          <h4 style="margin:0 0 12px;color:var(--tn-black);font-size:14px;font-weight:800;">
             ${isTa ? "➕ புதிய பயனாளரை தரவுத்தளத்தில் சேர்க்க" : "➕ Add Citizen to Tamil Nadu Database"}
           </h4>
           <label style="margin:8px 0 4px;font-size:11px;">${isTa ? "முழு பெயர்" : "Full Name"}</label>
@@ -1491,77 +1608,80 @@ function cardView() {
     <div class="login-box" style="max-width:720px;padding:34px;">
       <div class="login-stripe"></div>
       <div class="eyebrow">${isTa ? "தமிழ்நாடு பொது விநியோகத் திட்டம் • சரிபார்ப்பு" : "Tamil Nadu ePDS • Verification"}</div>
-      <h1 style="color:var(--navy);font-size:26px;margin:8px 0 16px;">
+      <h1 style="color:var(--tn-black);font-size:26px;margin:8px 0 16px;">
         ${isTa ? "மின்னணு குடும்ப அட்டை (e-Smart Card)" : "e-Smart Ration Card"}
       </h1>
 
       <!-- Graphic Smart Card UI -->
       <div class="ration-card-ui">
         <div class="card-header-row">
-          <div>
-            <div style="font-size:12px;opacity:0.85;text-transform:uppercase;letter-spacing:1px;">
-              ${isTa ? "தமிழ்நாடு அரசு • உணவுப் பொருள் வழங்கல் துறை" : "GOVERNMENT OF TAMIL NADU • CIVIL SUPPLIES"}
-            </div>
-            <div style="font-size:19px;font-weight:800;letter-spacing:0.5px;">
-              ${isTa ? "தமிழ்நாடு ஸ்மார்ட் குடும்ப அட்டை" : "TAMIL NADU SMART RATION CARD"}
+          <div style="display:flex;align-items:center;gap:12px;">
+            <img src="tn-emblem.png" class="brand-emblem-card" alt="TN Government Emblem">
+            <div>
+              <div style="font-size:11px;opacity:0.9;text-transform:uppercase;letter-spacing:1px;">
+                ${isTa ? "தமிழ்நாடு அரசு • உணவுப் பொருள் வழங்கல் துறை" : "GOVERNMENT OF TAMIL NADU • CIVIL SUPPLIES"}
+              </div>
+              <div style="font-size:18px;font-weight:800;letter-spacing:0.5px;">
+                ${isTa ? "தமிழ்நாடு ஸ்மார்ட் குடும்ப அட்டை" : "TAMIL NADU SMART RATION CARD"}
+              </div>
             </div>
           </div>
-          <span class="badge available" style="background:white;color:var(--tn-green);font-size:12px;">
+          <span class="badge" style="background:#ffffff;color:var(--tn-green);font-size:12px;font-weight:800;">
             ${c.card_type}
           </span>
         </div>
 
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13px;">
           <div>
-            <span style="opacity:0.75;font-size:11px;display:block;">${isTa ? "குடும்ப அட்டை எண்" : "CARD NUMBER"}</span>
+            <span style="opacity:0.85;font-size:11px;display:block;">${isTa ? "குடும்ப அட்டை எண்" : "CARD NUMBER"}</span>
             <b style="font-size:16px;letter-spacing:1px;">${c.smart_card_no}</b>
           </div>
           <div>
-            <span style="opacity:0.75;font-size:11px;display:block;">${isTa ? "குடும்பத் தலைவர்" : "HEAD OF FAMILY"}</span>
+            <span style="opacity:0.85;font-size:11px;display:block;">${isTa ? "குடும்பத் தலைவர்" : "HEAD OF FAMILY"}</span>
             <b style="font-size:15px;">${c.family_head || c.full_name}</b>
           </div>
           <div>
-            <span style="opacity:0.75;font-size:11px;display:block;">${isTa ? "பதிவு செய்யப்பட்ட கைபேசி" : "REGISTERED MOBILE"}</span>
+            <span style="opacity:0.85;font-size:11px;display:block;">${isTa ? "பதிவு செய்யப்பட்ட கைபேசி" : "REGISTERED MOBILE"}</span>
             <b>+91 ${c.mobile_number}</b>
           </div>
           <div>
-            <span style="opacity:0.75;font-size:11px;display:block;">${isTa ? "வட்டம் / மாவட்டம்" : "TALUK / DISTRICT"}</span>
+            <span style="opacity:0.85;font-size:11px;display:block;">${isTa ? "வட்டம் / மாவட்டம்" : "TALUK / DISTRICT"}</span>
             <b>${c.taluk || 'Mylapore'}, ${c.district || 'Chennai'}</b>
           </div>
         </div>
 
         <div class="card-quota-grid">
           <div class="card-quota-item">
-            <span style="font-size:11px;opacity:0.8;">${t("rice")}</span>
+            <span style="font-size:11px;opacity:0.9;">${t("rice")}</span>
             <b>${c.rice_quota_kg || 20} ${t("kg")}</b>
           </div>
           <div class="card-quota-item">
-            <span style="font-size:11px;opacity:0.8;">${t("sugar")}</span>
+            <span style="font-size:11px;opacity:0.9;">${t("sugar")}</span>
             <b>${c.sugar_quota_kg || 2} ${t("kg")}</b>
           </div>
           <div class="card-quota-item">
-            <span style="font-size:11px;opacity:0.8;">${t("dal")}</span>
+            <span style="font-size:11px;opacity:0.9;">${t("dal")}</span>
             <b>${c.dhal_quota_kg || 1} ${t("kg")}</b>
           </div>
           <div class="card-quota-item">
-            <span style="font-size:11px;opacity:0.8;">${isTa ? "எண்ணெய்" : "OIL"}</span>
+            <span style="font-size:11px;opacity:0.9;">${isTa ? "எண்ணெய்" : "OIL"}</span>
             <b>${c.oil_quota_liters || 1} ${t("liters")}</b>
           </div>
         </div>
       </div>
 
-      <div class="card" style="box-shadow:none;background:#f8fafc;margin-bottom:20px;">
+      <div class="card" style="box-shadow:none;background:#f8fafc;margin-bottom:20px;border-left:4px solid var(--tn-green);">
         <div style="display:flex;justify-content:space-between;align-items:center;">
           <div>
             <span class="muted" style="font-size:12px;display:block;">${isTa ? "ஒதுக்கப்பட்ட நியாயவிலைக் கடை" : "ALLOTTED FAIR PRICE SHOP"}</span>
-            <strong style="color:var(--navy);font-size:15px;">${c.fps_shop_code || 'TN-FPS-0102'} — ${c.fps_shop_name || 'Mylapore TUCS Cooperative Society'}</strong>
+            <strong style="color:var(--tn-black);font-size:15px;">${c.fps_shop_code || 'TN-FPS-0102'} — ${c.fps_shop_name || 'Mylapore TUCS Cooperative Society'}</strong>
           </div>
           <span class="badge available">${isTa ? "● நடைமுறையில் உள்ளது" : "● ACTIVE SHOP"}</span>
         </div>
       </div>
 
       <div class="actions">
-        <button class="btn btn-primary" style="padding:13px 24px;font-size:15px;background:var(--tn-green);" onclick="confirmCard()">
+        <button class="btn btn-primary" style="padding:13px 24px;font-size:15px;" onclick="confirmCard()">
           ${isTa ? "விவரங்களை உறுதிசெய்து முகப்பிற்குச் செல்க →" : "Confirm Details & Access Dashboard →"}
         </button>
         <button class="btn btn-outline" onclick="logoutCitizen()">
@@ -1642,7 +1762,8 @@ function shell(role, body, active) {
   <div class="portal-layout">
     <aside class="sidebar" id="sidebar">
       <div class="side-brand">
-        <span>🌾</span> ${t("brandName")}
+        <img src="tn-emblem.png" style="width:36px;height:36px;object-fit:contain;background:white;border-radius:50%;padding:2px;" alt="TN Emblem">
+        <span>${t("brandName")}</span>
       </div>
       <div class="side-nav">
         ${menus.map(m => `
@@ -1650,7 +1771,7 @@ function shell(role, body, active) {
             ${menuIcon(m[0])} &nbsp;${m[1]}
           </button>
         `).join("")}
-        <button style="margin-top:20px;color:#fca5a5;" onclick="logoutCitizen()">
+        <button style="margin-top:20px;color:var(--tn-red-light);border-top:1px solid rgba(255,255,255,0.15);" onclick="logoutCitizen()">
           🚪 &nbsp;${t("navLogout")}
         </button>
       </div>
@@ -1666,7 +1787,7 @@ function shell(role, body, active) {
           </span>
         </div>
         <div class="user-tools">
-          <button class="btn btn-outline" style="border-color:var(--tn-green);color:var(--tn-green);padding:7px 11px;font-size:12px;" onclick="openLanguage()">
+          <button class="btn btn-outline" style="border-color:var(--tn-green);color:var(--tn-green);padding:7px 11px;font-size:12px;font-weight:800;" onclick="openLanguage()">
             🌐 ${state.lang === "தமிழ்" ? "தமிழ்" : "English"}
           </button>
           <button class="btn btn-outline" style="padding:8px 12px;" onclick="openNotifications()">🔔</button>
@@ -1731,7 +1852,7 @@ function dashboard() {
     </div>
 
     <div class="two-col">
-      <div class="card">
+      <div class="card" style="border-top:3px solid var(--tn-green);">
         <h2>${t("goodMorning")}, ${c.full_name}</h2>
         <div class="progress-label">
           <span>${isTa ? "மாதாந்திர ரேஷன் ஒதுக்கீடு முன்னேற்றம்" : "Monthly Ration Quota Progress"}</span>
@@ -1742,14 +1863,14 @@ function dashboard() {
           ${t("proTip")}
         </div>
         <div class="actions">
-          <button class="btn btn-primary" style="background:var(--tn-green);" onclick="setPage('products')">${t("viewProductsBtn")}</button>
+          <button class="btn btn-primary" onclick="setPage('products')">${t("viewProductsBtn")}</button>
           <button class="btn btn-outline" onclick="setPage('slots')">${t("bookSlotBtn")}</button>
         </div>
       </div>
 
-      <div class="card">
+      <div class="card" style="border-top:3px solid var(--tn-black);">
         <h3>${t("yourFps")}</h3>
-        <strong style="color:var(--navy);font-size:15px;">${c.fps_shop_code || 'TN-FPS-0102'} — ${c.fps_shop_name || 'Mylapore TUCS Cooperative Society'}</strong>
+        <strong style="color:var(--tn-black);font-size:15px;">${c.fps_shop_code || 'TN-FPS-0102'} — ${c.fps_shop_name || 'Mylapore TUCS Cooperative Society'}</strong>
         <p class="muted">${c.taluk || 'Mylapore'}, ${c.district || 'Chennai'}, ${isTa ? "தமிழ்நாடு" : "Tamil Nadu"}</p>
         <span class="badge available">${t("openToday")}</span>
         <p class="muted" style="margin-top:10px;font-size:12px;">
@@ -1761,9 +1882,9 @@ function dashboard() {
       </div>
     </div>
 
-    <div class="card" style="margin-top:18px">
+    <div class="card" style="margin-top:18px;border-left:4px solid var(--tn-red);">
       <h3>${t("importantGuidelines")}</h3>
-      <div class="notice">
+      <div class="notice" style="background:#fef2f2;border-color:var(--tn-red);color:var(--tn-red-dark);">
         <b>${t("guidelineText")}</b>
       </div>
     </div>
@@ -1785,7 +1906,7 @@ function productsView() {
       ${products.map((p, i) => {
         const prodName = isTa ? (p.nameTa || p.name) : p.name;
         return `
-        <div class="product-card">
+        <div class="product-card" style="border-top:3px solid ${p.available ? 'var(--tn-green)' : 'var(--tn-red)'};">
           <div class="product-icon">${p.icon}</div>
           <h3>${prodName}</h3>
           <p class="muted">${t("entitlement")}: <b>${p.eligible} ${t("kg")}</b></p>
@@ -1799,11 +1920,11 @@ function productsView() {
               <span id="q${i}">0</span>
               <button onclick="changeQty(${i}, 1)">+</button>
             </div>
-            <button class="btn btn-primary" style="width:100%;margin-top:auto;background:var(--tn-green);" onclick="addCart(${i})">
+            <button class="btn btn-primary" style="width:100%;margin-top:auto;" onclick="addCart(${i})">
               ${t("addToCart")}
             </button>
           ` : `
-            <button class="btn btn-outline" style="width:100%;margin-top:auto;" onclick="notifyProduct('${prodName}')">
+            <button class="btn btn-outline" style="width:100%;margin-top:auto;border-color:var(--tn-red);color:var(--tn-red);" onclick="notifyProduct('${prodName}')">
               ${state.notified[p.name] ? t("notificationRequested") : t("notifyMe")}
             </button>
           `}
@@ -1850,11 +1971,11 @@ function notifyProduct(name) {
     <button class="close" onclick="closeModal()">×</button>
     <h2>${isTa ? "சரக்கு இருப்பு அறிவிப்புக் கோரிக்கை" : "Commodity Notification Request"}</h2>
     <p>${isTa ? `<b>${name}</b> தற்போது உங்கள் நியாயவிலைக் கடையில் கையிருப்பு இல்லை.` : `Product <b>${name}</b> is currently out of stock at your allotted FPS.`}</p>
-    <div class="notice">
+    <div class="notice" style="border-left-color:var(--tn-red);background:var(--tn-red-light);color:var(--tn-red-dark);">
       <b>${isTa ? "நிலை" : "Status"}:</b> ${isTa ? "குடோனில் இருந்து சரக்கு வாகனம் வர காத்திருக்கிறது." : "Awaiting fresh truck delivery from Civil Supplies Godown."}<br>
       <b>${isTa ? "அறிவிப்பு சேனல்" : "Push Channel"}:</b> ${isTa ? "ntfy செயலி மூலம் உங்கள் கைபேசிக்கு நேரடி அறிவிப்பு வரும்." : "Instant alert to your phone via ntfy app."}
     </div>
-    <button class="btn btn-primary" style="width:100%;background:var(--tn-green);" onclick="registerNotify('${name}')">
+    <button class="btn btn-primary" style="width:100%;" onclick="registerNotify('${name}')">
       ${isTa ? "கைபேசி அறிவிப்பைப் பதிவு செய்க" : "Register Phone Notification Request"}
     </button>
   `);
@@ -1878,7 +1999,7 @@ function cartView() {
   let total = state.cart.reduce((a, x) => a + x.qty, 0);
 
   return shell("beneficiary", `
-    <div class="card">
+    <div class="card" style="border-top:3px solid var(--tn-green);">
       <h2>${isTa ? "ரேஷன் தயாரிப்புக் கூடை" : "My Ration Cart"}</h2>
       <p class="muted">${isTa ? "இது நியாயவிலைக் கடை ஊழியர் முன்கூட்டியே பொருட்களைப் பேக் செய்வதற்கான கோரிக்கையாகும்." : "This is an express pre-packing request for your FPS shop staff, not a commercial order."}</p>
       ${state.cart.length ? `
@@ -1900,7 +2021,7 @@ function cartView() {
                   <td>${x.qty} ${t("kg")}</td>
                   <td>${x.eligible} ${t("kg")}</td>
                   <td><span class="badge prepared">${isTa ? "பேக்கிங் தயார்" : "Ready for Pack"}</span></td>
-                  <td><button class="btn btn-outline" style="padding:6px 12px;font-size:12px;" onclick="removeCart(${i})">${isTa ? "நீக்கு" : "Remove"}</button></td>
+                  <td><button class="btn btn-outline" style="padding:6px 12px;font-size:12px;color:var(--tn-red);border-color:var(--tn-red);" onclick="removeCart(${i})">${isTa ? "நீக்கு" : "Remove"}</button></td>
                 </tr>
               `).join("")}
             </tbody>
@@ -1911,14 +2032,14 @@ function cartView() {
             <b>${isTa ? "மொத்த பொருட்கள்" : "Total Items"}: ${state.cart.length}</b> &nbsp;|&nbsp; 
             <b>${isTa ? "மொத்த எடை" : "Total Weight"}: ${total} ${t("kg")}</b>
           </div>
-          <button class="btn btn-primary" style="background:var(--tn-green);" onclick="setPage('slots')">
+          <button class="btn btn-primary" onclick="setPage('slots')">
             ${isTa ? "15-நிமிட நேர முன்பதிவிற்குச் செல்க →" : "Proceed to 15-Minute Slot Booking →"}
           </button>
         </div>
       ` : `
         <div class="empty">
           ${isTa ? "உங்கள் ரேஷன் தயாரிப்புக் கூடை காலியாக உள்ளது." : "Your ration preparation cart is empty."}<br>
-          <button class="btn btn-primary" style="margin-top:14px;background:var(--tn-green);" onclick="setPage('products')">
+          <button class="btn btn-primary" style="margin-top:14px;" onclick="setPage('products')">
             ${isTa ? "பொருட்களைப் பார்க்க" : "Browse Eligible Commodities"}
           </button>
         </div>
@@ -1939,7 +2060,7 @@ function slotsView() {
 
   return shell("beneficiary", `
     <div class="two-col">
-      <div class="card">
+      <div class="card" style="border-top:3px solid var(--tn-green);">
         <h2>${t("chooseSlot")}</h2>
         <p class="muted">${isTa ? "கடை" : "Shop"}: <b>${c.fps_shop_code} — ${c.fps_shop_name}</b></p>
         <div class="slot-grid">
@@ -1953,7 +2074,7 @@ function slotsView() {
         </div>
         ${state.selectedSlot !== null ? `
           <div class="actions" style="margin-top:24px;">
-            <button class="btn btn-primary" style="padding:13px 24px;font-size:15px;background:var(--tn-green);" onclick="confirmBooking()">
+            <button class="btn btn-primary" style="padding:13px 24px;font-size:15px;" onclick="confirmBooking()">
               ${t("confirmSlotBooking")}
             </button>
           </div>
@@ -1961,7 +2082,7 @@ function slotsView() {
       </div>
 
       <div>
-        <div class="card">
+        <div class="card" style="border-top:3px solid var(--tn-black);">
           <h3>${t("crowdAnalytics")}</h3>
           <p class="muted">${t("crowdDesc")}</p>
           <div class="chart">
@@ -2018,7 +2139,7 @@ function confirmBooking() {
     <p><b>${isTa ? "நேரம்" : "Time Window"}:</b> ${s[0]}</p>
     <p><b>${isTa ? "பொருட்கள்" : "Pre-Packed Items"}:</b><br>${state.cart.map(x => `• ${isTa ? (x.nameTa || x.name) : x.name} — ${x.qty} ${t("kg")}`).join("<br>") || (isTa ? "மாதாந்திர அத்தியாவசிய ஒதுக்கீடு" : "Standard Monthly Entitlement")}</p>
     <span class="badge available">${isTa ? "விரைவு கவுண்டர் இடம் உறுதி செய்யப்பட்டது" : "Express Window Reserved"}</span>
-    <button class="btn btn-primary" style="width:100%;margin-top:20px;padding:12px;background:var(--tn-green);" onclick="finishBooking()">
+    <button class="btn btn-primary" style="width:100%;margin-top:20px;padding:12px;" onclick="finishBooking()">
       ${isTa ? "டோக்கன் பெற்று உறுதிசெய்க ✓" : "Confirm & Receive Booking Pass ✓"}
     </button>
   `);
@@ -2041,7 +2162,7 @@ function bookingsView() {
   const isTa = state.lang === "தமிழ்";
 
   return shell("beneficiary", `
-    <div class="card">
+    <div class="card" style="border-top:3px solid var(--tn-green);">
       <h2>${isTa ? "என் நேர முன்பதிவுகள்" : "My Active Collection Bookings"}</h2>
       ${state.booking ? `
         <div class="two-col">
@@ -2081,7 +2202,7 @@ function bookingsView() {
       ` : `
         <div class="empty">
           ${isTa ? "தற்போது எந்த முன்பதிவும் இல்லை." : "You have no active slot bookings."}<br>
-          <button class="btn btn-primary" style="margin-top:14px;background:var(--tn-green);" onclick="setPage('slots')">
+          <button class="btn btn-primary" style="margin-top:14px;" onclick="setPage('slots')">
             ${isTa ? "விரைவு நேர முன்பதிவு செய்க" : "Book an Express Slot"}
           </button>
         </div>
@@ -2094,7 +2215,7 @@ function historyView() {
   const isTa = state.lang === "தமிழ்";
 
   return shell("beneficiary", `
-    <div class="card">
+    <div class="card" style="border-top:3px solid var(--tn-green);">
       <h2>${isTa ? "விநியோக வரலாறு" : "My Collection History"}</h2>
       <div class="table-wrap">
         <table class="table">
@@ -2162,7 +2283,7 @@ function locationView() {
 
   return shell("beneficiary", `
     <div class="two-col">
-      <div class="card">
+      <div class="card" style="border-top:3px solid var(--tn-green);">
         <h2>${isTa ? "கடை மாற்றம் (Portability)" : "Change Collection Location (Portability)"}</h2>
         <label>${isTa ? "தற்போதைய நியாயவிலைக் கடை" : "Current Assigned Shop"}</label>
         <input value="${c.fps_shop_code || state.location} — Mylapore TUCS" disabled>
@@ -2177,17 +2298,17 @@ function locationView() {
         <label>${isTa ? "மாற்றத்திற்கான காரணம்" : "Reason for Temporary Transfer"}</label>
         <textarea id="reason" rows="3" placeholder="${isTa ? 'எ.கா: தற்காலிக பணி மாற்றம், இருப்பிட மாற்றம்' : 'e.g. Temporary work transfer, family relocation'}"></textarea>
 
-        <label style="font-weight:600;margin-top:14px;">
+        <label style="font-weight:700;margin-top:14px;">
           <input type="checkbox" id="locationConfirm" style="width:auto"> 
           ${isTa ? "ஒரே நாடு ஒரே ரேஷன் அட்டை விதிகளின்படி இந்த மாத ரேஷன் பொருட்களைப் பெற கடை மாற்றத்தை உறுதி செய்கிறேன்." : "I confirm that this portability transfer is for monthly ration collection under One Nation One Ration Card (ONORC) guidelines."}
         </label>
 
-        <button class="btn btn-primary" style="margin-top:16px;background:var(--tn-green);" onclick="changeLocation()">
+        <button class="btn btn-primary" style="margin-top:16px;" onclick="changeLocation()">
           ${isTa ? "கடை மாற்றத்தை உறுதிசெய்க" : "Confirm Location Change"}
         </button>
       </div>
 
-      <div class="card">
+      <div class="card" style="border-top:3px solid var(--tn-black);">
         <h3>${isTa ? "கடை மாற்ற விதிமுறைகள்" : "Portability Regulations"}</h3>
         <div class="notice">
           ${isTa ? "அலுவலகத்திற்கு நேரில் செல்ல வேண்டிய அவசியமில்லை. தேசிய உணவுப் பாதுகாப்புச் சட்ட விதிகளின்படி உடனடியாக டிஜிட்டல் முறையில் கடை மாற்றிக்கொள்ளலாம்." : "No manual office approvals required. Instant digital shop migration is supported under National Food Security Act portability guidelines."}
@@ -2239,7 +2360,7 @@ function flowView() {
   ];
 
   return shell("beneficiary", `
-    <div class="card">
+    <div class="card" style="border-top:3px solid var(--tn-green);">
       <h2 style="text-align:center">${isTa ? "திட்டத்தின் முழு செயல்முறை வரைபடம்" : "End-to-End System Workflow"}</h2>
       <div class="flow">
         ${steps.map((x, i) => `
@@ -2255,7 +2376,7 @@ function notificationsView() {
   const isTa = state.lang === "தமிழ்";
 
   return shell("beneficiary", `
-    <div class="card">
+    <div class="card" style="border-top:3px solid var(--tn-green);">
       <h2>${isTa ? "அறிவிப்பு மையம்" : "Notification Centre"}</h2>
       <div class="actions" style="margin-bottom:18px;">
         <span class="badge booked">${isTa ? "அனைத்தும்" : "All"}</span>
@@ -2277,22 +2398,22 @@ function helpView() {
   const isTa = state.lang === "தமிழ்";
 
   return shell("beneficiary", `
-    <div class="card">
+    <div class="card" style="border-top:3px solid var(--tn-green);">
       <h2>${isTa ? "குடிமக்கள் உதவி மையம் & புகார் பிரிவு" : "Citizen Support & Grievance Helpline"}</h2>
       <p class="muted">${t("footerDept")}</p>
       <div class="stat-grid" style="margin:20px 0;">
-        <div class="stat-card">
+        <div class="stat-card" style="border-top-color:var(--tn-green);">
           <div class="label">${isTa ? "கட்டணமில்லா உதவி எண்" : "Toll-Free Helpline"}</div>
-          <div class="num" style="font-size:22px;">1967</div>
+          <div class="num" style="font-size:22px;color:var(--tn-green);">1967</div>
           <div class="sub">${isTa ? "24 மணி நேர சேவை" : "24x7 Support"}</div>
         </div>
-        <div class="stat-card">
+        <div class="stat-card" style="border-top-color:var(--tn-red);">
           <div class="label">${isTa ? "நுகர்வோர் குறைதீர்ப்பு எண்" : "Consumer Grievance"}</div>
-          <div class="num" style="font-size:22px;">1800-425-5901</div>
+          <div class="num" style="font-size:22px;color:var(--tn-red);">1800-425-5901</div>
           <div class="sub">${isTa ? "இலவச அழைப்பு" : "Free Calling"}</div>
         </div>
       </div>
-      <div class="notice">
+      <div class="notice" style="border-left-color:var(--tn-red);background:var(--tn-red-light);color:var(--tn-red-dark);">
         <b>${isTa ? "மோசடி தடுப்பு எச்சரிக்கை" : "Fraud Prevention"}:</b> ${isTa ? "உங்கள் OTP எண்ணை எவருடனும் பகிர வேண்டாம். நியாயவிலைக் கடையில் பொருட்கள் பெறும்போது கைரேகை மட்டுமே போதுமானது." : "Never share your OTP with shopkeepers or unauthorized agents. The Fair Price Shop staff will only require your biometric confirmation during handover."}
       </div>
     </div>
@@ -2305,26 +2426,26 @@ function helpView() {
 function staffDashboard() {
   return shell("staff", `
     <div class="stat-grid">
-      <div class="stat-card">
+      <div class="stat-card" style="border-top-color:var(--tn-green);">
         <div class="label">Today's Bookings</div>
         <div class="num">48</div>
       </div>
-      <div class="stat-card">
+      <div class="stat-card" style="border-top-color:var(--tn-black);">
         <div class="label">Orders to Prepare</div>
         <div class="num">31</div>
       </div>
-      <div class="stat-card">
+      <div class="stat-card" style="border-top-color:var(--tn-green);">
         <div class="label">Collected So Far</div>
         <div class="num">24</div>
       </div>
-      <div class="stat-card">
+      <div class="stat-card" style="border-top-color:var(--tn-red);">
         <div class="label">Pending Collections</div>
         <div class="num">7</div>
       </div>
     </div>
 
     <div class="two-col">
-      <div class="card">
+      <div class="card" style="border-top:3px solid var(--tn-green);">
         <h2>Today's Counter Operations</h2>
         <div class="progress-label">
           <span>Advance Packed Bags</span>
@@ -2336,10 +2457,10 @@ function staffDashboard() {
         </div>
       </div>
 
-      <div class="card">
+      <div class="card" style="border-top:3px solid var(--tn-black);">
         <h3>Stock Reconciliation Formula</h3>
         <b>Opening + Received − Handed Over = Remaining</b>
-        <p style="margin-top:10px;font-size:15px;">1000 + 500 − 850 = <b>650 kg</b></p>
+        <p style="margin-top:10px;font-size:15px;font-weight:700;">1000 + 500 − 850 = <b style="color:var(--tn-green);">650 kg</b></p>
       </div>
     </div>
   `, `staff`);
@@ -2347,7 +2468,7 @@ function staffDashboard() {
 
 function staffBookings() {
   return shell("staff", `
-    <div class="card">
+    <div class="card" style="border-top:3px solid var(--tn-green);">
       <h2>Today's Slot Bookings</h2>
       <div class="table-wrap">
         <table class="table">
@@ -2384,7 +2505,7 @@ function staffBookings() {
 function prepareView() {
   return shell("staff", `
     <div class="two-col">
-      <div class="card">
+      <div class="card" style="border-top:3px solid var(--tn-green);">
         <h2>Advance Bag Preparation</h2>
         <p><b>Booking Token:</b> SR-00124</p>
         <p style="font-size:16px;">
@@ -2399,12 +2520,12 @@ function prepareView() {
           ☑ Attach token label to bundle<br>
           ☐ Place in express collection bay
         </p>
-        <button class="btn btn-success" onclick="markPrepared()">
+        <button class="btn btn-primary" onclick="markPrepared()">
           Mark as Pre-Packed ✓
         </button>
       </div>
 
-      <div class="card">
+      <div class="card" style="border-top:3px solid var(--tn-black);">
         <h3>Packing Status</h3>
         <span class="badge ${state.prepared ? 'prepared' : 'pending'}" style="font-size:14px;padding:8px 16px;">
           ${state.prepared ? 'Packed & Ready for Handover ✓' : 'Packing in Progress'}
@@ -2426,7 +2547,7 @@ function markPrepared() {
 
 function stockView() {
   return shell("staff", `
-    <div class="card">
+    <div class="card" style="border-top:3px solid var(--tn-green);">
       <div class="content-head">
         <h2>Shop Stock Management</h2>
         <button class="btn btn-primary" onclick="updateStock()">+ Receive New Godown Stock</button>
@@ -2516,7 +2637,7 @@ function applyStock() {
 
 function notifyView() {
   return shell("staff", `
-    <div class="card">
+    <div class="card" style="border-top:3px solid var(--tn-green);">
       <h2>Citizen Restock Alert Requests</h2>
       <div class="table-wrap">
         <table class="table">
@@ -2565,7 +2686,7 @@ function sendRestock(p) {
 function collectionView() {
   return shell("staff", `
     <div class="two-col">
-      <div class="card">
+      <div class="card" style="border-top:3px solid var(--tn-green);">
         <h2>Handover Biometric Authentication</h2>
         <p><b>Booking Token:</b> SR-00124</p>
         <p><b>Beneficiary:</b> Kavitha Murugan (33/G/0123456)</p>
@@ -2576,14 +2697,14 @@ function collectionView() {
           Authorize via ePOS Biometric Scanner
         </button>
         ${state.collected ? `
-          <div class="notice" style="background:#f0fdf4;border-color:var(--green);color:#166534;margin-top:16px;">
+          <div class="notice" style="background:var(--tn-green-light);border-color:var(--tn-green);color:var(--tn-green-dark);margin-top:16px;">
             <b>COLLECTION SUCCESSFUL ✓</b><br>
             Biometric match confirmed (Aadhaar UIDAI). Handover logged to state ePDS ledger.
           </div>
         ` : ""}
       </div>
 
-      <div class="card">
+      <div class="card" style="border-top:3px solid var(--tn-red);">
         <h3>Biometric Security Policy</h3>
         <div class="rule">
           <b>Zero Fraud Handover:</b> No ration can be marked collected without biometric fingerprint or iris confirmation at the Point of Sale device.
@@ -2599,7 +2720,7 @@ function biometric() {
     <h2>ePOS Biometric Verification</h2>
     <p class="muted">Citizen places thumb on scanner for Aadhaar ePDS handshake.</p>
     <div style="font-size:60px;text-align:center;margin:20px 0;">🖐️ 🔐</div>
-    <button class="btn btn-success" style="width:100%" onclick="completeCollection()">
+    <button class="btn btn-primary" style="width:100%" onclick="completeCollection()">
       Simulate Biometric Verification & Handover
     </button>
   `);
@@ -2622,16 +2743,16 @@ function completeCollection() {
 function rescheduleView() {
   return shell("staff", `
     <div class="two-col">
-      <div class="card">
+      <div class="card" style="border-top:3px solid var(--tn-red);">
         <h2>Missed Slot Management</h2>
-        <div class="notice">
+        <div class="notice" style="border-left-color:var(--tn-red);background:var(--tn-red-light);color:var(--tn-red-dark);">
           <b>Citizen missed scheduled window (10:30 AM – 11:30 AM).</b>
         </div>
         <h3>One automatic reschedule window permitted.</h3>
         <button class="btn btn-primary" onclick="reschedule()">Grant Reschedule Window</button>
       </div>
 
-      <div class="card">
+      <div class="card" style="border-top:3px solid var(--tn-black);">
         <h3>Department Reschedule Policy</h3>
         <p>• <b>Month 1:</b> Primary window + 1 reschedule.</p>
         <p>• <b>Recovery Days:</b> Last 3 days of the month reserved for missed slot collections.</p>
@@ -2648,7 +2769,7 @@ function reschedule() {
 
 function auditView() {
   return shell("staff", `
-    <div class="card">
+    <div class="card" style="border-top:3px solid var(--tn-green);">
       <h2>Fair Price Shop Operational Audit Log</h2>
       <div class="table-wrap">
         <table class="table">
@@ -2692,26 +2813,26 @@ function auditView() {
 function officialDashboard() {
   return shell("official", `
     <div class="stat-grid">
-      <div class="stat-card">
+      <div class="stat-card" style="border-top-color:var(--tn-green);">
         <div class="label">Total FPS Shops</div>
         <div class="num">128</div>
       </div>
-      <div class="stat-card">
+      <div class="stat-card" style="border-top-color:var(--tn-black);">
         <div class="label">Today's Bookings</div>
         <div class="num">2,340</div>
       </div>
-      <div class="stat-card">
+      <div class="stat-card" style="border-top-color:var(--tn-green);">
         <div class="label">Completed Handovers</div>
         <div class="num">1,982</div>
       </div>
-      <div class="stat-card">
+      <div class="stat-card" style="border-top-color:var(--tn-red);">
         <div class="label">Pending Today</div>
         <div class="num">358</div>
       </div>
     </div>
 
     <div class="two-col">
-      <div class="card">
+      <div class="card" style="border-top:3px solid var(--tn-green);">
         <h2>District Distribution Progress</h2>
         <div class="chart">
           ${[85, 67, 53, 25, 38].map((v, i) => `
@@ -2723,19 +2844,19 @@ function officialDashboard() {
         </div>
       </div>
 
-      <div class="card">
+      <div class="card" style="border-top:3px solid var(--tn-black);">
         <h2>Overall Commodity Availability</h2>
         <div class="progress-label"><span>In Stock</span><b>83%</b></div>
         <div class="progress"><span style="width:83%"></span></div>
-        <div class="progress-label" style="margin-top:16px;"><span>Awaiting Restock</span><b>17%</b></div>
-        <div class="progress"><span style="width:17%;background:var(--red)"></span></div>
+        <div class="progress-label" style="margin-top:16px;"><span>Awaiting Restock</span><b style="color:var(--tn-red);">17%</b></div>
+        <div class="progress"><span style="width:17%;background:var(--tn-red)"></span></div>
       </div>
     </div>
   `, `official`);
 }
 
 function officialSimple(title, active, body) {
-  return shell("official", `<div class="card"><h2>${title}</h2>${body}</div>`, active);
+  return shell("official", `<div class="card" style="border-top:3px solid var(--tn-green);"><h2>${title}</h2>${body}</div>`, active);
 }
 
 function openNotifications() {
@@ -2791,12 +2912,12 @@ function render() {
       collections: isTa ? "விநியோக அறிக்கைகள்" : "Verified Handover Reports"
     };
     const bodies = {
-      shops: `<div class="notice">128 registered Fair Price Shops across Chennai and suburban taluks.</div><div class="stat-grid"><div class="stat-card"><div class="label">Open Shops</div><div class="num">119</div></div><div class="stat-card"><div class="label">Stock Critical</div><div class="num">9</div></div></div>`,
+      shops: `<div class="notice">128 registered Fair Price Shops across Chennai and suburban taluks.</div><div class="stat-grid"><div class="stat-card"><div class="label">Open Shops</div><div class="num">119</div></div><div class="stat-card" style="border-top-color:var(--tn-red);"><div class="label">Stock Critical</div><div class="num" style="color:var(--tn-red);">9</div></div></div>`,
       stockofficial: `<div class="notice">Central stock ledger synchronizing godown inward and counter sales.</div><div class="chart">${[72,58,81,43,67,52].map((v,i)=>`<div class="bar" style="height:${v}%"><span>${v}</span><small>FPS ${i+1}</small></div>`).join("")}</div>`,
       analytics: `<h3>Godown Inward → Outward → Shop Balance</h3><div class="stat-grid"><div class="stat-card"><div class="label">Inward</div><div class="num">500 MT</div></div><div class="stat-card"><div class="label">Distributed</div><div class="num">350 MT</div></div><div class="stat-card"><div class="label">Remaining</div><div class="num">150 MT</div></div></div>`,
       slotdemand: `<h3>Hourly Slot Bookings Demand</h3><div class="chart">${[32,45,60,82,48,35,70,54].map((v,i)=>`<div class="bar" style="height:${v}%"><span>${v}</span><small>${8+i}:30</small></div>`).join("")}</div>`,
       notifyofficial: `<h3>Restock Push Notification Funnel</h3><div class="timeline">${["Requests","Restocked","Pushed","Booked","Collected"].map((x,i)=>`<div class="step done"><div class="dot">${[421,302,278,210,185][i]}</div><p>${x}</p></div>`).join("")}</div>`,
-      collections: `<div class="notice">Digital ePOS ledger reports.</div><div class="stat-grid"><div class="stat-card"><div class="label">Biometrically Handed Over</div><div class="num">1,982</div></div><div class="stat-card"><div class="label">Missed Slots</div><div class="num">103</div></div><div class="stat-card"><div class="label">Recovered</div><div class="num">42</div></div></div>`
+      collections: `<div class="notice">Digital ePOS ledger reports.</div><div class="stat-grid"><div class="stat-card"><div class="label">Biometrically Handed Over</div><div class="num">1,982</div></div><div class="stat-card" style="border-top-color:var(--tn-red);"><div class="label">Missed Slots</div><div class="num" style="color:var(--tn-red);">103</div></div><div class="stat-card"><div class="label">Recovered</div><div class="num">42</div></div></div>`
     };
     root.innerHTML = officialSimple(titles[p], p, bodies[p]);
   }
