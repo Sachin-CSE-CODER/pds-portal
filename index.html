@@ -940,6 +940,50 @@ const state = {
   // 2-Step Login State (Name + Password -> Mobile OTP Verification)
   authStep: 1, // 1 = Name + Password, 2 = Mobile OTP
   isAdminVerified: false, // Default is false for normal citizens (autofill, presets & dev OTP hidden)
+  adminUser: null, // Logged in admin: { login_id: 'admin', role: 'Super Administrator' }
+  adminTab: 'bookings', // Active tab in Admin Console: 'bookings', 'citizens', 'capacity', 'extensions'
+  citizenOtps: {}, // Cached verification OTPs per citizen mobile
+  allBookings: [
+    {
+      id: 'TN-BK-829104',
+      citizen_name: 'Vijay Anand',
+      mobile_number: '6382826805',
+      smart_card_no: '33/S/0998877',
+      date: 'Today',
+      time: '10:00 AM – 10:15 AM',
+      shop_code: 'TN-FPS-1201',
+      shop_name: 'Suramangalam Fair Price Outlet',
+      items: ['Boiled Rice (20 kg)', 'Sugar (2 kg)', 'Toor Dhal (1 kg)', 'Palm Oil (1 L)'],
+      status: 'Booked',
+      created_at: new Date().toISOString()
+    },
+    {
+      id: 'TN-BK-409182',
+      citizen_name: 'Kavitha Murugan',
+      mobile_number: '7904208464',
+      smart_card_no: '33/G/0123456',
+      date: 'Today',
+      time: '11:15 AM – 11:30 AM',
+      shop_code: 'TN-FPS-0102',
+      shop_name: 'Mylapore TUCS Cooperative Society',
+      items: ['Rice (20 kg)', 'Sugar (2 kg)', 'Palm Oil (1 L)'],
+      status: 'Pre-Packed',
+      created_at: new Date().toISOString()
+    },
+    {
+      id: 'TN-BK-193850',
+      citizen_name: 'Senthil Kumar',
+      mobile_number: '9876543210',
+      smart_card_no: '33/K/0789012',
+      date: 'Tomorrow',
+      time: '09:00 AM – 09:15 AM',
+      shop_code: 'TN-FPS-0504',
+      shop_name: 'Gandhipuram Primary Agri Coop Shop',
+      items: ['Rice (35 kg)', 'Sugar (3 kg)', 'Toor Dhal (2 kg)', 'Palm Oil (2 L)'],
+      status: 'Booked',
+      created_at: new Date().toISOString()
+    }
+  ],
   inputName: '',
   inputPassword: '',
   showPassword: false,
@@ -1028,6 +1072,37 @@ async function fetchCitizensFromBackend() {
   } catch (e) {
     console.log("Operating in offline/cached citizen mode.");
   }
+}
+
+// Fetch live bookings for Admin Management
+async function fetchBookingsFromBackend() {
+  try {
+    const res = await fetch(`${API_URL}/bookings`);
+    if (res.ok) {
+      const data = await res.json();
+      if (data.bookings && Array.isArray(data.bookings) && data.bookings.length > 0) {
+        state.allBookings = data.bookings;
+        if (state.citizen) {
+          const myB = state.allBookings.find(b => b.mobile_number === state.citizen.mobile_number && b.status !== 'Cancelled');
+          if (myB) state.booking = myB;
+        }
+        if (state.page === "adminconsole" || state.page === "bookings") render();
+      }
+    }
+  } catch (e) {
+    console.log("Operating in local bookings store mode.");
+  }
+}
+
+// Helper to get or generate active verification OTP for citizen (for Admin inspection)
+function getOrGenCitizenOtp(mobile) {
+  const clean = String(mobile || '6382826805').replace(/[^0-9]/g, '').slice(-10);
+  if (!state.citizenOtps[clean]) {
+    const seed = parseInt(clean.slice(-4), 10) || 1234;
+    const code = Math.floor(100000 + ((seed * 73) % 900000)).toString();
+    state.citizenOtps[clean] = code;
+  }
+  return state.citizenOtps[clean];
 }
 
 // =====================================================================
@@ -1275,10 +1350,13 @@ function onCitizenSelectChange(mobile) {
     const firstName = found.full_name.toLowerCase().split(' ')[0];
     state.inputPassword = state.isAdminVerified ? (found.password || `${firstName}123`) : '';
     state.selectedCardNo = found.smart_card_no;
+    state.citizen = found;
+    if (state.isAdminVerified) {
+      state.devOtp = state.citizenOtps[found.mobile_number] || getOrGenCitizenOtp(found.mobile_number);
+    }
   }
   state.authStep = 1;
   state.otpSent = false;
-  state.devOtp = null;
   clearInterval(state.countdownInterval);
   render();
 }
@@ -1324,15 +1402,32 @@ function openAdminModal() {
     <div style="text-align:center;padding:12px 6px;">
       <div style="font-size:42px;margin-bottom:8px;">🛡️</div>
       <h2 style="font-size:20px;color:var(--tn-black);margin-bottom:8px;font-weight:800;">
-        ${isTa ? 'நிர்வாகி சரிபார்ப்பாளர் உள்நுழைவு' : 'Admin Verifier Authentication'}
+        ${isTa ? 'நிர்வாகி சரிபார்ப்பாளர் உள்நுழைவு' : 'Admin Verifier Login'}
       </h2>
       <p class="muted" style="font-size:13px;line-height:1.5;margin-bottom:20px;">
         ${isTa 
-          ? 'தானியங்கு நிரப்புதல், மாதிரி கணக்குகள் மற்றும் டெவலப்பர் OTP கருவிகளைத் திறக்க நிர்வாக கடவுச்சொல்லை உள்ளிடவும்.' 
-          : 'Enter the Admin Password (tnpds123) to unlock autofill options, citizen presets, and developer OTP tools.'}
+          ? 'நிர்வாகி உள்நுழைவு ஐடி (Admin Login ID) மற்றும் கடவுச்சொல்லை உள்ளிட்டு, பயனாளர் தரவுத்தள விவரங்கள் (User ID, கடவுச்சொல், OTP) மற்றும் முன்பதிவு திருத்தக் கருவிகளைத் திறக்கவும்.' 
+          : 'Enter the separate Admin Login ID and Admin Password to inspect user IDs, passwords, active verification OTPs, and modify portal bookings.'}
       </p>
 
-      <form onsubmit="event.preventDefault(); verifyAdminPassword();">
+      <form onsubmit="event.preventDefault(); verifyAdminCredentials();">
+        <div style="text-align:left;margin-bottom:14px;">
+          <label style="font-size:12px;font-weight:700;margin-bottom:6px;display:block;">
+            👤 ${isTa ? 'நிர்வாகி உள்நுழைவு ஐடி' : 'Admin Login ID'}
+          </label>
+          <input 
+            type="text" 
+            id="adminLoginId" 
+            value="admin"
+            placeholder="${isTa ? 'நிர்வாகி ஐடி (எ.கா. admin)' : 'Enter Admin ID (e.g. admin)'}" 
+            style="font-size:14px;padding:12px;width:100%;border:1px solid #cbd5e1;border-radius:8px;font-weight:700;"
+            required
+          >
+          <div style="font-size:11px;color:#64748b;margin-top:4px;">
+            🆔 ${isTa ? 'அங்கீகரிக்கப்பட்ட ஐடி:' : 'Authorized Admin ID:'} <code>admin</code>
+          </div>
+        </div>
+
         <div style="text-align:left;margin-bottom:18px;">
           <label style="font-size:12px;font-weight:700;margin-bottom:6px;display:block;">
             🔒 ${isTa ? 'நிர்வாக கடவுச்சொல்' : 'Admin Password'}
@@ -1345,8 +1440,8 @@ function openAdminModal() {
             autofocus
             required
           >
-          <div style="font-size:11px;color:#64748b;margin-top:6px;">
-            🔑 ${isTa ? 'நிர்வாக கடவுச்சொல்:' : 'Admin Key:'} <code>tnpds123</code>
+          <div style="font-size:11px;color:#64748b;margin-top:4px;">
+            🔑 ${isTa ? 'நிர்வாக கடவுச்சொல்:' : 'Admin Password:'} <code>tnpds123</code>
           </div>
         </div>
 
@@ -1368,30 +1463,57 @@ function openAdminModal() {
   }, 100);
 }
 
-function verifyAdminPassword() {
-  const input = document.getElementById('adminSecretPassword');
-  const password = input ? input.value.trim() : '';
+async function verifyAdminCredentials() {
+  const idInput = document.getElementById('adminLoginId');
+  const passInput = document.getElementById('adminSecretPassword');
+  const loginId = idInput ? idInput.value.trim() : 'admin';
+  const password = passInput ? passInput.value.trim() : '';
+  const isTa = state.lang === "தமிழ்";
 
-  if (password === 'tnpds123') {
-    state.isAdminVerified = true;
-    closeModal();
-    const sel = state.citizensList.find(c => c.mobile_number === state.selectedMobile) || state.citizensList[0];
-    state.inputName = sel.full_name;
-    const firstName = sel.full_name.toLowerCase().split(' ')[0];
-    state.inputPassword = sel.password || `${firstName}123`;
-    toast(state.lang === "தமிழ்" ? "🛡️ நிர்வாகி சரிபார்ப்பு வெற்றிகரமாக முடிந்தது! Autofill திறக்கப்பட்டது." : "🛡️ Admin Verifier Verified! Autofill & Dev OTP Unlocked.");
-    render();
-  } else {
-    toast(state.lang === "தமிழ்" ? "❌ தவறான நிர்வாக கடவுச்சொல். அனுமதி மறுக்கப்பட்டது." : "❌ Incorrect admin password. Access denied.");
-    if (input) {
-      input.value = '';
-      input.focus();
+  const validIds = ['admin', 'tnpds_admin', 'admin_pds', 'tn_admin', 'tnpds', 'tn-admin'];
+  const isValidId = !loginId || validIds.includes(loginId.toLowerCase());
+  const isValidPass = (password === 'tnpds123');
+
+  // Verify via backend API if online
+  try {
+    const res = await fetch('/api/verify-admin', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ login_id: loginId, password: password })
+    });
+    const data = await res.json();
+    if (!res.ok || !data.success) {
+      toast(`❌ ${data.error || (isTa ? 'தவறான நிர்வாகி விவரங்கள்.' : 'Incorrect admin credentials.')}`);
+      if (passInput) { passInput.value = ''; passInput.focus(); }
+      return;
     }
+    state.adminUser = data.admin || { login_id: loginId, role: 'Super Administrator' };
+  } catch (e) {
+    if (!isValidId || !isValidPass) {
+      toast(isTa ? "❌ தவறான நிர்வாகி ஐடி அல்லது கடவுச்சொல்." : "❌ Invalid Admin ID or password. (Use: admin / tnpds123)");
+      if (passInput) { passInput.value = ''; passInput.focus(); }
+      return;
+    }
+    state.adminUser = { login_id: loginId || 'admin', role: 'Super Administrator' };
   }
+
+  state.isAdminVerified = true;
+  closeModal();
+
+  // Populate first citizen presets and OTP
+  const sel = state.citizensList.find(c => c.mobile_number === state.selectedMobile) || state.citizensList[0];
+  state.inputName = sel.full_name;
+  const firstName = sel.full_name.toLowerCase().split(' ')[0];
+  state.inputPassword = sel.password || `${firstName}123`;
+  state.devOtp = state.citizenOtps[sel.mobile_number] || getOrGenCitizenOtp(sel.mobile_number);
+
+  toast(isTa ? `🛡️ நிர்வாகி சரிபார்ப்பு வெற்றிகரமாக முடிந்தது! (ஐடி: ${state.adminUser.login_id})` : `🛡️ Admin Verified! Login ID: ${state.adminUser.login_id}. Citizen details & modifications unlocked.`);
+  render();
 }
 
 function exitAdminMode() {
   state.isAdminVerified = false;
+  state.adminUser = null;
   state.inputName = "";
   state.inputPassword = "";
   state.devOtp = null;
@@ -1427,14 +1549,21 @@ function loginView() {
       <div class="login-stripe"></div>
       
       <!-- Admin Verifier Mode Header Bar -->
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid #f1f5f9;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid #f1f5f9;flex-wrap:wrap;gap:8px;">
         <span style="font-size:12px;color:#64748b;font-weight:700;">
-          ${state.isAdminVerified ? `🛡️ <b style="color:var(--tn-green);">${isTa ? 'நிர்வாகி முறை செயலில் உள்ளது' : 'Admin Verifier Mode Active'}</b>` : `👤 ${isTa ? 'பொது பயனாளி உள்நுழைவு' : 'Citizen Login'}`}
+          ${state.isAdminVerified 
+            ? `🛡️ <b style="color:var(--tn-green);">${isTa ? 'நிர்வாகி முறை செயலில் உள்ளது' : 'Admin Mode'}: ${state.adminUser ? state.adminUser.login_id : 'admin'}</b>` 
+            : `👤 ${isTa ? 'பொது பயனாளி உள்நுழைவு' : 'Citizen Login'}`}
         </span>
         ${state.isAdminVerified ? `
-          <button type="button" onclick="exitAdminMode()" style="background:#fee2e2;border:1px solid #fca5a5;color:#b91c1c;padding:3px 10px;border-radius:6px;font-size:11px;font-weight:800;cursor:pointer;">
-            🔒 ${isTa ? 'வெளியேறு' : 'Lock Admin'}
-          </button>
+          <div style="display:flex;gap:6px;align-items:center;">
+            <button type="button" onclick="setPage('adminconsole')" style="background:var(--tn-black);color:#fff;border:none;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:4px;">
+              🛠️ ${isTa ? 'நிர்வாக பலகை' : 'Admin Console'}
+            </button>
+            <button type="button" onclick="exitAdminMode()" style="background:#fee2e2;border:1px solid #fca5a5;color:#b91c1c;padding:3px 10px;border-radius:6px;font-size:11px;font-weight:800;cursor:pointer;">
+              🔒 ${isTa ? 'வெளியேறு' : 'Lock Admin'}
+            </button>
+          </div>
         ` : `
           <button type="button" onclick="openAdminModal()" style="background:#f1f5f9;border:1px solid #cbd5e1;color:#334155;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:4px;">
             🛡️ ${isTa ? 'நிர்வாகி சரிபார்ப்பாளர்' : 'Admin Verifier'}
@@ -1469,19 +1598,69 @@ function loginView() {
           ${t("step1Desc")}
         </p>
 
-        <!-- Database Citizen Quick Selector (Admin Verifier Only) -->
+        <!-- Database Citizen Quick Selector with User ID, Password, OTP, and details (Admin Verifier Only) -->
         ${state.isAdminVerified ? `
-          <div style="background:#f8fafc;border:1px solid var(--border);border-left:4px solid var(--tn-green);border-radius:12px;padding:12px;margin-bottom:18px;text-align:left;">
-            <label style="margin:0 0 6px;font-size:11px;color:var(--tn-black);text-transform:uppercase;letter-spacing:0.5px;font-weight:800;">
-              👥 ${t("selectFromDb")} (Admin Tool)
-            </label>
-            <select id="citizenSelectDropdown" onchange="onCitizenSelectChange(this.value)" style="font-weight:700;font-size:13px;width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:#fff;">
-              ${state.citizensList.map(c => `
-                <option value="${c.mobile_number}" ${c.mobile_number === mobile ? "selected" : ""}>
-                  ${c.full_name} (${c.district || 'TN'}) — ${c.mobile_number}
-                </option>
-              `).join("")}
+          <div style="background:#f8fafc;border:2px solid var(--tn-green);border-radius:12px;padding:14px;margin-bottom:18px;text-align:left;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+              <label style="margin:0;font-size:11px;color:var(--tn-black);text-transform:uppercase;letter-spacing:0.5px;font-weight:800;display:flex;align-items:center;gap:4px;">
+                👥 ${isTa ? 'பயனாளர் தரவுத்தள விவரங்கள் (நிர்வாகி பார்வை)' : 'Citizen Database Directory (Admin View)'}
+              </label>
+              <span style="font-size:11px;background:#dcfce7;color:#166534;padding:2px 8px;border-radius:10px;font-weight:800;">
+                🛡️ ${state.adminUser ? state.adminUser.login_id : 'admin'} verified
+              </span>
+            </div>
+
+            <!-- Dropdown Menu showing User ID, Password, OTP, and Other Details -->
+            <select id="citizenSelectDropdown" onchange="onCitizenSelectChange(this.value)" style="font-weight:700;font-size:12px;width:100%;padding:10px;border:1px solid #94a3b8;border-radius:8px;background:#fff;color:#0f172a;line-height:1.4;">
+              ${state.citizensList.map(c => {
+                const cPass = c.password || `${c.full_name.toLowerCase().split(' ')[0]}123`;
+                const cOtp = state.citizenOtps[c.mobile_number] || (c.mobile_number === mobile ? state.devOtp : null) || getOrGenCitizenOtp(c.mobile_number);
+                return `
+                  <option value="${c.mobile_number}" ${c.mobile_number === mobile ? "selected" : ""}>
+                    [ID: ${c.id || '-'}] ${c.full_name} | Pass: ${cPass} | OTP: ${cOtp} | Ph: ${c.mobile_number} | Card: ${c.smart_card_no || '-'} (${c.district || 'TN'})
+                  </option>
+                `;
+              }).join("")}
             </select>
+
+            <!-- Detailed Admin Citizen Inspector Card -->
+            <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin-top:10px;font-size:12px;">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                <div>
+                  <span style="color:#64748b;font-size:10px;text-transform:uppercase;font-weight:700;">User ID & Name:</span>
+                  <div style="font-weight:800;color:var(--tn-black);font-size:13px;">[ID: ${selectedCitizen.id}] ${selectedCitizen.full_name}</div>
+                </div>
+                <div>
+                  <span style="color:#64748b;font-size:10px;text-transform:uppercase;font-weight:700;">Password:</span>
+                  <div style="font-weight:800;color:var(--tn-green);font-size:13px;font-family:monospace;">${demoPass}</div>
+                </div>
+                <div>
+                  <span style="color:#64748b;font-size:10px;text-transform:uppercase;font-weight:700;">Active OTP:</span>
+                  <div style="font-weight:900;color:var(--tn-red);font-size:14px;font-family:monospace;">
+                    ${state.devOtp || getOrGenCitizenOtp(selectedCitizen.mobile_number)}
+                  </div>
+                </div>
+                <div>
+                  <span style="color:#64748b;font-size:10px;text-transform:uppercase;font-weight:700;">Mobile & Topic:</span>
+                  <div style="font-weight:700;color:#334155;">+91 ${mobile} (<a href="https://ntfy.sh/tnpds-${mobile}" target="_blank" style="color:var(--tn-green);text-decoration:underline;">tnpds-${mobile}</a>)</div>
+                </div>
+                <div>
+                  <span style="color:#64748b;font-size:10px;text-transform:uppercase;font-weight:700;">Smart Card:</span>
+                  <div style="font-weight:700;color:#334155;">${selectedCitizen.smart_card_no || '33/S/0998877'} (${selectedCitizen.card_type || 'PHH'})</div>
+                </div>
+                <div>
+                  <span style="color:#64748b;font-size:10px;text-transform:uppercase;font-weight:700;">FPS Shop:</span>
+                  <div style="font-weight:700;color:#334155;">${selectedCitizen.fps_shop_code} (${selectedCitizen.district || 'Salem'})</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Direct Button to Admin Bookings & Modification Console -->
+            <div style="margin-top:10px;display:flex;gap:8px;">
+              <button type="button" class="btn" onclick="setPage('adminconsole')" style="flex:1;background:var(--tn-black);color:#fff;font-size:12px;font-weight:800;padding:8px;border-radius:6px;display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;">
+                🛠️ ${isTa ? 'நிர்வாக முன்பதிவு திருத்த பலகைக்குச் செல்' : 'Open Admin Bookings & Modification Console →'}
+              </button>
+            </div>
           </div>
         ` : ""}
 
@@ -2053,13 +2232,21 @@ function logoutCitizen() {
 // =====================================================================
 function shell(role, body, active) {
   const isTa = state.lang === "தமிழ்";
-  let title = role === "beneficiary" 
+  let title = role === "admin"
+    ? (isTa ? "மாநில நிர்வாகி கட்டுப்பாட்டு பலகை" : "Tamil Nadu ePDS State Admin Console")
+    : role === "beneficiary" 
     ? (isTa ? "பயனாளர் போர்டல்" : "Beneficiary Portal") 
     : role === "staff" 
     ? (isTa ? "நியாயவிலைக் கடை ஊழியர் போர்டல்" : "FPS Staff Portal") 
     : (isTa ? "துறை அதிகாரிகள் டாஷ்போர்டு" : "Officials Dashboard");
 
-  let menus = role === "beneficiary" ? [
+  let menus = role === "admin" ? [
+    ["adminconsole", isTa ? "🛡️ நிர்வாக பலகை" : "🛡️ Admin Console"],
+    ["beneficiary", isTa ? "👤 பயனாளி முகப்பு" : "👤 Citizen Portal"],
+    ["staff", isTa ? "🏪 கடை ஊழியர்" : "🏪 Staff Portal"],
+    ["official", isTa ? "📊 அதிகாரிகள் தணிக்கை" : "📊 Officials Portal"]
+  ] : role === "beneficiary" ? [
+    ...(state.isAdminVerified ? [["adminconsole", isTa ? "🛡️ நிர்வாக பலகை" : "🛡️ Admin Console"]] : []),
     ["beneficiary", t("navDashboard")],
     ["products", t("navProducts")],
     ["cart", t("navCart")],
@@ -2071,6 +2258,7 @@ function shell(role, body, active) {
     ["notifications", t("navNotifications")],
     ["help", t("navHelp")]
   ] : role === "staff" ? [
+    ...(state.isAdminVerified ? [["adminconsole", isTa ? "🛡️ நிர்வாக பலகை" : "🛡️ Admin Console"]] : []),
     ["staff", isTa ? "முகப்பு" : "Dashboard"],
     ["staffbookings", isTa ? "இன்றைய முன்பதிவுகள்" : "Today's Bookings"],
     ["prepare", isTa ? "தயார் செய்ய வேண்டியவை" : "Orders to Prepare"],
@@ -2080,6 +2268,7 @@ function shell(role, body, active) {
     ["reschedule", isTa ? "தவறிய நேரங்கள்" : "Missed Slots"],
     ["audit", isTa ? "தணிக்கை பதிவு" : "Audit Log"]
   ] : [
+    ...(state.isAdminVerified ? [["adminconsole", isTa ? "🛡️ நிர்வாக பலகை" : "🛡️ Admin Console"]] : []),
     ["official", isTa ? "பொது விவரம்" : "Overview"],
     ["shops", isTa ? "கடைகள்" : "Shops"],
     ["stockofficial", isTa ? "இருப்பு கண்காணிப்பு" : "Stock"],
@@ -2119,7 +2308,7 @@ function shell(role, body, active) {
           <button class="mobile-menu" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
           <h1>${title}</h1>
           <span class="muted">
-            ${state.citizen ? `${isTa ? 'உள்நுழைந்துள்ள பயனாளர்' : 'Logged in'}: <b>${state.citizen.full_name}</b> (+91 ${state.citizen.mobile_number}) • ${state.citizen.card_type}` : t("footerDept")}
+            ${state.citizen ? `${isTa ? 'உள்நுழைந்துள்ள பயனாளர்' : 'Logged in'}: <b>${state.citizen.full_name}</b> (+91 ${state.citizen.mobile_number}) • ${state.citizen.card_type}` : (state.isAdminVerified ? `🛡️ <b>Admin Active: ${state.adminUser ? state.adminUser.login_id : 'admin'}</b>` : t("footerDept"))}
           </span>
         </div>
         <div class="user-tools">
@@ -2127,7 +2316,7 @@ function shell(role, body, active) {
             🌐 ${state.lang === "தமிழ்" ? "தமிழ்" : "English"}
           </button>
           <button class="btn btn-outline" style="padding:8px 12px;" onclick="openNotifications()">🔔</button>
-          <span class="avatar">${role === "beneficiary" ? citizenInitials : role === "staff" ? "SF" : "OF"}</span>
+          <span class="avatar">${role === "admin" ? "AD" : role === "beneficiary" ? citizenInitials : role === "staff" ? "SF" : "OF"}</span>
         </div>
       </div>
       ${body}
@@ -2137,6 +2326,7 @@ function shell(role, body, active) {
 
 function menuIcon(x) {
   return ({
+    adminconsole: "🛡️",
     beneficiary: "⌂", products: "▦", cart: "🛒", slots: "◷", bookings: "▣", history: "▤",
     location: "⌖", flow: "⇅", notifications: "🔔", help: "?",
     staff: "⌂", staffbookings: "▣", prepare: "☑", stock: "▥", notify: "🔔", collection: "✓",
@@ -3381,6 +3571,712 @@ function openNotifications() {
 }
 
 // =====================================================================
+// Admin Management & Modifications Console
+// =====================================================================
+function openAdminConsole() {
+  state.page = 'adminconsole';
+  render();
+}
+
+function adminConsoleView() {
+  const isTa = state.lang === "தமிழ்";
+  if (!state.adminTab) state.adminTab = 'bookings';
+
+  return shell("admin", `
+    <div style="margin-bottom:20px;">
+      <!-- Admin Header Bar -->
+      <div style="background:linear-gradient(135deg, #0f172a, #1e293b);color:#fff;border-radius:12px;padding:20px 24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;box-shadow:0 4px 12px rgba(0,0,0,0.15);">
+        <div style="display:flex;align-items:center;gap:14px;">
+          <div style="font-size:36px;background:rgba(255,255,255,0.1);padding:8px 14px;border-radius:12px;">🛡️</div>
+          <div>
+            <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#94a3b8;font-weight:700;">Government of Tamil Nadu • ePDS Administration</div>
+            <h2 style="margin:2px 0 4px;font-size:20px;color:#fff;">${isTa ? 'நிர்வாக கட்டுப்பாட்டு பலகை' : 'Admin Management & Modifications Console'}</h2>
+            <div style="font-size:12px;color:#cbd5e1;">
+              ${isTa ? 'உள்நுழைந்துள்ள நிர்வாகி:' : 'Logged-in Admin:'} <b>${state.adminUser ? state.adminUser.login_id : 'admin'}</b> | Role: <b>State Administrator</b>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+          <button class="btn" onclick="openAdminNewBookingModal()" style="background:var(--tn-green);color:#fff;padding:9px 14px;font-size:12px;font-weight:800;border-radius:8px;cursor:pointer;">
+            ➕ ${isTa ? 'புதிய முன்பதிவு ஒதுக்கீடு' : 'Assign / Book Slot'}
+          </button>
+          <button class="btn" onclick="setPage('login')" style="background:rgba(255,255,255,0.15);color:#fff;padding:9px 14px;font-size:12px;font-weight:700;border-radius:8px;border:1px solid rgba(255,255,255,0.3);cursor:pointer;">
+            👤 ${isTa ? 'உள்நுழைவு பக்கத்திற்கு' : 'Return to Login'}
+          </button>
+        </div>
+      </div>
+
+      <!-- Admin Navigation Tabs -->
+      <div style="display:flex;gap:8px;margin:20px 0 16px;border-bottom:2px solid #e2e8f0;padding-bottom:8px;overflow-x:auto;">
+        <button onclick="state.adminTab='bookings';render();" style="background:${state.adminTab==='bookings'?'var(--tn-green)':'#f1f5f9'};color:${state.adminTab==='bookings'?'#fff':'#334155'};border:none;padding:10px 18px;border-radius:8px;font-weight:800;font-size:13px;cursor:pointer;">
+          🎟️ ${isTa ? 'முன்பதிவுகள் & திருத்தங்கள்' : 'Slot Bookings & Modifications'} (${state.allBookings.length})
+        </button>
+        <button onclick="state.adminTab='citizens';render();" style="background:${state.adminTab==='citizens'?'var(--tn-green)':'#f1f5f9'};color:${state.adminTab==='citizens'?'#fff':'#334155'};border:none;padding:10px 18px;border-radius:8px;font-weight:800;font-size:13px;cursor:pointer;">
+          👥 ${isTa ? 'பயனாளர் தரவுத்தளம் (ID, Pass, OTP)' : 'Citizen Accounts & Credentials'} (${state.citizensList.length})
+        </button>
+        <button onclick="state.adminTab='capacity';render();" style="background:${state.adminTab==='capacity'?'var(--tn-green)':'#f1f5f9'};color:${state.adminTab==='capacity'?'#fff':'#334155'};border:none;padding:10px 18px;border-radius:8px;font-weight:800;font-size:13px;cursor:pointer;">
+          🏪 ${isTa ? 'கடை & நேர அளவீடுகள்' : 'FPS Slot Capacity & Windows'}
+        </button>
+        <button onclick="state.adminTab='extensions';render();" style="background:${state.adminTab==='extensions'?'var(--tn-green)':'#f1f5f9'};color:${state.adminTab==='extensions'?'#fff':'#334155'};border:none;padding:10px 18px;border-radius:8px;font-weight:800;font-size:13px;cursor:pointer;">
+          ⚙️ ${isTa ? 'கூடுதல் அமைப்புகள் (Extensions)' : 'System Extensions'}
+        </button>
+      </div>
+
+      <!-- Tab Content -->
+      ${state.adminTab === 'bookings' ? renderAdminBookingsTab(isTa) : ''}
+      ${state.adminTab === 'citizens' ? renderAdminCitizensTab(isTa) : ''}
+      ${state.adminTab === 'capacity' ? renderAdminCapacityTab(isTa) : ''}
+      ${state.adminTab === 'extensions' ? renderAdminExtensionsTab(isTa) : ''}
+    </div>
+  `, `adminconsole`);
+}
+
+function renderAdminBookingsTab(isTa) {
+  const activeCount = state.allBookings.filter(b => b.status !== 'Cancelled').length;
+  const prepackedCount = state.allBookings.filter(b => b.status === 'Pre-Packed').length;
+  const completedCount = state.allBookings.filter(b => b.status === 'Biometric Auth' || b.status === 'Completed').length;
+  const cancelledCount = state.allBookings.filter(b => b.status === 'Cancelled').length;
+
+  return `
+    <!-- Stats Cards -->
+    <div class="stat-grid" style="margin-bottom:20px;">
+      <div class="stat-card" style="border-top-color:var(--tn-green);">
+        <div class="label">${isTa ? 'செயலில் உள்ள முன்பதிவுகள்' : 'Active Bookings'}</div>
+        <div class="num">${activeCount}</div>
+      </div>
+      <div class="stat-card" style="border-top-color:#8b5cf6;">
+        <div class="label">${isTa ? 'பேக்கிங் செய்யப்பட்டவை' : 'Pre-Packed & Ready'}</div>
+        <div class="num" style="color:#8b5cf6;">${prepackedCount}</div>
+      </div>
+      <div class="stat-card" style="border-top-color:#059669;">
+        <div class="label">${isTa ? 'விநியோகிக்கப்பட்டவை' : 'Completed / Handed Over'}</div>
+        <div class="num" style="color:#059669;">${completedCount}</div>
+      </div>
+      <div class="stat-card" style="border-top-color:var(--tn-red);">
+        <div class="label">${isTa ? 'ரத்து செய்யப்பட்டவை' : 'Cancelled'}</div>
+        <div class="num" style="color:var(--tn-red);">${cancelledCount}</div>
+      </div>
+    </div>
+
+    <!-- Bookings Table Card -->
+    <div class="card" style="border-top:3px solid var(--tn-green);">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px;">
+        <h2 style="margin:0;font-size:18px;">
+          🎟️ ${isTa ? 'அனைத்து பயனாளர் முன்பதிவுகள் & திருத்தக் கருவிகள்' : 'All Citizen Slot Bookings & Modifications'}
+        </h2>
+        <span class="muted" style="font-size:12px;">
+          ${isTa ? 'நிர்வாகியால் நேரத்தை மாற்றவோ, ரத்து செய்யவோ, அல்லது அறிவிப்பு அனுப்பவோ முடியும்.' : 'Admins can modify slot time, date, status, shop, and push live ntfy updates to citizens.'}
+        </span>
+      </div>
+
+      <div class="table-wrap">
+        <table class="table" style="font-size:13px;">
+          <thead>
+            <tr>
+              <th>${isTa ? 'டோக்கன் எண்' : 'Token ID'}</th>
+              <th>${isTa ? 'பயனாளர் விவரம்' : 'Citizen'}</th>
+              <th>${isTa ? 'நாள் & நேரம்' : 'Date & Time Slot'}</th>
+              <th>${isTa ? 'கடை' : 'Fair Price Shop'}</th>
+              <th>${isTa ? 'பொருட்கள்' : 'Commodities'}</th>
+              <th>${isTa ? 'நிலை' : 'Status'}</th>
+              <th style="text-align:center;">${isTa ? 'செயல்கள் (Actions)' : 'Actions'}</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${state.allBookings.map(b => {
+              const statusStyle = b.status === 'Pre-Packed' 
+                ? 'background:#ede9fe;color:#6d28d9;border:1px solid #c4b5fd;' 
+                : b.status === 'Biometric Auth' || b.status === 'Completed'
+                ? 'background:#dcfce7;color:#166534;border:1px solid #86efac;'
+                : b.status === 'Cancelled'
+                ? 'background:#fee2e2;color:#991b1b;border:1px solid #fca5a5;'
+                : 'background:#e0f2fe;color:#0369a1;border:1px solid #7dd3fc;';
+              
+              const itemsStr = Array.isArray(b.items) ? b.items.join(', ') : (b.items || 'Standard Quota');
+
+              return `
+                <tr>
+                  <td>
+                    <code style="font-weight:800;color:var(--tn-green);font-size:13px;background:#f0fdf4;padding:2px 6px;border-radius:4px;border:1px solid #bbf7d0;">
+                      ${b.id}
+                    </code>
+                  </td>
+                  <td>
+                    <b>${b.citizen_name}</b><br>
+                    <small style="color:#64748b;">+91 ${b.mobile_number} • Card: ${b.smart_card_no || '-'}</small>
+                  </td>
+                  <td>
+                    <b>${b.time}</b><br>
+                    <small style="color:#64748b;">${b.date}</small>
+                  </td>
+                  <td>
+                    <b>${b.shop_code}</b><br>
+                    <small style="color:#64748b;">${b.shop_name || 'Fair Price Shop'}</small>
+                  </td>
+                  <td style="max-width:200px;font-size:12px;color:#334155;">
+                    ${itemsStr}
+                  </td>
+                  <td>
+                    <span style="display:inline-block;padding:3px 8px;border-radius:6px;font-size:11px;font-weight:800;${statusStyle}">
+                      ${b.status}
+                    </span>
+                  </td>
+                  <td style="text-align:center;">
+                    <div style="display:flex;gap:4px;justify-content:center;flex-wrap:wrap;">
+                      <button type="button" class="btn" onclick="openAdminModifyBookingModal('${b.id}')" style="background:var(--tn-green);color:#fff;padding:4px 8px;font-size:11px;font-weight:700;border-radius:4px;cursor:pointer;" title="Modify Time, Shop or Status">
+                        ✏️ ${isTa ? 'திருத்து' : 'Modify'}
+                      </button>
+                      <button type="button" class="btn" onclick="adminSendNotification('${b.id}')" style="background:#0284c7;color:#fff;padding:4px 8px;font-size:11px;font-weight:700;border-radius:4px;cursor:pointer;" title="Dispatch ntfy pass alert">
+                        🔔 ${isTa ? 'அறிவிப்பு' : 'Notify'}
+                      </button>
+                      ${b.status !== 'Cancelled' ? `
+                        <button type="button" class="btn" onclick="adminCancelBooking('${b.id}')" style="background:#fee2e2;border:1px solid #fca5a5;color:#b91c1c;padding:4px 8px;font-size:11px;font-weight:700;border-radius:4px;cursor:pointer;" title="Cancel this slot booking">
+                          ❌
+                        </button>
+                      ` : ''}
+                    </div>
+                  </td>
+                </tr>
+              `;
+            }).join("")}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+}
+
+function openAdminModifyBookingModal(bookingId) {
+  const isTa = state.lang === "தமிழ்";
+  const b = state.allBookings.find(x => x.id === bookingId);
+  if (!b) return toast('Booking not found');
+
+  const slotOptions = [
+    "08:30 AM – 08:45 AM", "08:45 AM – 09:00 AM",
+    "09:00 AM – 09:15 AM", "09:15 AM – 09:30 AM",
+    "09:30 AM – 09:45 AM", "09:45 AM – 10:00 AM",
+    "10:00 AM – 10:15 AM", "10:15 AM – 10:30 AM",
+    "10:30 AM – 10:45 AM", "10:45 AM – 11:00 AM",
+    "11:00 AM – 11:15 AM", "11:15 AM – 11:30 AM",
+    "11:30 AM – 11:45 AM", "11:45 AM – 12:00 PM",
+    "02:00 PM – 02:15 PM", "02:30 PM – 02:45 PM",
+    "03:00 PM – 03:15 PM", "03:30 PM – 03:45 PM",
+    "04:00 PM – 04:15 PM", "04:30 PM – 04:45 PM",
+    "05:00 PM – 05:15 PM", "05:30 PM – 05:45 PM"
+  ];
+
+  const dateOptions = [
+    isTa ? "இன்று" : "Today",
+    isTa ? "நாளை" : "Tomorrow",
+    isTa ? "வியாழன்" : "Thursday",
+    isTa ? "வெள்ளி" : "Friday",
+    isTa ? "மீட்பு நாட்கள் (Recovery Days)" : "Recovery Days (Missed Slots)"
+  ];
+
+  const statusOptions = ["Booked", "Pre-Packed", "Biometric Auth", "Rescheduled", "Cancelled"];
+  const itemsText = Array.isArray(b.items) ? b.items.join(', ') : (b.items || '');
+
+  modal(`
+    <div style="padding:10px 4px;text-align:left;">
+      <button class="close" onclick="closeModal()">×</button>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+        <span style="font-size:28px;">✏️</span>
+        <div>
+          <h2 style="margin:0;font-size:18px;color:var(--tn-black);">
+            ${isTa ? 'முன்பதிவு திருத்தம்' : 'Modify Booking Pass'} — <code style="color:var(--tn-green);">${b.id}</code>
+          </h2>
+          <span style="font-size:12px;color:#64748b;">
+            Citizen: <b>${b.citizen_name}</b> (+91 ${b.mobile_number}) • Card: ${b.smart_card_no || '-'}
+          </span>
+        </div>
+      </div>
+
+      <form onsubmit="event.preventDefault(); saveAdminBookingModification('${b.id}');">
+        <!-- Time Slot Selection -->
+        <div style="margin-bottom:12px;">
+          <label style="font-size:12px;font-weight:700;margin-bottom:4px;display:block;">
+            ⏰ ${isTa ? 'நேர இடைவெளி (Time Slot)' : 'Modify Time Slot'}
+          </label>
+          <select id="editSlotTime" style="width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:8px;font-weight:700;font-size:13px;background:#fff;">
+            ${slotOptions.map(slot => `
+              <option value="${slot}" ${slot === b.time ? 'selected' : ''}>${slot}</option>
+            `).join('')}
+          </select>
+        </div>
+
+        <!-- Date Selection -->
+        <div style="margin-bottom:12px;">
+          <label style="font-size:12px;font-weight:700;margin-bottom:4px;display:block;">
+            📅 ${isTa ? 'தேதி / நாள் (Date)' : 'Collection Day'}
+          </label>
+          <select id="editSlotDate" style="width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:8px;font-weight:700;font-size:13px;background:#fff;">
+            ${dateOptions.map(d => `
+              <option value="${d}" ${d === b.date ? 'selected' : ''}>${d}</option>
+            `).join('')}
+          </select>
+        </div>
+
+        <!-- Status Selection -->
+        <div style="margin-bottom:12px;">
+          <label style="font-size:12px;font-weight:700;margin-bottom:4px;display:block;">
+            🏷️ ${isTa ? 'முன்பதிவு நிலை (Status)' : 'Booking Status'}
+          </label>
+          <select id="editSlotStatus" style="width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:8px;font-weight:700;font-size:13px;background:#fff;">
+            ${statusOptions.map(st => `
+              <option value="${st}" ${st === b.status ? 'selected' : ''}>${st}</option>
+            `).join('')}
+          </select>
+        </div>
+
+        <!-- FPS Shop Code & Name -->
+        <div style="display:grid;grid-template-columns:1fr 2fr;gap:10px;margin-bottom:12px;">
+          <div>
+            <label style="font-size:12px;font-weight:700;margin-bottom:4px;display:block;">
+              🏪 ${isTa ? 'கடை எண்' : 'Shop Code'}
+            </label>
+            <input id="editSlotShopCode" value="${b.shop_code || 'TN-FPS-1201'}" style="width:100%;padding:9px;border:1px solid #cbd5e1;border-radius:8px;font-size:13px;">
+          </div>
+          <div>
+            <label style="font-size:12px;font-weight:700;margin-bottom:4px;display:block;">
+              ${isTa ? 'கடையின் பெயர்' : 'Shop Name'}
+            </label>
+            <input id="editSlotShopName" value="${b.shop_name || 'Suramangalam Outlet'}" style="width:100%;padding:9px;border:1px solid #cbd5e1;border-radius:8px;font-size:13px;">
+          </div>
+        </div>
+
+        <!-- Pre-packed Commodities -->
+        <div style="margin-bottom:14px;">
+          <label style="font-size:12px;font-weight:700;margin-bottom:4px;display:block;">
+            📦 ${isTa ? 'பொருட்கள் (Commodities)' : 'Pre-Packed Commodities'}
+          </label>
+          <input id="editSlotItems" value="${itemsText}" style="width:100%;padding:9px;border:1px solid #cbd5e1;border-radius:8px;font-size:13px;">
+        </div>
+
+        <!-- Notify Citizen Toggle -->
+        <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:8px;padding:10px 12px;margin-bottom:16px;">
+          <label style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:#166534;cursor:pointer;margin:0;">
+            <input type="checkbox" id="editNotifyCitizen" checked style="width:16px;height:16px;accent-color:var(--tn-green);">
+            <span>📲 ${isTa ? 'மாற்றங்களை ntfy மூலம் பயனாளருக்கு உடனடியாக அனுப்புக' : 'Push modification alert directly to citizen\'s ntfy app'} (<code>tnpds-${b.mobile_number}</code>)</span>
+          </label>
+        </div>
+
+        <div style="display:flex;gap:10px;">
+          <button type="button" class="btn btn-outline" style="flex:1;" onclick="closeModal()">
+            ${isTa ? 'ரத்து' : 'Cancel'}
+          </button>
+          <button type="submit" class="btn btn-primary" style="flex:2;font-weight:800;">
+            ${isTa ? 'சேமி & அறிவிப்பு அனுப்புக ✓' : 'Save Modifications & Notify Citizen ✓'}
+          </button>
+        </div>
+      </form>
+    </div>
+  `);
+}
+
+async function saveAdminBookingModification(bookingId) {
+  const isTa = state.lang === "தமிழ்";
+  const b = state.allBookings.find(x => x.id === bookingId);
+  if (!b) return;
+
+  const newTime = document.getElementById('editSlotTime').value;
+  const newDate = document.getElementById('editSlotDate').value;
+  const newStatus = document.getElementById('editSlotStatus').value;
+  const newShopCode = document.getElementById('editSlotShopCode').value.trim();
+  const newShopName = document.getElementById('editSlotShopName').value.trim();
+  const newItemsStr = document.getElementById('editSlotItems').value.trim();
+  const notifyCitizen = document.getElementById('editNotifyCitizen').checked;
+
+  b.time = newTime;
+  b.date = newDate;
+  b.status = newStatus;
+  b.shop_code = newShopCode;
+  b.shop_name = newShopName;
+  b.items = newItemsStr.split(',').map(s => s.trim()).filter(Boolean);
+
+  if (state.citizen && state.citizen.mobile_number === b.mobile_number) {
+    state.booking = { ...state.booking, ...b };
+  }
+
+  closeModal();
+
+  try {
+    await fetch(`/api/bookings/${bookingId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        date: newDate,
+        time: newTime,
+        status: newStatus,
+        shop_code: newShopCode,
+        shop_name: newShopName,
+        items: b.items,
+        notify_citizen: notifyCitizen
+      })
+    });
+  } catch (e) {
+    console.warn('Backend update failed, updated in client state:', e);
+  }
+
+  if (notifyCitizen) {
+    const cleanMobile = String(b.mobile_number).replace(/[^0-9]/g, '').slice(-10);
+    const ntfyTopic = `tnpds-${cleanMobile}`;
+    const updateTitle = isTa 
+      ? `தமிழ்நாடு ePDS - முன்பதிவு மாற்றப்பட்டது (${b.id})`
+      : `Tamil Nadu ePDS - Slot Modified (${b.id})`;
+    const updateBody = isTa
+      ? `வணக்கம் ${b.citizen_name}!\n\nஉங்கள் நியாயவிலைக் கடை முன்பதிவு நிர்வாகியால் மாற்றியமைக்கப்பட்டுள்ளது:\n🎫 டோக்கன்: ${b.id}\n📅 நாள்: ${b.date}\n⏰ நேரம்: ${b.time}\n🏪 கடை: ${b.shop_code} (${b.shop_name})\n📊 நிலை: ${b.status}\n📦 பொருட்கள்: ${b.items.join(', ')}\n\nகுறிப்பிட்ட நேரத்தில் விரைவு கவுண்டருக்கு வருகை தரவும்.`
+      : `Hello ${b.citizen_name}!\n\nYour Fair Price Shop collection booking has been MODIFIED by the Administrator:\n🎫 Token: ${b.id}\n📅 Date: ${b.date}\n⏰ Time: ${b.time}\n🏪 Shop: ${b.shop_code} (${b.shop_name})\n📊 Status: ${b.status}\n📦 Items: ${b.items.join(', ')}\n\nPlease note your updated time window.`;
+
+    fetch(`https://ntfy.sh/${ntfyTopic}`, {
+      method: 'POST',
+      headers: {
+        'Title': updateTitle,
+        'Priority': 'high',
+        'Tags': 'pencil,calendar,bell',
+        'Click': 'http://localhost:3000/#bookings'
+      },
+      body: updateBody
+    }).catch(() => {});
+  }
+
+  toast(isTa ? `✓ டோக்கன் ${bookingId} திருத்தப்பட்டது! பயனாளிக்கு அறிவிக்கப்பட்டது.` : `✓ Booking ${bookingId} modified successfully! Citizen notified.`);
+  render();
+}
+
+async function adminCancelBooking(bookingId) {
+  const isTa = state.lang === "தமிழ்";
+  const b = state.allBookings.find(x => x.id === bookingId);
+  if (!b) return;
+
+  if (!confirm(isTa ? `நிச்சயமாக முன்பதிவு ${bookingId} (${b.citizen_name}) ஐ ரத்து செய்ய விரும்புகிறீர்களா?` : `Are you sure you want to cancel booking ${bookingId} for citizen ${b.citizen_name}?`)) {
+    return;
+  }
+
+  b.status = 'Cancelled';
+  if (state.booking && state.booking.id === bookingId) {
+    state.booking.status = 'Cancelled';
+  }
+
+  try {
+    await fetch(`/api/bookings/${bookingId}`, { method: 'DELETE' });
+  } catch (e) {}
+
+  const cleanMobile = String(b.mobile_number).replace(/[^0-9]/g, '').slice(-10);
+  fetch(`https://ntfy.sh/tnpds-${cleanMobile}`, {
+    method: 'POST',
+    headers: {
+      'Title': `Tamil Nadu ePDS - Booking Cancelled (${b.id})`,
+      'Priority': 'default',
+      'Tags': 'x,no_entry_sign'
+    },
+    body: `Hello ${b.citizen_name},\nYour collection booking pass ${b.id} scheduled for ${b.time} has been CANCELLED by the Administrator.`
+  }).catch(() => {});
+
+  toast(isTa ? `❌ முன்பதிவு ${bookingId} ரத்து செய்யப்பட்டது.` : `❌ Booking ${bookingId} cancelled.`);
+  render();
+}
+
+async function adminSendNotification(bookingId) {
+  const isTa = state.lang === "தமிழ்";
+  const b = state.allBookings.find(x => x.id === bookingId);
+  if (!b) return;
+
+  toast(isTa ? `⏳ அறிவிப்பு அனுப்பப்படுகிறது...` : `⏳ Dispatching notification to ${b.citizen_name}...`);
+  await dispatchSlotBookingNotification(b, { full_name: b.citizen_name, mobile_number: b.mobile_number, fps_shop_code: b.shop_code, fps_shop_name: b.shop_name }, b.items);
+  toast(isTa ? `✓ ntfy அறிவிப்பு அனுப்பப்பட்டது (tnpds-${b.mobile_number})!` : `✓ ntfy pass alert sent to tnpds-${b.mobile_number}!`);
+}
+
+function openAdminNewBookingModal() {
+  const isTa = state.lang === "தமிழ்";
+  const slotOptions = [
+    "08:30 AM – 08:45 AM", "09:00 AM – 09:15 AM", "09:30 AM – 09:45 AM",
+    "10:00 AM – 10:15 AM", "10:30 AM – 10:45 AM", "11:00 AM – 11:15 AM",
+    "11:30 AM – 11:45 AM", "02:00 PM – 02:15 PM", "03:00 PM – 03:15 PM",
+    "04:00 PM – 04:15 PM", "05:00 PM – 05:15 PM"
+  ];
+
+  modal(`
+    <div style="padding:10px 4px;text-align:left;">
+      <button class="close" onclick="closeModal()">×</button>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+        <span style="font-size:28px;">➕</span>
+        <div>
+          <h2 style="margin:0;font-size:18px;color:var(--tn-black);">
+            ${isTa ? 'பயனாளருக்கு புதிய முன்பதிவு ஒதுக்கீடு' : 'Assign / Book Collection Slot for Citizen'}
+          </h2>
+          <span style="font-size:12px;color:#64748b;">
+            ${isTa ? 'நிர்வாகியால் எந்த பயனாளருக்கும் நேரடியாக நேர முன்பதிவை உருவாக்க முடியும்.' : 'Admins can directly create an express collection booking for any registered citizen.'}
+          </span>
+        </div>
+      </div>
+
+      <form onsubmit="event.preventDefault(); saveAdminNewBooking();">
+        <!-- Choose Citizen -->
+        <div style="margin-bottom:12px;">
+          <label style="font-size:12px;font-weight:700;margin-bottom:4px;display:block;">
+            👥 ${isTa ? 'பயனாளரைத் தேர்வு செய்க' : 'Select Beneficiary Citizen'}
+          </label>
+          <select id="newSlotCitizenMobile" style="width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:8px;font-weight:700;font-size:13px;background:#fff;">
+            ${state.citizensList.map(c => `
+              <option value="${c.mobile_number}">[ID: ${c.id}] ${c.full_name} — +91 ${c.mobile_number} (${c.district || 'TN'})</option>
+            `).join('')}
+          </select>
+        </div>
+
+        <!-- Slot Time -->
+        <div style="margin-bottom:12px;">
+          <label style="font-size:12px;font-weight:700;margin-bottom:4px;display:block;">
+            ⏰ ${isTa ? 'நேர இடைவெளி' : 'Time Window'}
+          </label>
+          <select id="newSlotTime" style="width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:8px;font-weight:700;font-size:13px;background:#fff;">
+            ${slotOptions.map(s => `<option value="${s}">${s}</option>`).join('')}
+          </select>
+        </div>
+
+        <!-- Collection Day -->
+        <div style="margin-bottom:14px;">
+          <label style="font-size:12px;font-weight:700;margin-bottom:4px;display:block;">
+            📅 ${isTa ? 'நாள் / தேதி' : 'Collection Day'}
+          </label>
+          <select id="newSlotDate" style="width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:8px;font-weight:700;font-size:13px;background:#fff;">
+            <option value="Today">${isTa ? 'இன்று' : 'Today'}</option>
+            <option value="Tomorrow">${isTa ? 'நாளை' : 'Tomorrow'}</option>
+            <option value="Thursday">${isTa ? 'வியாழன்' : 'Thursday'}</option>
+            <option value="Recovery Days">${isTa ? 'மீட்பு நாட்கள்' : 'Recovery Days (Missed Slots)'}</option>
+          </select>
+        </div>
+
+        <div style="display:flex;gap:10px;">
+          <button type="button" class="btn btn-outline" style="flex:1;" onclick="closeModal()">
+            ${isTa ? 'ரத்து' : 'Cancel'}
+          </button>
+          <button type="submit" class="btn btn-primary" style="flex:2;font-weight:800;">
+            ${isTa ? 'முன்பதிவு செய்து டோக்கன் அனுப்புக ✓' : 'Create Booking & Dispatch Token ✓'}
+          </button>
+        </div>
+      </form>
+    </div>
+  `);
+}
+
+async function saveAdminNewBooking() {
+  const isTa = state.lang === "தமிழ்";
+  const mobile = document.getElementById('newSlotCitizenMobile').value;
+  const time = document.getElementById('newSlotTime').value;
+  const date = document.getElementById('newSlotDate').value;
+
+  const c = state.citizensList.find(x => x.mobile_number === mobile) || state.citizensList[0];
+  const bookingId = `TN-BK-${Date.now().toString().slice(-6)}`;
+  const cleanMobile = String(c.mobile_number).replace(/[^0-9]/g, '').slice(-10);
+
+  const defaultItems = c.rice_quota_kg 
+    ? [`Boiled Rice (${c.rice_quota_kg} kg)`, `Sugar (${c.sugar_quota_kg || 2} kg)`, `Toor Dhal (${c.dhal_quota_kg || 1} kg)`, `Palm Oil (${c.oil_quota_liters || 1} L)`]
+    : ['Standard Monthly Entitlement'];
+
+  const newBooking = {
+    id: bookingId,
+    citizen_name: c.full_name,
+    mobile_number: cleanMobile,
+    smart_card_no: c.smart_card_no || '33/S/0998877',
+    date: date,
+    time: time,
+    shop_code: c.fps_shop_code || 'TN-FPS-1201',
+    shop_name: c.fps_shop_name || 'Fair Price Shop',
+    items: defaultItems,
+    status: 'Booked',
+    created_at: new Date().toISOString()
+  };
+
+  state.allBookings.unshift(newBooking);
+  if (state.citizen && state.citizen.mobile_number === cleanMobile) {
+    state.booking = newBooking;
+  }
+
+  closeModal();
+
+  await dispatchSlotBookingNotification(newBooking, c, []);
+
+  toast(isTa ? `✓ டோக்கன் ${bookingId} உருவாக்கப்பட்டு ntfy மூலம் அனுப்பப்பட்டது!` : `✓ Token ${bookingId} created and dispatched to ${c.full_name}!`);
+  render();
+}
+
+function renderAdminCitizensTab(isTa) {
+  return `
+    <div class="card" style="border-top:3px solid var(--tn-green);">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px;">
+        <h2 style="margin:0;font-size:18px;">
+          👥 ${isTa ? 'அனைத்து பயனாளர் கணக்குகள், கடவுச்சொற்கள் & OTP விவரங்கள்' : 'All Citizen Accounts, Passwords & Live Verification OTPs'}
+        </h2>
+        <span class="muted" style="font-size:12px;">
+          ${isTa ? 'முழு பயனர் விவரங்கள், கடவுச்சொல் மற்றும் சரிபார்ப்பு OTP இங்கிருந்து உடனடியாகக் கிடைக்கும்.' : 'Inspect user IDs, passwords, active verification OTPs, and simulate logins directly.'}
+        </span>
+      </div>
+
+      <div class="table-wrap">
+        <table class="table" style="font-size:13px;">
+          <thead>
+            <tr>
+              <th>${isTa ? 'பயனர் ஐடி & பெயர்' : 'User ID & Citizen Name'}</th>
+              <th>${isTa ? 'கடவுச்சொல்' : 'Login Password'}</th>
+              <th>${isTa ? 'சரிபார்ப்பு OTP' : 'Verification OTP'}</th>
+              <th>${isTa ? 'கைபேசி எண்' : 'Registered Mobile'}</th>
+              <th>${isTa ? 'குடும்ப அட்டை' : 'Smart Card No'}</th>
+              <th>${isTa ? 'மாவட்டம் & கடை' : 'District & FPS'}</th>
+              <th>${isTa ? 'மாதாந்திர ஒதுக்கீடு' : 'Quotas'}</th>
+              <th style="text-align:center;">${isTa ? 'செயல்பாடு' : 'Action'}</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${state.citizensList.map(c => {
+              const pass = c.password || `${c.full_name.toLowerCase().split(' ')[0]}123`;
+              const otp = state.citizenOtps[c.mobile_number] || (c.mobile_number === state.selectedMobile ? state.devOtp : null) || getOrGenCitizenOtp(c.mobile_number);
+              return `
+                <tr>
+                  <td>
+                    <b style="color:var(--tn-black);font-size:14px;">${c.full_name}</b><br>
+                    <code style="font-size:11px;color:#64748b;background:#f1f5f9;padding:1px 5px;border-radius:3px;">User ID: ${c.id}</code>
+                  </td>
+                  <td>
+                    <code style="font-weight:800;color:var(--tn-green);font-size:13px;background:#f0fdf4;padding:3px 7px;border-radius:4px;border:1px solid #bbf7d0;">
+                      ${pass}
+                    </code>
+                  </td>
+                  <td>
+                    <code style="font-weight:900;color:var(--tn-red);font-size:14px;background:#fef2f2;padding:3px 8px;border-radius:4px;border:1px solid #fecaca;letter-spacing:1px;">
+                      ${otp}
+                    </code>
+                  </td>
+                  <td>
+                    <b>+91 ${c.mobile_number}</b><br>
+                    <a href="https://ntfy.sh/tnpds-${c.mobile_number}" target="_blank" style="color:var(--tn-green);font-size:11px;text-decoration:underline;">
+                      ntfy: tnpds-${c.mobile_number} ↗
+                    </a>
+                  </td>
+                  <td>
+                    <b>${c.smart_card_no || '-'}</b><br>
+                    <small style="color:#64748b;">${c.card_type || 'PHH'}</small>
+                  </td>
+                  <td>
+                    <b>${c.district || 'Salem'}</b><br>
+                    <small style="color:#64748b;">${c.fps_shop_code}</small>
+                  </td>
+                  <td style="font-size:12px;color:#334155;">
+                    🌾 Rice: ${c.rice_quota_kg || 20}kg<br>
+                    🧂 Sugar: ${c.sugar_quota_kg || 2}kg
+                  </td>
+                  <td style="text-align:center;">
+                    <button type="button" class="btn btn-primary" onclick="adminLoginAsCitizen('${c.mobile_number}')" style="padding:5px 9px;font-size:11px;font-weight:700;border-radius:5px;cursor:pointer;">
+                      👤 ${isTa ? 'உள்நுழைக' : 'Test Login'}
+                    </button>
+                  </td>
+                </tr>
+              `;
+            }).join("")}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+}
+
+function adminLoginAsCitizen(mobile) {
+  const found = state.citizensList.find(c => c.mobile_number === mobile);
+  if (!found) return;
+  state.selectedMobile = mobile;
+  finishSuccessfulLogin(found, 'admin_impersonate_token');
+  toast(`Logged in as ${found.full_name} (${found.mobile_number})`);
+}
+
+function renderAdminCapacityTab(isTa) {
+  return `
+    <div class="two-col">
+      <div class="card" style="border-top:3px solid var(--tn-green);">
+        <h2>🏪 ${isTa ? 'நியாயவிலைக் கடை நேர திறன் மேலாண்மை' : 'FPS Slot Capacity & Express Window Management'}</h2>
+        <p class="muted" style="margin-bottom:16px;">
+          ${isTa ? 'ஒவ்வொரு 15-நிமிட நேரத்திற்கும் அனுமதிக்கப்படும் அதிகபட்ச பயனாளர்களின் எண்ணிக்கையை மாற்றலாம்.' : 'Adjust allocated capacity, peak crowd caps, and express counter windows per shop.'}
+        </p>
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>${isTa ? 'நேரம்' : 'Window'}</th>
+                <th>${isTa ? 'அதிகபட்ச இடங்கள்' : 'Max Cap'}</th>
+                <th>${isTa ? 'மீதமுள்ளவை' : 'Available'}</th>
+                <th>${isTa ? 'செயல்' : 'Action'}</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${slots.map((s, i) => `
+                <tr>
+                  <td><b>${s[0]}</b></td>
+                  <td>${s[1]} slots</td>
+                  <td><b style="color:var(--tn-green);">${s[2]}</b> left</td>
+                  <td>
+                    <button type="button" class="btn btn-outline" style="padding:3px 8px;font-size:11px;" onclick="slots[${i}][1]+=5;slots[${i}][2]+=5;render();toast('+5 Slots Added');">
+                      +5 Slots
+                    </button>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card" style="border-top:3px solid var(--tn-black);">
+        <h3>📊 ${isTa ? 'கூட்ட நெரிசல் பகுப்பாய்வு' : 'Hourly Demand Hotspots'}</h3>
+        <p class="muted">${isTa ? 'இன்றைய நேர முன்பதிவு அடர்த்தி மற்றும் விரைவு கவுண்டர் சுமை.' : 'Real-time booking density across express counters.'}</p>
+        <div class="chart">
+          ${[35, 48, 65, 42, 55, 78, 40, 31].map((v, i) => `
+            <div class="bar" style="height:${v}%">
+              <span>${v}</span>
+              <small>${slots[i][0].split("–")[0]}</small>
+            </div>
+          `).join("")}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderAdminExtensionsTab(isTa) {
+  return `
+    <div class="card" style="border-top:3px solid var(--tn-green);">
+      <h2>⚙️ ${isTa ? 'நிர்வாக அமைப்புகள் & விரிவாக்கங்கள்' : 'System Configuration & Extensibility'}</h2>
+      <p class="muted" style="margin-bottom:20px;">
+        ${isTa ? 'கூடுதல் கட்டமைப்பு வசதிகள் மற்றும் எதிர்கால மாற்றங்களுக்கான அமைப்பு பலகை.' : 'Central administration portal ready for additional customizations and future modules.'}
+      </p>
+
+      <div class="stat-grid" style="margin-bottom:20px;">
+        <div style="background:#f8fafc;border:1px solid #cbd5e1;border-radius:10px;padding:16px;">
+          <h4 style="margin:0 0 6px;color:var(--tn-green);font-size:14px;">🔔 ntfy Gateway Channel</h4>
+          <p style="font-size:12px;color:#475569;margin:0 0 10px;">Push notification server configuration for live SMS-free delivery.</p>
+          <code style="font-weight:800;background:#e2e8f0;padding:2px 8px;border-radius:4px;">https://ntfy.sh/tnpds-[mobile]</code>
+        </div>
+
+        <div style="background:#f8fafc;border:1px solid #cbd5e1;border-radius:10px;padding:16px;">
+          <h4 style="margin:0 0 6px;color:#8b5cf6;font-size:14px;">📦 Express Counter Allocation</h4>
+          <p style="font-size:12px;color:#475569;margin:0 0 10px;">Fast-track counter ratio at fair price shops.</p>
+          <b>2 Express Windows Active per FPS</b>
+        </div>
+
+        <div style="background:#f8fafc;border:1px solid #cbd5e1;border-radius:10px;padding:16px;">
+          <h4 style="margin:0 0 6px;color:#0284c7;font-size:14px;">🚚 Godown Restock Automation</h4>
+          <p style="font-size:12px;color:#475569;margin:0 0 10px;">Automatic stock replenishment threshold alert.</p>
+          <b>Threshold: &lt; 15% Remaining</b>
+        </div>
+
+        <div style="background:#f8fafc;border:1px solid #cbd5e1;border-radius:10px;padding:16px;">
+          <h4 style="margin:0 0 6px;color:#b91c1c;font-size:14px;">🛡️ Super Admin Session</h4>
+          <p style="font-size:12px;color:#475569;margin:0 0 10px;">Admin Login ID verified with elevated permissions.</p>
+          <b>ID: ${state.adminUser ? state.adminUser.login_id : 'admin'} (Active)</b>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// =====================================================================
 // Router & Renderer
 // =====================================================================
 function render() {
@@ -3395,6 +4291,7 @@ function render() {
   else if (p === "cart") root.innerHTML = cartView();
   else if (p === "slots") root.innerHTML = slotsView();
   else if (p === "bookings") root.innerHTML = bookingsView();
+  else if (p === "adminconsole" || p === "adminbookings") root.innerHTML = adminConsoleView();
   else if (p === "history") root.innerHTML = historyView();
   else if (p === "location") root.innerHTML = locationView();
   else if (p === "flow") root.innerHTML = flowView();
@@ -3434,6 +4331,7 @@ function render() {
 
 // Startup
 fetchCitizensFromBackend();
+fetchBookingsFromBackend();
 render();
 </script>
 </body>

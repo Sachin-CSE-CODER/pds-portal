@@ -138,6 +138,52 @@ const inMemoryCitizens = [
   }
 ];
 
+// ---------------------------------------------------------------
+// In-Memory Bookings Store (Managed & Modifiable by Admin)
+// ---------------------------------------------------------------
+const inMemoryBookings = [
+  {
+    id: 'TN-BK-829104',
+    citizen_name: 'Vijay Anand',
+    mobile_number: '6382826805',
+    smart_card_no: '33/S/0998877',
+    date: 'Today',
+    time: '10:00 AM – 10:15 AM',
+    shop_code: 'TN-FPS-1201',
+    shop_name: 'Suramangalam Fair Price Outlet',
+    items: ['Boiled Rice (20 kg)', 'Sugar (2 kg)', 'Toor Dhal (1 kg)', 'Palm Oil (1 L)'],
+    status: 'Booked',
+    created_at: new Date().toISOString()
+  },
+  {
+    id: 'TN-BK-409182',
+    citizen_name: 'Kavitha Murugan',
+    mobile_number: '7904208464',
+    smart_card_no: '33/G/0123456',
+    date: 'Today',
+    time: '11:15 AM – 11:30 AM',
+    shop_code: 'TN-FPS-0102',
+    shop_name: 'Mylapore TUCS Cooperative Society',
+    items: ['Rice (20 kg)', 'Sugar (2 kg)', 'Palm Oil (1 L)'],
+    status: 'Pre-Packed',
+    created_at: new Date().toISOString()
+  },
+  {
+    id: 'TN-BK-193850',
+    citizen_name: 'Senthil Kumar',
+    mobile_number: '9876543210',
+    smart_card_no: '33/K/0789012',
+    date: 'Tomorrow',
+    time: '09:00 AM – 09:15 AM',
+    shop_code: 'TN-FPS-0504',
+    shop_name: 'Gandhipuram Primary Agri Coop Shop',
+    items: ['Rice (35 kg)', 'Sugar (3 kg)', 'Toor Dhal (2 kg)', 'Palm Oil (2 L)'],
+    status: 'Booked',
+    created_at: new Date().toISOString()
+  }
+];
+
+
 const inMemoryOtpStore = new Map(); // mobile -> { otp, expiresAt }
 
 let isPgConnected = false;
@@ -524,26 +570,44 @@ app.post('/api/register-citizen', async (req, res) => {
 });
 
 // ---------------------------------------------------------------
-// 7. API Route: Admin Verifier Authentication
+// 7. API Route: Admin Verifier Authentication (ID + Password)
 // ---------------------------------------------------------------
 app.post('/api/verify-admin', (req, res) => {
-  const { password } = req.body;
-  if (password && String(password).trim() === 'tnpds123') {
-    console.log('🛡️ Admin Verifier authenticated successfully.');
-    return res.json({ success: true, message: 'Admin verified successfully.' });
+  const { login_id, password } = req.body;
+  const validIds = ['admin', 'tnpds_admin', 'admin_pds', 'tn_admin', 'tnpds', 'tn-admin'];
+  const isValidId = !login_id || validIds.includes(String(login_id).trim().toLowerCase());
+  const isValidPass = password && String(password).trim() === 'tnpds123';
+
+  if (isValidId && isValidPass) {
+    const adminUser = {
+      login_id: login_id ? String(login_id).trim() : 'admin',
+      name: 'Tamil Nadu PDS State Administrator',
+      role: 'Super Administrator',
+      permissions: ['view_credentials', 'modify_bookings', 'manage_slots', 'system_extensions']
+    };
+    console.log(`🛡️ Admin authenticated successfully: Login ID '${adminUser.login_id}'`);
+    return res.json({ 
+      success: true, 
+      message: 'Admin verified successfully.', 
+      admin: adminUser 
+    });
   } else {
-    return res.status(401).json({ success: false, error: 'Incorrect admin password.' });
+    const errMsg = !isValidId 
+      ? 'Invalid Admin Login ID. (Authorized: admin)' 
+      : 'Incorrect admin password. (Authorized: tnpds123)';
+    return res.status(401).json({ success: false, error: errMsg });
   }
 });
 
 // ---------------------------------------------------------------
-// 8. API Route: Notify Slot Booked (ntfy Push Notification)
+// 8. API Route: Notify Slot Booked & Record Booking
 // ---------------------------------------------------------------
 app.post('/api/notify-slot-booked', async (req, res) => {
   try {
     const { 
       mobile_number, 
       citizen_name, 
+      smart_card_no,
       booking_id, 
       date, 
       time_slot, 
@@ -565,6 +629,28 @@ app.post('/api/notify-slot-booked', async (req, res) => {
       ? items.join(', ') 
       : (typeof items === 'string' && items.trim() ? items : 'Standard Monthly Entitlement (Rice 20kg, Sugar 2kg, Dhal 1kg, Oil 1L)');
     const isTa = lang === 'ta' || lang === 'tamil' || lang === 'தமிழ்';
+
+    // Upsert into In-Memory Bookings Store
+    const existingIndex = inMemoryBookings.findIndex(b => b.id === bookingId);
+    const bookingRecord = {
+      id: bookingId,
+      citizen_name: citizenName,
+      mobile_number: cleanMobile,
+      smart_card_no: smart_card_no || '33/S/0998877',
+      date: bookingDate,
+      time: timeSlot,
+      shop_code: shop_code || 'TN-FPS-1201',
+      shop_name: shop_name || 'Suramangalam Fair Price Outlet',
+      items: Array.isArray(items) ? items : [itemsList],
+      status: req.body.status || 'Booked',
+      updated_at: new Date().toISOString()
+    };
+
+    if (existingIndex >= 0) {
+      inMemoryBookings[existingIndex] = { ...inMemoryBookings[existingIndex], ...bookingRecord };
+    } else {
+      inMemoryBookings.unshift(bookingRecord);
+    }
 
     console.log(`\n======================================================`);
     console.log(`🎟️ [SLOT BOOKING CONFIRMED & NOTIFICATION DISPATCHED]`);
@@ -630,6 +716,108 @@ app.post('/api/notify-slot-booked', async (req, res) => {
     console.error('[Notify Slot Booked Error]:', err);
     res.status(500).json({ error: 'Failed to process slot booking notification: ' + err.message });
   }
+});
+
+// ---------------------------------------------------------------
+// 9. API Route: Get All Bookings (Admin Inspection)
+// ---------------------------------------------------------------
+app.get('/api/bookings', (req, res) => {
+  res.json({
+    success: true,
+    count: inMemoryBookings.length,
+    bookings: inMemoryBookings
+  });
+});
+
+// ---------------------------------------------------------------
+// 10. API Route: Admin Modify Booking
+// ---------------------------------------------------------------
+app.put('/api/bookings/:id', async (req, res) => {
+  try {
+    const bookingId = req.params.id;
+    const idx = inMemoryBookings.findIndex(b => b.id === bookingId);
+    if (idx === -1) {
+      return res.status(404).json({ success: false, error: `Booking ${bookingId} not found.` });
+    }
+
+    const { date, time, status, shop_code, shop_name, items, notify_citizen } = req.body;
+    const b = inMemoryBookings[idx];
+
+    if (date) b.date = date;
+    if (time) b.time = time;
+    if (status) b.status = status;
+    if (shop_code) b.shop_code = shop_code;
+    if (shop_name) b.shop_name = shop_name;
+    if (items) b.items = Array.isArray(items) ? items : [items];
+    b.updated_at = new Date().toISOString();
+
+    console.log(`\n======================================================`);
+    console.log(`🛡️ [ADMIN MODIFIED BOOKING: ${bookingId}]`);
+    console.log(`👤 Citizen       : ${b.citizen_name}`);
+    console.log(`⏰ Modified Time : ${b.time} (${b.date})`);
+    console.log(`🏷️ New Status    : ${b.status}`);
+    console.log(`🏪 FPS Shop      : ${b.shop_code} (${b.shop_name})`);
+    console.log(`======================================================\n`);
+
+    // Dispatch update notification via ntfy if requested
+    if (notify_citizen !== false) {
+      const cleanMobile = String(b.mobile_number).replace(/[^0-9]/g, '').slice(-10);
+      const ntfyTopic = `tnpds-${cleanMobile}`;
+      const ntfyUrl = `https://ntfy.sh/${ntfyTopic}`;
+      const updateMsg = `Hello ${b.citizen_name}!\n\nYour Fair Price Shop collection booking has been MODIFIED by the Administrator:\n\n🎫 Token: ${b.id}\n📅 Date: ${b.date}\n⏰ Time: ${b.time}\n🏪 Shop: ${b.shop_code} (${b.shop_name})\n📊 Status: ${b.status}\n📦 Items: ${b.items.join(', ')}\n\nPlease note your updated time window.`;
+
+      fetch(ntfyUrl, {
+        method: 'POST',
+        headers: {
+          'Title': `Tamil Nadu ePDS - Booking Updated (${b.id})`,
+          'Priority': 'high',
+          'Tags': 'pencil,calendar,bell',
+          'Click': 'http://localhost:3000/#bookings'
+        },
+        body: updateMsg
+      }).catch(e => console.warn('[ntfy admin update push error]:', e.message));
+    }
+
+    return res.json({
+      success: true,
+      message: `Booking ${bookingId} modified successfully!`,
+      booking: b
+    });
+  } catch (err) {
+    console.error('[Admin Modify Booking Error]:', err);
+    res.status(500).json({ error: 'Failed to modify booking: ' + err.message });
+  }
+});
+
+// ---------------------------------------------------------------
+// 11. API Route: Admin Cancel Booking
+// ---------------------------------------------------------------
+app.delete('/api/bookings/:id', (req, res) => {
+  const bookingId = req.params.id;
+  const idx = inMemoryBookings.findIndex(b => b.id === bookingId);
+  if (idx === -1) {
+    return res.status(404).json({ success: false, error: `Booking ${bookingId} not found.` });
+  }
+
+  const b = inMemoryBookings[idx];
+  b.status = 'Cancelled';
+  b.updated_at = new Date().toISOString();
+
+  // Send cancellation push
+  const cleanMobile = String(b.mobile_number).replace(/[^0-9]/g, '').slice(-10);
+  const ntfyTopic = `tnpds-${cleanMobile}`;
+  fetch(`https://ntfy.sh/${ntfyTopic}`, {
+    method: 'POST',
+    headers: {
+      'Title': `Tamil Nadu ePDS - Booking Cancelled (${b.id})`,
+      'Priority': 'default',
+      'Tags': 'x,no_entry_sign'
+    },
+    body: `Hello ${b.citizen_name},\nYour collection booking token ${b.id} scheduled for ${b.time} has been CANCELLED by the Administrator.`
+  }).catch(() => {});
+
+  console.log(`🛡️ Admin cancelled booking ${bookingId} for citizen ${b.citizen_name}`);
+  res.json({ success: true, message: `Booking ${bookingId} cancelled.`, booking: b });
 });
 
 // ---------------------------------------------------------------
