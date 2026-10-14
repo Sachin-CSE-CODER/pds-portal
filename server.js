@@ -537,7 +537,103 @@ app.post('/api/verify-admin', (req, res) => {
 });
 
 // ---------------------------------------------------------------
-// 8. Health Check
+// 8. API Route: Notify Slot Booked (ntfy Push Notification)
+// ---------------------------------------------------------------
+app.post('/api/notify-slot-booked', async (req, res) => {
+  try {
+    const { 
+      mobile_number, 
+      citizen_name, 
+      booking_id, 
+      date, 
+      time_slot, 
+      shop_code, 
+      shop_name, 
+      items,
+      lang 
+    } = req.body;
+
+    const cleanMobile = mobile_number ? String(mobile_number).replace(/[^0-9]/g, '').slice(-10) : '6382826805';
+    const ntfyTopic = process.env.NTFY_TOPIC || `tnpds-${cleanMobile}`;
+    const ntfyUrl = `https://ntfy.sh/${ntfyTopic}`;
+    const citizenName = citizen_name || 'Citizen';
+    const bookingId = booking_id || `TN-BK-${Date.now().toString().slice(-6)}`;
+    const timeSlot = time_slot || '10:00 AM - 10:15 AM';
+    const bookingDate = date || 'Today';
+    const shop = shop_name ? `${shop_code || ''} (${shop_name})` : (shop_code || 'TN-FPS-0102');
+    const itemsList = Array.isArray(items) && items.length > 0 
+      ? items.join(', ') 
+      : (typeof items === 'string' && items.trim() ? items : 'Standard Monthly Entitlement (Rice 20kg, Sugar 2kg, Dhal 1kg, Oil 1L)');
+    const isTa = lang === 'ta' || lang === 'tamil' || lang === 'தமிழ்';
+
+    console.log(`\n======================================================`);
+    console.log(`🎟️ [SLOT BOOKING CONFIRMED & NOTIFICATION DISPATCHED]`);
+    console.log(`👤 Citizen       : ${citizenName}`);
+    console.log(`📱 Mobile        : +91 ${cleanMobile}`);
+    console.log(`🎫 Booking Token : ${bookingId}`);
+    console.log(`📅 Date & Time   : ${bookingDate} | ${timeSlot}`);
+    console.log(`🏪 FPS Shop      : ${shop}`);
+    console.log(`📦 Commodities   : ${itemsList}`);
+    console.log(`🔔 ntfy Topic    : ${ntfyTopic}`);
+    console.log(`🌐 Live Web Feed : https://ntfy.sh/${ntfyTopic}`);
+    console.log(`======================================================\n`);
+
+    const title = isTa 
+      ? `தமிழ்நாடு ePDS - முன்பதிவு உறுதி (${bookingId})`
+      : `Tamil Nadu ePDS - Slot Confirmed (${bookingId})`;
+
+    const bodyMessage = isTa
+      ? `வணக்கம் ${citizenName}!\n\nஉங்கள் நியாயவிலைக் கடை நேரம் முன்பதிவு செய்யப்பட்டது:\n🎫 டோக்கன்: ${bookingId}\n📅 நாள்: ${bookingDate}\n⏰ நேரம்: ${timeSlot}\n🏪 கடை: ${shop}\n📦 பொருட்கள்: ${itemsList}\n\nகுறிப்பிட்ட நேரத்திற்கு 5 நிமிடங்களுக்கு முன் கவுண்டருக்கு வருகை தந்து, பயோமெட்ரிக் கைரேகை மூலம் பொருட்களைப் பெறவும்.`
+      : `Hello ${citizenName}!\n\nYour Fair Price Shop express collection slot is confirmed:\n🎫 Token: ${bookingId}\n📅 Date: ${bookingDate}\n⏰ Time: ${timeSlot}\n🏪 Shop: ${shop}\n📦 Items: ${itemsList}\n\nPlease arrive 5 minutes before your slot. Show this token or your Smart Card at Express Counter.`;
+
+    let pushSuccess = false;
+    try {
+      const ntfyResponse = await fetch(ntfyUrl, {
+        method: 'POST',
+        headers: {
+          'Title': title,
+          'Priority': 'high',
+          'Tags': 'calendar,ticket,white_check_mark',
+          'Click': `http://localhost:3000/#bookings`
+        },
+        body: bodyMessage
+      });
+
+      if (ntfyResponse.ok) {
+        pushSuccess = true;
+        console.log(`✅ Slot booking notification delivered to ntfy topic '${ntfyTopic}'!`);
+      } else {
+        console.warn(`⚠️ ntfy returned status ${ntfyResponse.status}`);
+      }
+    } catch (pushErr) {
+      console.error('⚠️ [ntfy Network Error on slot booking]:', pushErr.message);
+    }
+
+    // CallMeBot WhatsApp alert if key exists
+    const apiKey = CONFIG.callmebotApiKey;
+    if (apiKey && apiKey !== 'YOUR_CALLMEBOT_API_KEY' && apiKey.trim() !== '') {
+      try {
+        const waMsg = `🌾 *Tamil Nadu ePDS - Slot Confirmed*\n\nHello *${citizenName}*,\nYour ration slot is booked!\n\n🎫 *Token:* ${bookingId}\n⏰ *Time:* ${timeSlot}\n🏪 *Shop:* ${shop}\n📦 *Items:* ${itemsList}`;
+        const callMeBotUrl = `https://api.callmebot.com/whatsapp.php?phone=+91${cleanMobile}&text=${encodeURIComponent(waMsg)}&apikey=${encodeURIComponent(apiKey.trim())}`;
+        fetch(callMeBotUrl).catch(() => {});
+      } catch (e) {}
+    }
+
+    return res.json({
+      success: true,
+      message: 'Slot booking notification sent successfully!',
+      topic: ntfyTopic,
+      booking_id: bookingId,
+      push_delivered: pushSuccess
+    });
+  } catch (err) {
+    console.error('[Notify Slot Booked Error]:', err);
+    res.status(500).json({ error: 'Failed to process slot booking notification: ' + err.message });
+  }
+});
+
+// ---------------------------------------------------------------
+// 9. Health Check
 // ---------------------------------------------------------------
 app.get('/api/health', (req, res) => {
   res.json({

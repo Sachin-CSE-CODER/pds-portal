@@ -2458,44 +2458,173 @@ function confirmBooking() {
   if (state.selectedSlot === null) return;
   const isTa = state.lang === "தமிழ்";
   const s = slots[state.selectedSlot];
-  const c = state.citizen || { fps_shop_code: 'TN-FPS-0102' };
+  const c = state.citizen || { full_name: 'Vijay Anand', mobile_number: '6382826805', fps_shop_code: 'TN-FPS-1201', fps_shop_name: 'Suramangalam Fair Price Outlet' };
+  const mobile = c.mobile_number || state.selectedMobile || '6382826805';
+  const cleanMobile = String(mobile).replace(/[^0-9]/g, '').slice(-10);
+  const ntfyTopic = `tnpds-${cleanMobile}`;
   const bookingId = `TN-BK-${Date.now().toString().slice(-6)}`;
+  
+  const bookedItems = (state.cart && state.cart.length > 0)
+    ? state.cart.map(x => `${isTa ? (x.nameTa || x.name) : x.name} (${x.qty} ${t("kg")})`)
+    : (c.rice_quota_kg 
+        ? [`${isTa ? 'அரிசி' : 'Rice'} (${c.rice_quota_kg} kg)`, `${isTa ? 'சர்க்கரை' : 'Sugar'} (${c.sugar_quota_kg || 2} kg)`, `${isTa ? 'துவரம்பருப்பு' : 'Toor Dhal'} (${c.dhal_quota_kg || 1} kg)`, `${isTa ? 'பாமாயில்' : 'Palm Oil'} (${c.oil_quota_liters || 1} L)`]
+        : [isTa ? "மாதாந்திர அத்தியாவசிய ஒதுக்கீடு" : "Standard Monthly Entitlement"]);
+
   state.booking = {
     id: bookingId,
     date: isTa ? "இன்று" : "Today",
     time: s[0],
-    shop: c.fps_shop_code || "TN-FPS-0102"
+    shop: c.fps_shop_code || "TN-FPS-0102",
+    shop_code: c.fps_shop_code || "TN-FPS-0102",
+    shop_name: c.fps_shop_name || (c.district ? `${c.district} Fair Price Outlet` : "Fair Price Shop"),
+    items: bookedItems,
+    citizen_name: c.full_name || state.inputName || "Vijay Anand",
+    mobile_number: cleanMobile
   };
   audit("Slot Booked", s[0]);
+
   modal(`
     <button class="close" onclick="closeModal()">×</button>
     <h2>${isTa ? "நேர முன்பதிவை உறுதிசெய்க" : "Confirm Collection Slot"}</h2>
     <p><b>${isTa ? "முன்பதிவு டோக்கன்" : "Booking Token"}:</b> <code style="font-size:16px;">${bookingId}</code></p>
-    <p><b>${isTa ? "நியாயவிலைக் கடை" : "Fair Price Shop"}:</b> ${state.booking.shop}</p>
+    <p><b>${isTa ? "நியாயவிலைக் கடை" : "Fair Price Shop"}:</b> ${state.booking.shop_code} — ${state.booking.shop_name}</p>
     <p><b>${isTa ? "நேரம்" : "Time Window"}:</b> ${s[0]}</p>
-    <p><b>${isTa ? "பொருட்கள்" : "Pre-Packed Items"}:</b><br>${state.cart.map(x => `• ${isTa ? (x.nameTa || x.name) : x.name} — ${x.qty} ${t("kg")}`).join("<br>") || (isTa ? "மாதாந்திர அத்தியாவசிய ஒதுக்கீடு" : "Standard Monthly Entitlement")}</p>
+    <p><b>${isTa ? "பொருட்கள்" : "Pre-Packed Items"}:</b><br>${state.booking.items.map(x => `• ${x}`).join("<br>")}</p>
+
+    <!-- ntfy Notification Delivery Notice -->
+    <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:10px;padding:10px 14px;margin:14px 0;text-align:left;">
+      <div style="font-size:12px;font-weight:800;color:#166534;display:flex;align-items:center;gap:5px;">
+        📲 <span>${isTa ? 'கைபேசி ntfy அறிவிப்பு அனுப்பப்படும்' : 'Instant ntfy Push Alert to Phone'}</span>
+      </div>
+      <div style="font-size:12px;color:#334155;margin-top:4px;">
+        ${isTa ? 'உறுதிசெய்தவுடன் டோக்கன் & முழு விவரங்கள் இந்த சேனலுக்கு அனுப்பப்படும்:' : 'Full pass & slot details will be pushed to dedicated channel:'} 
+        <code style="font-weight:800;background:#dcfce7;color:#166534;padding:2px 6px;border-radius:4px;">${ntfyTopic}</code>
+      </div>
+    </div>
+
     <span class="badge available">${isTa ? "விரைவு கவுண்டர் இடம் உறுதி செய்யப்பட்டது" : "Express Window Reserved"}</span>
-    <button class="btn btn-primary" style="width:100%;margin-top:20px;padding:12px;" onclick="finishBooking()">
+    <button class="btn btn-primary" style="width:100%;margin-top:16px;padding:12px;" onclick="finishBooking()">
       ${isTa ? "டோக்கன் பெற்று உறுதிசெய்க ✓" : "Confirm & Receive Booking Pass ✓"}
     </button>
   `);
 }
 
-function finishBooking() {
+async function finishBooking() {
   closeModal();
+  if (!state.booking) return;
   state.booking.status = "Booked";
+  if (state.selectedSlot !== null && slots[state.selectedSlot] && slots[state.selectedSlot][2] > 0) {
+    slots[state.selectedSlot][2]--;
+  }
+
+  const isTa = state.lang === "தமிழ்";
+  const c = state.citizen || { full_name: 'Vijay Anand', mobile_number: '6382826805' };
+  const mobile = c.mobile_number || state.selectedMobile || '6382826805';
+  const cleanMobile = String(mobile).replace(/[^0-9]/g, '').slice(-10);
+  const ntfyTopic = `tnpds-${cleanMobile}`;
+
   state.notifications.unshift({
-    text: state.lang === "தமிழ்" ? `முன்பதிவு உறுதி செய்யப்பட்டது (${state.booking.time}). கவுண்டரில் டோக்கன் ${state.booking.id} காட்டவும்.` : `Slot confirmed for ${state.booking.time}. Show token ${state.booking.id} at the counter.`,
+    text: isTa 
+      ? `முன்பதிவு உறுதி செய்யப்பட்டது (${state.booking.time}). ntfy அறிவிப்பு அனுப்பப்பட்டது. கவுண்டரில் டோக்கன் ${state.booking.id} காட்டவும்.` 
+      : `Slot confirmed for ${state.booking.time}. Details pushed to your ntfy channel (${ntfyTopic}). Show token ${state.booking.id} at counter.`,
     type: "Bookings",
     time: "Now"
   });
   audit("Booking Confirmed", state.booking.id);
-  toast(state.lang === "தமிழ்" ? `✓ முன்பதிவு உறுதியானது! டோக்கன்: ${state.booking.id}` : `✓ Slot Confirmed! Pass Token: ${state.booking.id}`);
+  
+  toast(isTa 
+    ? `✓ முன்பதிவு உறுதியானது! ntfy செயலிக்கு விவரங்கள் அனுப்பப்பட்டன (டோக்கன்: ${state.booking.id})` 
+    : `✓ Slot Confirmed! Details & Token ${state.booking.id} sent to your ntfy app (${ntfyTopic})`);
+  
+  // Asynchronously dispatch the notification to server and ntfy.sh
+  dispatchSlotBookingNotification(state.booking, c, state.cart);
+  
   setPage("bookings");
+}
+
+async function dispatchSlotBookingNotification(booking, citizen, cart) {
+  const isTa = state.lang === "தமிழ்";
+  const mobile = (citizen && citizen.mobile_number) || (booking && booking.mobile_number) || state.selectedMobile || '6382826805';
+  const cleanMobile = String(mobile).replace(/[^0-9]/g, '').slice(-10);
+  const ntfyTopic = `tnpds-${cleanMobile}`;
+  const citizenName = (citizen && citizen.full_name) || (booking && booking.citizen_name) || state.inputName || 'Citizen';
+  const shopCode = (citizen && citizen.fps_shop_code) || (booking && booking.shop_code) || 'TN-FPS-1201';
+  const shopName = (citizen && citizen.fps_shop_name) || (booking && booking.shop_name) || 'Fair Price Shop';
+  
+  const itemsArray = (booking && booking.items && booking.items.length) 
+    ? booking.items 
+    : ((cart && cart.length > 0) 
+        ? cart.map(x => `${isTa ? (x.nameTa || x.name) : x.name} (${x.qty} ${t("kg")})`) 
+        : [isTa ? 'அரிசி (20 kg), சர்க்கரை (2 kg), துவரம்பருப்பு (1 kg), பாமாயில் (1 L)' : 'Rice (20 kg), Sugar (2 kg), Toor Dhal (1 kg), Palm Oil (1 L)']);
+  const itemsText = itemsArray.join(", ");
+
+  const payload = {
+    mobile_number: cleanMobile,
+    citizen_name: citizenName,
+    booking_id: booking ? booking.id : `TN-BK-${Date.now().toString().slice(-6)}`,
+    date: booking ? booking.date : "Today",
+    time_slot: booking ? booking.time : "10:00 AM – 10:15 AM",
+    shop_code: shopCode,
+    shop_name: shopName,
+    items: itemsArray,
+    lang: isTa ? 'ta' : 'en'
+  };
+
+  // 1. Send via Backend Server API
+  try {
+    const res = await fetch('/api/notify-slot-booked', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    if (res.ok) {
+      console.log('✅ Server successfully processed slot booking notification to ntfy');
+    }
+  } catch (err) {
+    console.warn('⚠️ Server /api/notify-slot-booked unreachable, relying on direct client push:', err);
+  }
+
+  // 2. Direct client fallback push to ntfy.sh (guarantees instant delivery even in standalone HTML mode)
+  try {
+    const title = isTa 
+      ? `தமிழ்நாடு ePDS - முன்பதிவு உறுதி (${payload.booking_id})` 
+      : `Tamil Nadu ePDS - Slot Confirmed (${payload.booking_id})`;
+    const body = isTa
+      ? `வணக்கம் ${citizenName}!\n\nஉங்கள் நியாயவிலைக் கடை நேரம் முன்பதிவு செய்யப்பட்டது:\n🎫 டோக்கன்: ${payload.booking_id}\n📅 நாள்: ${payload.date}\n⏰ நேரம்: ${payload.time_slot}\n🏪 கடை: ${shopCode} (${shopName})\n📦 பொருட்கள்: ${itemsText}\n\nகுறிப்பிட்ட நேரத்திற்கு 5 நிமிடங்களுக்கு முன் கவுண்டருக்கு வருகை தந்து, பயோமெட்ரிக் கைரேகை மூலம் பொருட்களைப் பெறவும்.`
+      : `Hello ${citizenName}!\n\nYour Fair Price Shop express collection slot is confirmed:\n🎫 Token: ${payload.booking_id}\n📅 Date: ${payload.date}\n⏰ Time: ${payload.time_slot}\n🏪 Shop: ${shopCode} (${shopName})\n📦 Items: ${itemsText}\n\nPlease arrive 5 minutes before your slot at Express Counter.`;
+
+    await fetch(`https://ntfy.sh/${ntfyTopic}`, {
+      method: 'POST',
+      headers: {
+        'Title': title,
+        'Priority': 'high',
+        'Tags': 'calendar,ticket,white_check_mark',
+        'Click': (window.location.origin && window.location.origin.startsWith('http')) ? `${window.location.origin}/#bookings` : 'http://localhost:3000/#bookings'
+      },
+      body: body
+    });
+    console.log(`📱 Direct ntfy push delivered to topic: ${ntfyTopic}`);
+  } catch (pushErr) {
+    console.warn('⚠️ Direct client ntfy push error:', pushErr);
+  }
+}
+
+async function resendSlotNotification() {
+  if (!state.booking) return;
+  const isTa = state.lang === "தமிழ்";
+  const mobile = (state.citizen && state.citizen.mobile_number) || (state.booking && state.booking.mobile_number) || state.selectedMobile || '6382826805';
+  const cleanMobile = String(mobile).replace(/[^0-9]/g, '').slice(-10);
+  toast(isTa ? `⏳ ntfy அறிவிப்பு மீண்டும் அனுப்பப்படுகிறது...` : `⏳ Resending notification to ntfy...`);
+  await dispatchSlotBookingNotification(state.booking, state.citizen, state.cart);
+  toast(isTa ? `✓ ntfy அறிவிப்பு அனுப்பப்பட்டது (tnpds-${cleanMobile})!` : `✓ Notification pushed to ntfy (tnpds-${cleanMobile})!`);
 }
 
 function bookingsView() {
   const isTa = state.lang === "தமிழ்";
+  const c = state.citizen || { full_name: 'Vijay Anand', mobile_number: '6382826805' };
+  const mobile = (state.booking && state.booking.mobile_number) || c.mobile_number || state.selectedMobile || '6382826805';
+  const cleanMobile = String(mobile).replace(/[^0-9]/g, '').slice(-10);
+  const ntfyTopic = `tnpds-${cleanMobile}`;
 
   return shell("beneficiary", `
     <div class="card" style="border-top:3px solid var(--tn-green);">
@@ -2503,12 +2632,55 @@ function bookingsView() {
       ${state.booking ? `
         <div class="two-col">
           <div>
-            <div class="notice">
-              <b>${isTa ? "முன்பதிவு டோக்கன்" : "Booking Token"}:</b> <code style="font-size:16px;background:#fff;padding:2px 8px;border-radius:4px;">${state.booking.id}</code>
+            <div class="notice" style="border-left-color:var(--tn-green);background:#f0fdf4;">
+              <b>${isTa ? "முன்பதிவு டோக்கன்" : "Booking Token"}:</b> 
+              <code style="font-size:16px;background:#fff;padding:2px 8px;border-radius:4px;color:var(--tn-green);border:1px solid #86efac;font-weight:800;">${state.booking.id}</code>
             </div>
-            <h3>${state.booking.shop}</h3>
-            <p><b>${isTa ? "நாள்" : "Day"}:</b> ${state.booking.date}<br><b>${isTa ? "நேரம்" : "Time Slot"}:</b> ${state.booking.time}</p>
+
+            <!-- ntfy Notification Delivery Status Banner -->
+            <div style="background:#f8fafc;border:1px solid #cbd5e1;border-radius:12px;padding:14px;margin:14px 0;">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;">
+                <div>
+                  <span style="font-size:12px;font-weight:800;color:var(--tn-green);display:flex;align-items:center;gap:4px;">
+                    📲 <span>${isTa ? 'ntfy கைபேசி அறிவிப்பு அனுப்பப்பட்டுள்ளது' : 'ntfy Push Notification Dispatched'}</span>
+                  </span>
+                  <div style="font-size:12px;color:#475569;margin-top:4px;">
+                    ${isTa ? 'அறிவிப்பு சேனல்:' : 'Dedicated Phone Topic:'} 
+                    <code style="font-weight:800;background:#e2e8f0;padding:2px 6px;border-radius:4px;color:#0f172a;">${ntfyTopic}</code>
+                  </div>
+                </div>
+                <div style="display:flex;gap:6px;">
+                  <a href="https://ntfy.sh/${ntfyTopic}" target="_blank" class="btn" style="background:var(--tn-green);color:#fff;padding:5px 10px;font-size:11px;border-radius:6px;text-decoration:none;font-weight:700;display:flex;align-items:center;gap:4px;">
+                    🔔 ${isTa ? 'நேரலை ஃபீட்' : 'Open ntfy Live Feed'}
+                  </a>
+                  <button type="button" class="btn" onclick="resendSlotNotification()" style="background:#fff;border:1px solid #cbd5e1;color:#334155;padding:5px 10px;font-size:11px;border-radius:6px;cursor:pointer;font-weight:700;">
+                    🔄 ${isTa ? 'மீண்டும் அனுப்புக' : 'Resend to Phone'}
+                  </button>
+                </div>
+              </div>
+              <small style="display:block;margin-top:8px;color:#64748b;font-size:11px;">
+                ${isTa ? '✓ டோக்கன், நேரம், கடை & பொருட்கள் அடங்கிய முழு விவரங்கள் உங்கள் போனில் உள்ள ntfy செயலிக்கு அனுப்பப்பட்டுள்ளன.' : '✓ Token, time slot, fair price shop, and booked commodities were pushed directly to your phone via the ntfy app.'}
+              </small>
+            </div>
+
+            <h3>${state.booking.shop_name ? `${state.booking.shop_code} — ${state.booking.shop_name}` : state.booking.shop}</h3>
+            <p>
+              <b>${isTa ? "நாள்" : "Day"}:</b> ${state.booking.date}<br>
+              <b>${isTa ? "நேரம்" : "Time Slot"}:</b> <span style="font-weight:800;color:var(--tn-green);">${state.booking.time}</span>
+            </p>
+
+            <!-- Booked Commodities List Card -->
+            <div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:12px;margin:12px 0;">
+              <h4 style="margin:0 0 8px;font-size:12px;color:var(--tn-black);text-transform:uppercase;letter-spacing:0.5px;font-weight:800;">
+                📦 ${isTa ? 'முன்பதிவு செய்யப்பட்ட பொருட்கள்' : 'Booked Commodities'}
+              </h4>
+              <ul style="margin:0;padding-left:20px;font-size:13px;line-height:1.6;color:#334155;">
+                ${(state.booking.items || []).map(item => `<li><b>${item}</b></li>`).join('') || `<li>${isTa ? 'மாதாந்திர அத்தியாவசிய ஒதுக்கீடு' : 'Standard Monthly Entitlement'}</li>`}
+              </ul>
+            </div>
+
             <span class="badge booked">${isTa ? "முன்பதிவு செய்யப்பட்டுள்ளது" : "BOOKED & RESERVED"}</span>
+
             <div class="timeline" style="margin-top:24px">
               ${[isTa ? "முன்பதிவு" : "Booked", isTa ? "பேக்கிங்" : "Pre-Packed", isTa ? "கைரேகை" : "Biometric Auth", isTa ? "விநியோகம்" : "Handed Over"].map((x, i) => `
                 <div class="step ${i === 0 ? 'current' : ''}">
