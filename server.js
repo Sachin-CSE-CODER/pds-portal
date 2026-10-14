@@ -469,3 +469,5 @@ app.listen(PORT, '0.0.0.0', () => {
   console.log(`===================================================`);
   console.log(`👉 Open index.html in your browser to log in.`);
 });
+
+module.exports = app;

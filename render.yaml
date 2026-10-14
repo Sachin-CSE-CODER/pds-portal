@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: tnpds-smart-ration
+    runtime: node
+    plan: free
+    region: singapore
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JWT_SECRET
+        generateValue: true
