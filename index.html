@@ -2,7 +2,13 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+<meta name="theme-color" content="#0a6638">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Smart Ration">
+<meta name="format-detection" content="telephone=no">
 <title>Smart Ration — Tamil Nadu ePDS Digital Platform</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -488,7 +494,7 @@ input:focus, select:focus, textarea:focus { border-color: var(--tn-green); box-s
 .bar small { position: absolute; bottom: -25px; left: 50%; transform: translateX(-50%); white-space: nowrap; color: var(--muted); font-size: 10px; font-weight: 700; }
 
 /* Timeline */
-.timeline { display: flex; align-items: center; gap: 0; overflow: auto; padding: 20px 0; }
+.timeline { display: flex; align-items: center; gap: 0; overflow-x: auto; -webkit-overflow-scrolling: touch; padding: 20px 0; }
 .step { min-width: 115px; text-align: center; position: relative; }
 .step:not(:last-child):after { content: ""; height: 3px; background: #e2e8f0; width: 100%; position: absolute; top: 18px; left: 50%; z-index: 0; }
 .dot {
@@ -607,31 +613,455 @@ input:focus, select:focus, textarea:focus { border-color: var(--tn-green); box-s
 }
 .card-quota-item b { display: block; font-size: 16px; margin-top: 4px; color: #ffffff; }
 
-/* Responsive */
+/* =====================================================================
+   MOBILE & RESPONSIVE DESIGN ENHANCEMENTS
+   ===================================================================== */
+html {
+  -webkit-tap-highlight-color: rgba(10, 102, 56, 0.15);
+  scroll-behavior: smooth;
+}
+
+/* Sidebar Drawer Backdrop for Mobile */
+.sidebar-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  z-index: 110;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+}
+.sidebar-backdrop.active {
+  display: block;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.side-close-btn {
+  display: none;
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  border-radius: 50%;
+  width: 34px;
+  height: 34px;
+  font-size: 16px;
+  line-height: 1;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  margin-left: auto;
+  transition: background 0.15s ease;
+}
+.side-close-btn:hover, .side-close-btn:active {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Week Days Scroller (Grid on desktop, horizontal swipe reel on mobile) */
+.week-days-scroller {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+
+/* Operating Hour Slots Grid */
+.operating-hour-slots {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 8px;
+}
+
+/* Mobile Bottom Navigation Bar (Hidden on desktop) */
+.mobile-bottom-nav {
+  display: none;
+}
+
+/* Landing Top Actions */
+.landing-top-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+/* Tablet & Intermediate Screens */
 @media(max-width: 1050px) {
-  .hero { grid-template-columns: 1fr; }
+  .hero { grid-template-columns: 1fr; gap: 40px; }
   .product-grid { grid-template-columns: repeat(2, 1fr); }
   .stat-grid { grid-template-columns: repeat(2, 1fr); }
   .slot-grid { grid-template-columns: repeat(2, 1fr); }
   .two-col { grid-template-columns: 1fr; }
 }
-@media(max-width: 760px) {
+
+/* Mobile Screens (<= 768px) */
+@media(max-width: 768px) {
   .nav { display: none; }
-  .topbar { padding: 0 18px; }
-  .hero { padding: 50px 20px; }
-  .hero h1 { font-size: 32px; }
-  .section { padding: 50px 20px; }
-  .feature-grid, .portal-grid, .product-grid { grid-template-columns: 1fr; }
-  .portal-layout { grid-template-columns: 1fr; }
-  .sidebar { height: auto; position: fixed; left: -270px; width: 250px; z-index: 80; transition: .25s; }
-  .sidebar.open { left: 0; }
-  .content { padding: 18px; }
-  .mobile-menu { display: block; background: #e2e8f0; border-radius: 8px; padding: 9px 12px; }
-  .stat-grid { grid-template-columns: 1fr 1fr; }
-  .slot-grid { grid-template-columns: 1fr; }
-  .portal-options { grid-template-columns: 1fr; }
-  .lang-options { grid-template-columns: 1fr; }
-  .two-col { grid-template-columns: 1fr; }
+  
+  /* Topbar */
+  .topbar {
+    height: auto !important;
+    min-height: 60px;
+    padding: 8px 14px !important;
+  }
+  .brand { gap: 8px !important; }
+  .brand-emblem { width: 34px !important; height: 34px !important; }
+  .brand-tn span { font-size: 16px !important; line-height: 1.15; }
+  .brand-tn small {
+    font-size: 9px !important;
+    max-width: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .landing-top-actions { gap: 6px; }
+  .landing-top-actions .btn {
+    padding: 7px 11px !important;
+    font-size: 12px !important;
+    min-height: 38px;
+  }
+
+  /* Hero & Sections */
+  .hero {
+    padding: 36px 16px !important;
+    gap: 28px !important;
+  }
+  .hero h1 {
+    font-size: 27px !important;
+    line-height: 1.22 !important;
+  }
+  .hero p {
+    font-size: 14.5px !important;
+    line-height: 1.6 !important;
+  }
+  .hero-demo {
+    padding: 18px 14px !important;
+    border-radius: 16px !important;
+  }
+  .mini-value { font-size: 18px !important; }
+  .section { padding: 40px 16px !important; }
+  .section h2 { font-size: 22px !important; margin-bottom: 22px !important; }
+  .feature-grid, .portal-grid { grid-template-columns: 1fr !important; gap: 14px !important; }
+  .product-grid { grid-template-columns: 1fr !important; gap: 14px !important; }
+  .stat-grid { grid-template-columns: 1fr 1fr !important; gap: 10px !important; }
+  .stat-card { padding: 14px 12px !important; }
+  .stat-card .num { font-size: 21px !important; }
+  .stat-card .label { font-size: 11.5px !important; }
+  .two-col { grid-template-columns: 1fr !important; }
+
+  /* Portal Layout & Drawer */
+  .portal-layout {
+    grid-template-columns: 1fr !important;
+    position: relative;
+  }
+  .sidebar {
+    position: fixed !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    left: -290px !important;
+    width: 275px !important;
+    max-width: 82vw !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+    overflow-y: auto !important;
+    z-index: 120 !important;
+    box-shadow: 4px 0 25px rgba(0, 0, 0, 0.45) !important;
+    transition: left 0.28s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+  .sidebar.open {
+    left: 0 !important;
+  }
+  .side-close-btn {
+    display: inline-flex !important;
+  }
+
+  /* Content Area */
+  .content {
+    padding: 14px 14px 84px 14px !important;
+    min-height: calc(100vh - 64px);
+  }
+  .content-head {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 8px !important;
+    margin-bottom: 14px !important;
+    background: #ffffff;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+  }
+  .content-head-main {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    min-width: 0;
+  }
+  .content-head-title {
+    min-width: 0;
+  }
+  .content-head h1 {
+    font-size: 18px !important;
+    line-height: 1.25;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .user-subline {
+    font-size: 11px !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+    max-width: 200px;
+  }
+  .mobile-menu {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: var(--tn-green-light);
+    color: var(--tn-green);
+    border: 1.5px solid var(--tn-green-border);
+    font-size: 20px;
+    font-weight: 900;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .user-tools {
+    gap: 6px !important;
+    flex-shrink: 0;
+  }
+  .user-tools .btn {
+    padding: 6px 9px !important;
+    font-size: 11px !important;
+    border-radius: 8px;
+    min-height: 34px;
+  }
+  .avatar {
+    width: 34px !important;
+    height: 34px !important;
+    font-size: 12px !important;
+  }
+
+  /* Mobile Bottom Navigation Bar */
+  .mobile-bottom-nav {
+    display: flex !important;
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    height: 62px;
+    background: #ffffff;
+    border-top: 1.5px solid var(--border);
+    justify-content: space-around;
+    align-items: center;
+    z-index: 95;
+    padding-bottom: env(safe-area-inset-bottom);
+    box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.07);
+  }
+  .bottom-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    padding: 6px 8px;
+    color: #64748b;
+    font-size: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    flex: 1;
+    transition: color 0.15s;
+    text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .bottom-nav-item.active {
+    color: var(--tn-green);
+  }
+  .bottom-nav-item .b-icon {
+    font-size: 20px;
+    line-height: 1.1;
+    margin-bottom: 2px;
+  }
+  .bottom-nav-item .b-label {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.2px;
+    white-space: nowrap;
+  }
+  .bottom-nav-item.b-special {
+    position: relative;
+    top: -10px;
+  }
+  .b-special-circle {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--tn-green);
+    color: #ffffff;
+    display: grid;
+    place-items: center;
+    font-size: 20px;
+    box-shadow: 0 4px 12px rgba(10, 102, 56, 0.35);
+    border: 3px solid #ffffff;
+    margin-bottom: 2px;
+    transition: transform 0.15s ease, background 0.15s ease;
+  }
+  .bottom-nav-item.b-special:active .b-special-circle {
+    transform: scale(0.92);
+    background: var(--tn-green-dark);
+  }
+  .bottom-nav-item.b-special .b-label {
+    color: var(--tn-green);
+  }
+
+  /* Form inputs & touch targets */
+  .btn {
+    min-height: 44px;
+  }
+  input, select, textarea {
+    font-size: 16px !important; /* Prevents auto-zoom in iOS Safari */
+    padding: 12px 14px !important;
+  }
+  .actions {
+    flex-direction: column !important;
+    gap: 10px !important;
+  }
+  .actions .btn {
+    width: 100% !important;
+  }
+
+  /* Tables */
+  .table-wrap {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+  }
+  .table th, .table td {
+    padding: 10px 12px !important;
+    font-size: 12px !important;
+    white-space: nowrap;
+  }
+
+  /* Modals & Toast */
+  .modal {
+    width: 100% !important;
+    padding: 22px 18px !important;
+    border-radius: 16px !important;
+  }
+  .toast {
+    left: 14px !important;
+    right: 14px !important;
+    bottom: 74px !important;
+    max-width: none !important;
+    text-align: center;
+    font-size: 13px !important;
+    padding: 12px 16px !important;
+    border-radius: 12px !important;
+  }
+}
+
+/* Small Smartphone Screen Specifics (<= 600px) */
+@media(max-width: 600px) {
+  /* Week Days Horizontal Swipeable Rail */
+  .week-days-scroller {
+    display: flex !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    gap: 8px !important;
+    padding: 4px 2px 10px !important;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: thin;
+  }
+  .week-days-scroller > button {
+    flex: 0 0 76px !important;
+    min-width: 76px !important;
+    scroll-snap-align: start;
+    padding: 10px 4px !important;
+    border-radius: 12px !important;
+  }
+
+  /* Operating Hours Slots: Clean 2x2 Grid per hour */
+  .operating-hour-slots {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+  .operating-hour-slots > button {
+    padding: 10px 6px !important;
+    min-height: 56px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  /* Ration Card Graphic UI */
+  .ration-card-ui {
+    padding: 16px 14px !important;
+    border-radius: 14px !important;
+  }
+  .card-header-row {
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
+  .card-header-row .badge {
+    align-self: flex-start;
+  }
+  .card-quota-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+  .card-quota-item {
+    padding: 10px 8px !important;
+  }
+  .card-quota-item b {
+    font-size: 15px !important;
+  }
+  .card-citizen-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px !important;
+    font-size: 11.5px !important;
+  }
+
+  /* Login Box */
+  .portal {
+    padding: 16px 10px !important;
+  }
+  .login-box {
+    padding: 20px 14px !important;
+    margin: 8px auto !important;
+    border-radius: 16px !important;
+  }
+  #otp {
+    font-size: 22px !important;
+    letter-spacing: 6px !important;
+    padding: 12px 6px !important;
+  }
+
+  /* Crowd Analytics Chart */
+  .chart {
+    height: 180px !important;
+    gap: 8px !important;
+    padding: 12px 4px 6px !important;
+  }
+  .bar small {
+    font-size: 8px !important;
+    bottom: -20px !important;
+  }
+  .bar span {
+    font-size: 10px !important;
+    top: -18px !important;
+  }
 }
 </style>
 </head>
@@ -1293,7 +1723,34 @@ function loadBookingsFromMemory() {
   } catch (e) {}
 }
 
+// Mobile Drawer Navigation Controllers
+function openMobileSidebar() {
+  const sb = document.getElementById('sidebar');
+  const bd = document.getElementById('sidebarBackdrop');
+  if (sb) sb.classList.add('open');
+  if (bd) bd.classList.add('active');
+  try { document.body.style.overflow = 'hidden'; } catch (e) {}
+}
+
+function closeMobileSidebar() {
+  const sb = document.getElementById('sidebar');
+  const bd = document.getElementById('sidebarBackdrop');
+  if (sb) sb.classList.remove('open');
+  if (bd) bd.classList.remove('active');
+  try { document.body.style.overflow = ''; } catch (e) {}
+}
+
+function toggleMobileSidebar() {
+  const sb = document.getElementById('sidebar');
+  if (sb && sb.classList.contains('open')) {
+    closeMobileSidebar();
+  } else {
+    openMobileSidebar();
+  }
+}
+
 function setPage(p) {
+  closeMobileSidebar();
   state.page = p;
   saveSession();
   render();
@@ -1462,7 +1919,7 @@ function landing() {
         <a href="#features">${t("features")}</a>
         <a href="#citizens">${t("citizens")}</a>
       </nav>
-      <div style="display:flex;gap:10px;align-items:center;">
+      <div class="landing-top-actions">
         <button class="btn btn-outline" style="border-color:var(--tn-green);color:var(--tn-green);font-weight:800;" onclick="openLanguage()">
           🌐 ${state.lang === "தமிழ்" ? "தமிழ்" : "English"}
         </button>
@@ -1880,7 +2337,7 @@ function loginView() {
 
   return `
   <div class="portal">
-    <div class="login-box" style="max-width:520px;padding:32px 30px;">
+    <div class="login-box">
       <div class="login-stripe"></div>
       
       <!-- Admin Verifier Mode Header Bar -->
@@ -2457,7 +2914,7 @@ function cardView() {
 
   return `
   <div class="portal">
-    <div class="login-box" style="max-width:720px;padding:34px;">
+    <div class="login-box card-verify-box" style="max-width:720px;">
       <div class="login-stripe"></div>
       <div class="eyebrow">${isTa ? "தமிழ்நாடு பொது விநியோகத் திட்டம் • சரிபார்ப்பு" : "Tamil Nadu ePDS • Verification"}</div>
       <h1 style="color:var(--tn-black);font-size:26px;margin:8px 0 16px;">
@@ -2483,7 +2940,7 @@ function cardView() {
           </span>
         </div>
 
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13px;">
+        <div class="card-citizen-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13px;">
           <div>
             <span style="opacity:0.85;font-size:11px;display:block;">${isTa ? "குடும்ப அட்டை எண்" : "CARD NUMBER"}</span>
             <b style="font-size:16px;letter-spacing:1px;">${c.smart_card_no}</b>
@@ -2628,18 +3085,24 @@ function shell(role, body, active) {
 
   return `
   <div class="portal-layout">
+    <!-- Backdrop for Mobile Drawer -->
+    <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeMobileSidebar()"></div>
+
     <aside class="sidebar" id="sidebar">
-      <div class="side-brand">
-        <img src="tn-emblem.png" style="width:36px;height:36px;object-fit:contain;background:white;border-radius:50%;padding:2px;" alt="TN Emblem">
-        <span>${t("brandName")}</span>
+      <div class="side-brand" style="display:flex;align-items:center;justify-content:space-between;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <img src="tn-emblem.png" style="width:36px;height:36px;object-fit:contain;background:white;border-radius:50%;padding:2px;" alt="TN Emblem">
+          <span>${t("brandName")}</span>
+        </div>
+        <button type="button" class="side-close-btn" onclick="closeMobileSidebar()" aria-label="Close sidebar">✕</button>
       </div>
       <div class="side-nav">
         ${menus.map(m => `
-          <button class="${active === m[0] ? 'active' : ''}" onclick="setPage('${m[0]}')">
+          <button class="${active === m[0] ? 'active' : ''}" onclick="closeMobileSidebar(); setPage('${m[0]}')">
             ${menuIcon(m[0])} &nbsp;${m[1]}
           </button>
         `).join("")}
-        <button style="margin-top:20px;color:var(--tn-red-light);border-top:1px solid rgba(255,255,255,0.15);" onclick="logoutCitizen()">
+        <button style="margin-top:20px;color:var(--tn-red-light);border-top:1px solid rgba(255,255,255,0.15);" onclick="closeMobileSidebar(); logoutCitizen()">
           🚪 &nbsp;${t("navLogout")}
         </button>
       </div>
@@ -2647,12 +3110,14 @@ function shell(role, body, active) {
 
     <main class="content">
       <div class="content-head">
-        <div>
-          <button class="mobile-menu" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
-          <h1>${title}</h1>
-          <span class="muted">
-            ${state.citizen ? `${isTa ? 'உள்நுழைந்துள்ள பயனாளர்' : 'Logged in'}: <b>${state.citizen.full_name}</b> (+91 ${state.citizen.mobile_number}) • ${state.citizen.card_type}` : (state.isAdminVerified ? `🛡️ <b>Admin Active: ${state.adminUser ? state.adminUser.login_id : 'admin'}</b>` : t("footerDept"))}
-          </span>
+        <div class="content-head-main">
+          <button type="button" class="mobile-menu" onclick="toggleMobileSidebar()" aria-label="Open menu">☰</button>
+          <div class="content-head-title">
+            <h1>${title}</h1>
+            <span class="muted user-subline">
+              ${state.citizen ? `${isTa ? 'உள்நுழைந்துள்ள பயனாளர்' : 'Logged in'}: <b>${state.citizen.full_name}</b> (+91 ${state.citizen.mobile_number}) • ${state.citizen.card_type}` : (state.isAdminVerified ? `🛡️ <b>Admin Active: ${state.adminUser ? state.adminUser.login_id : 'admin'}</b>` : t("footerDept"))}
+            </span>
+          </div>
         </div>
         <div class="user-tools">
           <button class="btn btn-outline" style="border-color:var(--tn-green);color:var(--tn-green);padding:7px 11px;font-size:12px;font-weight:800;" onclick="openLanguage()">
@@ -2664,6 +3129,54 @@ function shell(role, body, active) {
       </div>
       ${body}
     </main>
+
+    <!-- Mobile Bottom Navigation Bar -->
+    <nav class="mobile-bottom-nav">
+      ${role === "beneficiary" ? `
+        <button type="button" class="bottom-nav-item ${active === 'beneficiary' ? 'active' : ''}" onclick="setPage('beneficiary')">
+          <span class="b-icon">⌂</span>
+          <span class="b-label">${isTa ? 'முகப்பு' : 'Home'}</span>
+        </button>
+        <button type="button" class="bottom-nav-item ${active === 'products' ? 'active' : ''}" onclick="setPage('products')">
+          <span class="b-icon">▦</span>
+          <span class="b-label">${isTa ? 'பொருட்கள்' : 'Products'}</span>
+        </button>
+        <button type="button" class="bottom-nav-item b-special ${active === 'slots' ? 'active' : ''}" onclick="setPage('slots')">
+          <div class="b-special-circle">◷</div>
+          <span class="b-label">${isTa ? 'முன்பதிவு' : 'Book Slot'}</span>
+        </button>
+        <button type="button" class="bottom-nav-item ${active === 'bookings' ? 'active' : ''}" onclick="setPage('bookings')">
+          <span class="b-icon">▣</span>
+          <span class="b-label">${isTa ? 'பதிவுகள்' : 'Bookings'}</span>
+        </button>
+        <button type="button" class="bottom-nav-item" onclick="openMobileSidebar()">
+          <span class="b-icon">☰</span>
+          <span class="b-label">${isTa ? 'மெனு' : 'Menu'}</span>
+        </button>
+      ` : (role === "admin" || state.isAdminVerified) ? `
+        <button type="button" class="bottom-nav-item ${active === 'adminconsole' ? 'active' : ''}" onclick="setPage('adminconsole')">
+          <span class="b-icon">🛡️</span>
+          <span class="b-label">${isTa ? 'நிர்வாகம்' : 'Admin'}</span>
+        </button>
+        <button type="button" class="bottom-nav-item ${active === 'slots' ? 'active' : ''}" onclick="setPage('slots')">
+          <span class="b-icon">◷</span>
+          <span class="b-label">${isTa ? 'இடங்கள்' : 'Slots'}</span>
+        </button>
+        <button type="button" class="bottom-nav-item ${active === 'bookings' ? 'active' : ''}" onclick="setPage('bookings')">
+          <span class="b-icon">📜</span>
+          <span class="b-label">${isTa ? 'பதிவேடு' : 'Ledger'}</span>
+        </button>
+        <button type="button" class="bottom-nav-item" onclick="openMobileSidebar()">
+          <span class="b-icon">☰</span>
+          <span class="b-label">${isTa ? 'மெனு' : 'Menu'}</span>
+        </button>
+      ` : `
+        <button type="button" class="bottom-nav-item active" onclick="openMobileSidebar()">
+          <span class="b-icon">☰</span>
+          <span class="b-label">${isTa ? 'பட்டியல்' : 'Menu'}</span>
+        </button>
+      `}
+    </nav>
   </div>`;
 }
 
@@ -2992,7 +3505,7 @@ function slotsView() {
           <label style="font-size:12px;font-weight:800;text-transform:uppercase;color:#475569;margin-bottom:8px;display:block;">
             📅 ${isTa ? 'முன்பதிவு செய்ய வேண்டிய நாளைத் தேர்ந்தெடுக்கவும் (திங்கள் – ஞாயிறு):' : 'Select Day of Current Week (Monday to Sunday):'}
           </label>
-          <div style="display:grid;grid-template-columns:repeat(7, 1fr);gap:6px;">
+          <div class="week-days-scroller">
             ${cal.days.map((d, i) => {
               const isSel = state.selectedDayIndex === i;
               const isPast = d.isPast;
@@ -3061,7 +3574,7 @@ function slotsView() {
                   <span style="font-size:11px;color:#64748b;font-weight:600;">4 × 15-min slots</span>
                 </div>
 
-                <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(130px, 1fr));gap:8px;">
+                <div class="operating-hour-slots" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(130px, 1fr));gap:8px;">
                   ${h.slots.map(slotTime => {
                     const tuple = dayCapacity.find(x => x[0] === slotTime) || [slotTime, MAX_SLOT_CAPACITY, MAX_SLOT_CAPACITY];
                     const maxCap = MAX_SLOT_CAPACITY;
