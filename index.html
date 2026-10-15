@@ -1023,8 +1023,11 @@ OPERATING_HOURS.forEach(h => {
   h.slots.forEach(s => ALL_28_SLOTS.push(s));
 });
 
-// Legacy slots array for backward compatibility
-const slots = ALL_28_SLOTS.map(s => [s, 15, 15]);
+// Capacity per 15-minute slot (3 persons per slot)
+const MAX_SLOT_CAPACITY = 3;
+
+// Legacy slots array for backward compatibility (3 persons per slot)
+const slots = ALL_28_SLOTS.map(s => [s, MAX_SLOT_CAPACITY, MAX_SLOT_CAPACITY]);
 
 // Calculates the current week of the year and Monday-Sunday calendar date details
 function getWeekCalendar() {
@@ -1054,12 +1057,16 @@ function getWeekCalendar() {
 
   const days = [];
   let todayIndex = 0;
+  const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
 
   for (let i = 0; i < 7; i++) {
     const cur = new Date(monday);
     cur.setDate(monday.getDate() + i);
     const dateKey = `${cur.getFullYear()}-${String(cur.getMonth() + 1).padStart(2, '0')}-${String(cur.getDate()).padStart(2, '0')}`;
+    const curMidnight = new Date(cur.getFullYear(), cur.getMonth(), cur.getDate()).getTime();
+    
     const isToday = cur.toDateString() === now.toDateString();
+    const isPast = curMidnight < todayMidnight;
     if (isToday) todayIndex = i;
 
     days.push({
@@ -1076,7 +1083,8 @@ function getWeekCalendar() {
       fullDateEn: `${dayNamesEn[i]}, ${monthNamesEn[cur.getMonth()]} ${cur.getDate()}, ${cur.getFullYear()}`,
       fullDateTa: `${dayNamesTa[i]}, ${cur.getDate()} ${monthNamesTa[cur.getMonth()]} ${cur.getFullYear()}`,
       badgeDateEn: `${dayNamesEn[i].slice(0, 3)} ${cur.getDate()} ${monthNamesEn[cur.getMonth()]}`,
-      isToday: isToday
+      isToday: isToday,
+      isPast: isPast
     });
   }
 
@@ -1090,20 +1098,64 @@ function getWeekCalendar() {
   };
 }
 
-// Retrieve or initialize slot capacity for a specific date (all 0 slots booked initially)
+// Check if a 15-minute slot has passed relative to the current live clock
+// "like if it is 11:18 am on tuesday the slots before and on 11:18 am should be turned grey and unacessible"
+function isSlotPassed(dateKey, slotTimeStr) {
+  const now = new Date();
+  const todayKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+  
+  // 1. If date is strictly before today, it has passed
+  if (dateKey < todayKey) return true;
+  // 2. If date is in the future, it has not passed
+  if (dateKey > todayKey) return false;
+
+  // 3. Date is Today: check slot start time against live time
+  const parts = slotTimeStr.split(/[–-]/);
+  if (!parts || parts.length < 2) return false;
+
+  const startPart = parts[0].trim();
+  const m = startPart.match(/(\d+):(\d+)\s*(AM|PM)/i);
+  if (!m) return false;
+
+  let slotHour = parseInt(m[1], 10);
+  const slotMin = parseInt(m[2], 10);
+  const ampm = m[3].toUpperCase();
+  if (ampm === 'PM' && slotHour < 12) slotHour += 12;
+  if (ampm === 'AM' && slotHour === 12) slotHour = 0;
+
+  const slotStartMinutes = slotHour * 60 + slotMin;
+  const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+  // If current time has reached or passed slot start time, it has already started or concluded -> PASSED!
+  return currentMinutes >= slotStartMinutes;
+}
+
+// Retrieve or initialize slot capacity for a specific date (3 persons per slot, 0 booked initially)
 function getSlotCapacityForDate(dateKey) {
   if (!state.slotCapacity) state.slotCapacity = {};
   if (!state.slotCapacity[dateKey]) {
     try {
       const stored = localStorage.getItem('tnpds_slot_capacity_' + dateKey);
       if (stored) {
-        state.slotCapacity[dateKey] = JSON.parse(stored);
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed) && parsed.length === 28) {
+          // Migrate any legacy 15-capacity to MAX_SLOT_CAPACITY (3 persons per slot)
+          state.slotCapacity[dateKey] = parsed.map(s => {
+            const oldMax = s[1] || MAX_SLOT_CAPACITY;
+            const oldAvail = (s[2] !== undefined) ? s[2] : oldMax;
+            const booked = Math.max(0, oldMax - oldAvail);
+            const maxCap = MAX_SLOT_CAPACITY;
+            const avail = Math.max(0, maxCap - Math.min(booked, maxCap));
+            return [s[0], maxCap, avail];
+          });
+          saveSlotCapacityForDate(dateKey);
+        }
       }
     } catch (e) {}
   }
   if (!state.slotCapacity[dateKey] || state.slotCapacity[dateKey].length !== 28) {
-    // 28 slots initialized with 15 max cap, 15 available (0 booked initially)
-    state.slotCapacity[dateKey] = ALL_28_SLOTS.map(s => [s, 15, 15]);
+    // 28 slots initialized with 3 max cap, 3 available (0 booked initially)
+    state.slotCapacity[dateKey] = ALL_28_SLOTS.map(s => [s, MAX_SLOT_CAPACITY, MAX_SLOT_CAPACITY]);
     saveSlotCapacityForDate(dateKey);
   }
   return state.slotCapacity[dateKey];
@@ -2876,18 +2928,22 @@ function slotsView() {
   const c = state.citizen || { full_name: 'Vijay Anand', mobile_number: '6382826805', fps_shop_code: 'TN-FPS-1201', fps_shop_name: 'Suramangalam Fair Price Outlet' };
 
   const cal = getWeekCalendar();
-  if (state.selectedDayIndex === null || state.selectedDayIndex === undefined) {
+  // Ensure selected day is not null and not a past day
+  if (state.selectedDayIndex === null || state.selectedDayIndex === undefined || cal.days[state.selectedDayIndex]?.isPast) {
     state.selectedDayIndex = cal.todayIndex;
   }
   const selectedDay = cal.days[state.selectedDayIndex] || cal.days[0];
   const dayCapacity = getSlotCapacityForDate(selectedDay.dateKey);
+
+  // Check if all 28 slots for the selected day have passed
+  const allSlotsPassedForSelectedDay = ALL_28_SLOTS.every(s => isSlotPassed(selectedDay.dateKey, s));
 
   // Calculate demand for the 7 operating hours
   const hourCrowds = OPERATING_HOURS.map(h => {
     let bookedTotal = 0;
     let maxTotal = 0;
     h.slots.forEach(slotTime => {
-      const tuple = dayCapacity.find(x => x[0] === slotTime) || [slotTime, 15, 15];
+      const tuple = dayCapacity.find(x => x[0] === slotTime) || [slotTime, MAX_SLOT_CAPACITY, MAX_SLOT_CAPACITY];
       maxTotal += tuple[1];
       bookedTotal += Math.max(0, tuple[1] - tuple[2]);
     });
@@ -2910,7 +2966,7 @@ function slotsView() {
             <p class="muted" style="margin:4px 0 0;">${isTa ? "கடை" : "Shop"}: <b>${c.fps_shop_code || 'TN-FPS-1201'} — ${c.fps_shop_name || 'Fair Price Shop'}</b></p>
           </div>
           <span class="badge available" style="font-size:12px;padding:6px 12px;font-weight:700;">
-            ✓ ${isTa ? 'துவக்கத்தில் 0 முன்பதிவு' : '0 Slots Booked Initially'}
+            ✓ ${isTa ? '3 நபர்கள் / இடம்' : '3 Persons per Slot'}
           </span>
         </div>
 
@@ -2931,7 +2987,7 @@ function slotsView() {
           </div>
         </div>
 
-        <!-- 2. Day Selector: Monday to Sunday of Current Week -->
+        <!-- 2. Day Selector: Monday to Sunday of Current Week (Passed days turned grey & disabled) -->
         <div style="margin-bottom:22px;">
           <label style="font-size:12px;font-weight:800;text-transform:uppercase;color:#475569;margin-bottom:8px;display:block;">
             📅 ${isTa ? 'முன்பதிவு செய்ய வேண்டிய நாளைத் தேர்ந்தெடுக்கவும் (திங்கள் – ஞாயிறு):' : 'Select Day of Current Week (Monday to Sunday):'}
@@ -2939,28 +2995,52 @@ function slotsView() {
           <div style="display:grid;grid-template-columns:repeat(7, 1fr);gap:6px;">
             ${cal.days.map((d, i) => {
               const isSel = state.selectedDayIndex === i;
+              const isPast = d.isPast;
               return `
-                <button type="button" onclick="selectBookingDay(${i})" style="
-                  border:2px solid ${isSel ? 'var(--tn-green)' : '#cbd5e1'};
-                  background:${isSel ? '#f0fdf4' : '#fff'};
-                  color:${isSel ? 'var(--tn-green)' : '#334155'};
-                  border-radius:10px;
-                  padding:10px 4px;
-                  text-align:center;
-                  cursor:pointer;
-                  transition:all 0.15s ease;
-                  position:relative;
-                  box-shadow:${isSel ? '0 0 0 1px var(--tn-green)' : 'none'};
-                ">
-                  ${d.isToday ? `<span style="position:absolute;top:-8px;right:4px;background:var(--tn-green);color:#fff;font-size:9px;font-weight:800;padding:1px 5px;border-radius:8px;">${isTa ? 'இன்று' : 'Today'}</span>` : ''}
+                <button type="button" 
+                  ${isPast ? 'disabled' : `onclick="selectBookingDay(${i})"`} 
+                  style="
+                    border: ${isPast ? '1.5px solid #cbd5e1' : (isSel ? '2px solid var(--tn-green)' : '1.5px solid #cbd5e1')};
+                    background: ${isPast ? '#f1f5f9' : (isSel ? '#f0fdf4' : '#fff')};
+                    color: ${isPast ? '#94a3b8' : (isSel ? 'var(--tn-green)' : '#334155')};
+                    border-radius: 10px;
+                    padding: 10px 4px;
+                    text-align: center;
+                    cursor: ${isPast ? 'not-allowed' : 'pointer'};
+                    transition: all 0.15s ease;
+                    position: relative;
+                    opacity: ${isPast ? '0.6' : '1'};
+                    box-shadow: ${isSel && !isPast ? '0 0 0 1px var(--tn-green)' : 'none'};
+                  "
+                  title="${isPast ? (isTa ? 'இந்த நாள் முடிந்துவிட்டது (முன்பதிவு செய்ய முடியாது)' : 'This day has passed (Unbookable)') : ''}"
+                >
+                  ${d.isToday 
+                    ? `<span style="position:absolute;top:-8px;right:4px;background:var(--tn-green);color:#fff;font-size:9px;font-weight:800;padding:1px 5px;border-radius:8px;">${isTa ? 'இன்று' : 'Today'}</span>` 
+                    : (isPast ? `<span style="position:absolute;top:-8px;right:4px;background:#94a3b8;color:#fff;font-size:9px;font-weight:800;padding:1px 5px;border-radius:8px;">${isTa ? 'முடிந்தது' : 'Passed'}</span>` : '')}
                   <div style="font-size:11px;font-weight:800;text-transform:uppercase;">${isTa ? d.shortDayTa : d.shortDayEn}</div>
                   <div style="font-size:18px;font-weight:900;margin:2px 0;">${d.dateNum}</div>
-                  <div style="font-size:10px;color:${isSel ? 'var(--tn-green)' : '#64748b'};font-weight:700;">${isTa ? d.monthTa : d.monthEn}</div>
+                  <div style="font-size:10px;color:${isPast ? '#94a3b8' : (isSel ? 'var(--tn-green)' : '#64748b')};font-weight:700;">${isTa ? d.monthTa : d.monthEn}</div>
                 </button>
               `;
             }).join('')}
           </div>
         </div>
+
+        <!-- Passed Day / Expired Slots Notice Banner -->
+        ${allSlotsPassedForSelectedDay ? `
+          <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:10px;padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+            <div style="font-size:13px;color:#991b1b;font-weight:700;">
+              ⏳ ${isTa 
+                ? 'தேர்வு செய்யப்பட்ட நாளில் அனைத்து நேர முன்பதிவுகளும் முடிவடைந்துவிட்டன. வரவிருக்கும் நாட்களைத் தேர்வு செய்யவும்.' 
+                : 'All collection slots for this day have closed. Please select an upcoming day (Fri – Sun) to book.'}
+            </div>
+            ${cal.todayIndex < 6 ? `
+              <button type="button" class="btn btn-primary" onclick="selectBookingDay(${cal.todayIndex + 1})" style="padding:6px 14px;font-size:12px;font-weight:800;">
+                👉 ${isTa ? 'அடுத்த நாளுக்கு முன்பதிவு செய்க' : 'Book for Tomorrow'}
+              </button>
+            ` : ''}
+          </div>
+        ` : ''}
 
         <!-- 3. The 7 Operating Hours (8-9, 9-10, 10-11, 11-12, 2-3, 3-4, 4-5) -->
         <div>
@@ -2968,7 +3048,7 @@ function slotsView() {
             <h3 style="font-size:15px;margin:0;color:var(--tn-black);">
               ⏰ ${isTa ? `${selectedDay.fullDateTa} — முன்பதிவு நேரங்கள் (7 மணிநேரங்கள் / 28 இடங்கள்):` : `${selectedDay.fullDateEn} — Operating Hours (7 Windows / 28 Slots):`}
             </h3>
-            <span style="font-size:12px;color:#64748b;">4 × 15-min slots / hr</span>
+            <span style="font-size:12px;color:var(--tn-green);font-weight:700;">✓ 3 ${isTa ? 'நபர்கள்/இடம்' : 'persons/slot'}</span>
           </div>
 
           ${OPERATING_HOURS.map(h => {
@@ -2978,21 +3058,53 @@ function slotsView() {
                   <span style="font-size:13px;font-weight:800;color:var(--tn-black);">
                     🕒 ${isTa ? h.labelTa : h.labelEn} <span style="font-size:11px;color:#64748b;font-weight:normal;">(Hour ${h.hourId})</span>
                   </span>
-                  <span style="font-size:11px;color:var(--tn-green);font-weight:700;">✓ 15 slots/slot</span>
+                  <span style="font-size:11px;color:#64748b;font-weight:600;">4 × 15-min slots</span>
                 </div>
 
                 <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(130px, 1fr));gap:8px;">
                   ${h.slots.map(slotTime => {
-                    const tuple = dayCapacity.find(x => x[0] === slotTime) || [slotTime, 15, 15];
-                    const maxCap = tuple[1];
+                    const tuple = dayCapacity.find(x => x[0] === slotTime) || [slotTime, MAX_SLOT_CAPACITY, MAX_SLOT_CAPACITY];
+                    const maxCap = MAX_SLOT_CAPACITY;
                     const avail = tuple[2];
                     const booked = Math.max(0, maxCap - avail);
                     const isSelected = state.selectedSlotTime === slotTime;
+                    const isPassed = isSlotPassed(selectedDay.dateKey, slotTime);
                     const isFull = avail <= 0;
 
+                    // If slot has passed: turned grey, unclickable and inaccessible!
+                    if (isPassed) {
+                      return `
+                        <button type="button" 
+                          disabled 
+                          style="
+                            padding:8px 6px;
+                            border:1.5px solid #cbd5e1;
+                            background:#f1f5f9;
+                            color:#94a3b8;
+                            border-radius:8px;
+                            text-align:center;
+                            cursor:not-allowed;
+                            opacity:0.65;
+                          "
+                          title="${isTa ? 'இந்த நேரம் முடிந்துவிட்டது (முன்பதிவு செய்ய முடியாது)' : 'This time slot has passed and is inaccessible'}"
+                        >
+                          <div style="font-size:11px;font-weight:700;color:#94a3b8;text-decoration:line-through;">${slotTime}</div>
+                          <div style="font-size:11px;margin-top:4px;color:#94a3b8;font-weight:600;">
+                            ${isTa ? 'நேரம் முடிந்தது' : 'Closed / Passed'}
+                          </div>
+                          <div style="margin-top:3px;">
+                            <span style="font-size:10px;padding:1px 6px;border-radius:3px;background:#e2e8f0;color:#64748b;font-weight:700;">
+                              ⌛ ${isTa ? 'முடிந்தது' : 'Passed'}
+                            </span>
+                          </div>
+                        </button>
+                      `;
+                    }
+
+                    // Upcoming slot: Active, white with green highlight and bookable
                     return `
                       <button type="button" 
-                        onclick="select15MinSlot('${slotTime}', ${avail})" 
+                        ${isFull ? 'disabled' : `onclick="select15MinSlot('${slotTime}', ${avail})"`}
                         style="
                           padding:8px 6px;
                           border:2px solid ${isSelected ? 'var(--tn-green)' : (isFull ? '#e2e8f0' : '#cbd5e1')};
@@ -3004,7 +3116,6 @@ function slotsView() {
                           box-shadow:${isSelected ? '0 4px 10px rgba(0,100,50,0.2)' : 'none'};
                           transition:all 0.15s ease;
                         "
-                        ${isFull ? 'disabled' : ''}
                       >
                         <div style="font-size:11px;font-weight:800;">${slotTime}</div>
                         <div style="font-size:11px;margin-top:4px;opacity:0.9;">
@@ -3041,7 +3152,9 @@ function slotsView() {
           </div>
         ` : `
           <div style="margin-top:16px;padding:12px;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:8px;text-align:center;color:#64748b;font-size:13px;">
-            👆 ${isTa ? 'மேலே உள்ள 28 நேர இடங்களில் ஏதேனும் ஒரு 15 நிமிட இடத்தை தேர்வு செய்யவும்.' : 'Please select any of the 28 15-minute slots above to proceed with booking.'}
+            ${allSlotsPassedForSelectedDay 
+              ? (isTa ? '⚠️ இந்த நாளில் இடங்கள் இல்லை. மேலே உள்ள நாட்காட்டியில் அடுத்த நாளைத் தேர்வு செய்யவும்.' : '⚠️ All slots for this day have closed. Please select an upcoming day from the calendar above.') 
+              : (isTa ? '👆 மேலே உள்ள திறந்த 15-நிமிட நேர இடங்களில் ஒன்றை தேர்வு செய்யவும் (ஒரு இடத்திற்கு 3 நபர்கள் மட்டுமே).' : '👆 Select any open 15-minute slot above to proceed (Strictly 3 persons per slot).')}
           </div>
         `}
       </div>
@@ -3060,16 +3173,16 @@ function slotsView() {
             `).join("")}
           </div>
           <div style="margin-top:24px;padding:10px 12px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;font-size:12px;color:#166534;display:flex;justify-content:space-between;align-items:center;">
-            <span>🟢 <b>${isTa ? 'தொடக்க நிலை:' : 'Initial Status:'}</b> 0 முன்பதிவு (0% நெரிசல்)</span>
-            <span style="font-weight:800;">✓ 100% Free Flow</span>
+            <span>🟢 <b>${isTa ? 'திறன் வரம்பு:' : 'Slot Policy:'}</b> 3 ${isTa ? 'நபர்கள்/இடம்' : 'persons/slot'}</span>
+            <span style="font-weight:800;">✓ Live Clock Sync</span>
           </div>
         </div>
 
         <div class="card" style="margin-top:18px">
           <h3>${t("collectionWindow")}</h3>
           <div class="timeline">
-            ${cal.days.slice(0, 3).map((d, i) => `
-              <div class="step ${state.selectedDayIndex === i ? 'current' : ''}">
+            ${cal.days.filter(d => !d.isPast).slice(0, 3).map((d, i) => `
+              <div class="step ${selectedDay.dateKey === d.dateKey ? 'current' : ''}">
                 <div class="dot">${i + 1}</div>
                 <p>${isTa ? d.shortDayTa : d.shortDayEn} (${d.dateNum} ${isTa ? d.monthTa : d.monthEn})</p>
               </div>
@@ -3085,6 +3198,10 @@ function slotsView() {
 }
 
 function selectBookingDay(idx) {
+  const cal = getWeekCalendar();
+  if (cal.days[idx] && cal.days[idx].isPast) {
+    return toast(state.lang === "தமிழ்" ? "⚠️ இந்த நாள் முடிந்துவிட்டது. வரவிருக்கும் நாளைத் தேர்வு செய்யவும்." : "⚠️ This day has already passed and cannot be booked.");
+  }
   state.selectedDayIndex = idx;
   state.selectedSlotTime = null;
   saveSession();
@@ -3092,6 +3209,11 @@ function selectBookingDay(idx) {
 }
 
 function select15MinSlot(slotTime, avail) {
+  const cal = getWeekCalendar();
+  const selectedDay = cal.days[state.selectedDayIndex !== null ? state.selectedDayIndex : cal.todayIndex];
+  if (isSlotPassed(selectedDay.dateKey, slotTime)) {
+    return toast(state.lang === "தமிழ்" ? "⚠️ இந்த நேரம் முடிந்துவிட்டது. எதிர்கால நேரத்தைத் தேர்ந்தெடுக்கவும்." : "⚠️ This time slot has already passed and cannot be booked.");
+  }
   if (avail <= 0) return toast(state.lang === "தமிழ்" ? "⚠️ இந்த நேரத்தில் இடங்கள் இல்லை." : "⚠️ No capacity remaining in this slot");
   state.selectedSlotTime = slotTime;
   saveSession();
@@ -3099,6 +3221,11 @@ function select15MinSlot(slotTime, avail) {
 }
 
 function selectSlot(i) {
+  const cal = getWeekCalendar();
+  const selectedDay = cal.days[state.selectedDayIndex !== null ? state.selectedDayIndex : cal.todayIndex];
+  if (isSlotPassed(selectedDay.dateKey, slots[i][0])) {
+    return toast(state.lang === "தமிழ்" ? "⚠️ இந்த நேரம் முடிந்துவிட்டது." : "⚠️ This time slot has passed.");
+  }
   if (slots[i][2] <= 0) return toast(state.lang === "தமிழ்" ? "⚠️ இந்த நேரத்தில் இடங்கள் இல்லை." : "⚠️ No capacity remaining in this slot");
   state.selectedSlot = i;
   state.selectedSlotTime = slots[i][0];
@@ -3112,6 +3239,10 @@ function confirmBooking() {
   const dayIdx = (state.selectedDayIndex !== null && state.selectedDayIndex !== undefined) ? state.selectedDayIndex : cal.todayIndex;
   const selectedDay = cal.days[dayIdx] || cal.days[0];
   const slotTime = state.selectedSlotTime || (state.selectedSlot !== null ? slots[state.selectedSlot][0] : ALL_28_SLOTS[0]);
+
+  if (isSlotPassed(selectedDay.dateKey, slotTime)) {
+    return toast(state.lang === "தமிழ்" ? "⚠️ இந்த நேரம் முடிந்துவிட்டது. எதிர்கால நேரத்தைத் தேர்ந்தெடுக்கவும்." : "⚠️ This time slot has already passed and cannot be booked.");
+  }
 
   const c = state.citizen || { full_name: 'Vijay Anand', mobile_number: '6382826805', fps_shop_code: 'TN-FPS-1201', fps_shop_name: 'Suramangalam Fair Price Outlet' };
   const mobile = c.mobile_number || state.selectedMobile || '6382826805';
@@ -4888,10 +5019,10 @@ function adminAdjustSlotCapacity(dateKey, slotTime, delta) {
 }
 
 function adminResetDaySlots(dateKey) {
-  state.slotCapacity[dateKey] = ALL_28_SLOTS.map(s => [s, 15, 15]);
+  state.slotCapacity[dateKey] = ALL_28_SLOTS.map(s => [s, MAX_SLOT_CAPACITY, MAX_SLOT_CAPACITY]);
   saveSlotCapacityForDate(dateKey);
   render();
-  toast(state.lang === "தமிழ்" ? "அனைத்து 28 இடங்களும் 0 முன்பதிவாக மீட்டமைக்கப்பட்டன" : "All 28 slots reset to 0 booked (100% capacity)");
+  toast(state.lang === "தமிழ்" ? "அனைத்து 28 இடங்களும் 3 நபர் திறனுடன் மீட்டமைக்கப்பட்டன" : "All 28 slots reset to 3 persons capacity (0 booked)");
 }
 
 function renderAdminCapacityTab(isTa) {
@@ -4912,7 +5043,7 @@ function renderAdminCapacityTab(isTa) {
     let bookedTotal = 0;
     let maxTotal = 0;
     h.slots.forEach(slotTime => {
-      const tuple = daySlots.find(x => x[0] === slotTime) || [slotTime, 15, 15];
+      const tuple = daySlots.find(x => x[0] === slotTime) || [slotTime, MAX_SLOT_CAPACITY, MAX_SLOT_CAPACITY];
       maxTotal += tuple[1];
       bookedTotal += Math.max(0, tuple[1] - tuple[2]);
     });
@@ -4931,7 +5062,7 @@ function renderAdminCapacityTab(isTa) {
     <div class="stat-grid" style="margin-bottom:20px;">
       <div class="stat-card" style="border-top-color:var(--tn-green);">
         <div class="label">${isTa ? 'மொத்த இட ஒதுக்கீடு' : 'Total Slot Capacity'}</div>
-        <div class="num">${totalMax} <small style="font-size:13px;font-weight:normal;color:#64748b;">(28 slots)</small></div>
+        <div class="num">${totalMax} <small style="font-size:13px;font-weight:normal;color:#64748b;">(28 slots × 3)</small></div>
       </div>
       <div class="stat-card" style="border-top-color:#0284c7;">
         <div class="label">${isTa ? 'முன்பதிவு செய்யப்பட்டவை' : 'Slots Booked'}</div>
@@ -4991,10 +5122,10 @@ function renderAdminCapacityTab(isTa) {
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px;">
           <div>
             <h2 style="margin:0;font-size:17px;">
-              🏪 ${isTa ? `${activeDay.fullDateTa} — 28 இடங்களின் திறன்` : `${activeDay.fullDateEn} — 28 Slots Capacity`}
+              🏪 ${isTa ? `${activeDay.fullDateTa} — 28 இடங்களின் திறன் (3 நபர்கள்/இடம்)` : `${activeDay.fullDateEn} — 28 Slots Capacity (3 Persons/Slot)`}
             </h2>
             <p class="muted" style="margin:4px 0 0 0;font-size:12px;">
-              ${isTa ? '7 இயக்க மணிநேரங்கள் (ஒவ்வொன்றிலும் 4 15-நிமிட இடங்கள்). துவக்கத்தில் 0 முன்பதிவு.' : '7 Operating Hours (4 15-min slots each). Initially 0 slots booked.'}
+              ${isTa ? '7 இயக்க மணிநேரங்கள் (ஒவ்வொன்றிலும் 4 15-நிமிட இடங்கள்). ஒரு இடத்திற்கு 3 நபர்கள்.' : '7 Operating Hours (4 15-min slots each). Strictly 3 persons per slot.'}
             </p>
           </div>
           <button type="button" class="btn btn-outline" style="font-size:11px;padding:5px 10px;color:var(--tn-red);border-color:#fca5a5;" onclick="adminResetDaySlots('${activeDay.dateKey}')">
@@ -5027,8 +5158,8 @@ function renderAdminCapacityTab(isTa) {
                   </td>
                   <td><b style="color:var(--tn-green);">${s[2]}</b> left (${s[2]} / ${s[1]})</td>
                   <td style="text-align:center;">
-                    <button type="button" class="btn btn-outline" style="padding:3px 7px;font-size:11px;" onclick="adminAdjustSlotCapacity('${activeDay.dateKey}', '${s[0]}', 5)">
-                      +5
+                    <button type="button" class="btn btn-outline" style="padding:3px 7px;font-size:11px;" onclick="adminAdjustSlotCapacity('${activeDay.dateKey}', '${s[0]}', 1)">
+                      +1
                     </button>
                     <button type="button" class="btn btn-outline" style="padding:3px 7px;font-size:11px;margin-left:4px;color:var(--tn-red);border-color:#fca5a5;" onclick="adminAdjustSlotCapacity('${activeDay.dateKey}', '${s[0]}', 0)">
                       0 Booked
